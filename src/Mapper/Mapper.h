@@ -9,8 +9,16 @@
 
 class MapperConfig {
 public:
-	std::vector<std::string> inputVector;
-	std::vector<std::string> outputVector;
+	std::vector<std::string> intInputVector;
+	std::vector<std::string> intOutputVector;
+	std::vector<std::string> floatInputVector;
+	std::vector<std::string> floatOutputVector;
+	std::vector<std::string> doulbeInputVector;
+	std::vector<std::string> doubleOutputVector;
+	std::vector<std::string> boolInputVector;
+	std::vector<std::string> boolOutputVector;
+	std::vector<std::string> stringInputVector;
+	std::vector<std::string> stringOutputVector;
 };
 
 class Mapper {

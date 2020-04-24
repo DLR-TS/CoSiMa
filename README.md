@@ -20,9 +20,17 @@ in lib folder:
 	- cmake
 	(- open-simulation-interface von dll auf lib umstellen
 		- alle können kompiliert werden)
-- git clone https://github.com/qtronic/fmusdk.git
 - git clone https://github.com/jbeder/yaml-cpp.git
+- git clone https://github.com/modelon-community/fmi-library
 
+Tests
+
+- git clone https://github.com/catchorg/Catch2.git
+	- cd Catch2
+	- git checkout tags/v2.12.1
+- git clone https://github.com/eranpeer/FakeIt.git
+	- cd FakeIt
+	- git checkout tags/2.0.5
 
 CMake
 and build CoSimulationManager

@@ -5,7 +5,10 @@ add_subdirectory("Mapper")
 add_subdirectory("SimulationInterfaces")
 
 #source
-set(COSIMA_SOURCE ${COSIMA_SOURCE} "CoSiMa.cpp" "CoSiMa.h")
+set(COSIMA_SOURCE ${COSIMA_SOURCE}
+"CoSiMa.cpp" "CoSiMa.h"
+"SimulationInterfaceFactory.cpp" "SimulationInterfaceFactory.h"
+)
 
 add_executable (CoSimulationManager ${COSIMA_SOURCE})
 

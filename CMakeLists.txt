@@ -15,8 +15,8 @@ set (ENV{CMAKE_INCLUDE_PATH} "${CMAKE_SOURCE_DIR}/lib/protobuf/src")
 set (ENV{CMAKE_LIBRARY_PATH} "${CMAKE_SOURCE_DIR}/lib/protobuf/build2/Debug")
 add_subdirectory ("lib/open-simulation-interface")
 
-#fmusdk
-add_subdirectory("lib/fmusdk")
+#fmi library
+add_subdirectory("lib/fmi-library")
 
 #yaml
 add_subdirectory("lib/yaml-cpp")

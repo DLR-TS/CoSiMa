@@ -11,6 +11,7 @@ class FMIBridge : iSimulationData
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;
 	int disconnect() override;
+	int doStep() override;
 
 	std::vector<int> getInteger() override;
 	std::vector<float> getFloat() override;

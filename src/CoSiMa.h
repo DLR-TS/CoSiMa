@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "SimulationInterfaces/iSimulationData.h"
 
 static std::vector<iSimulationData*> simulationInterfaces;

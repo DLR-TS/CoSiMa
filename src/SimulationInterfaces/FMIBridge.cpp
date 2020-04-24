@@ -14,6 +14,10 @@ int FMIBridge::disconnect() {
 	return 0;
 }
 
+int FMIBridge::doStep() {
+	return 0;
+}
+
 std::vector<int> FMIBridge::getInteger() {
 	return std::vector<int>();
 }

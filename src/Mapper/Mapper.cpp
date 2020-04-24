@@ -4,7 +4,7 @@
 
 //output part
 int Mapper::extractInternalState(internalState* state)
-{	
+{
 	for (auto simulationInterface : simulationInterfaces)
 	{
 		Mapper* inputMapper = simulationInterface->getMapper();
@@ -15,15 +15,24 @@ int Mapper::extractInternalState(internalState* state)
 
 //called from output part of Mapper
 void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
-
-	for (unsigned int index = 0; index < outputMapper->config.outputVector.size(); index++) {
-		for (std::string name : config.inputVector) {
-			if (name.compare(config.outputVector.at(index))) {
+	//at the moment just for int 
+	for (unsigned int index = 0; index < outputMapper->config.intOutputVector.size(); index++) {
+		for (std::string name : config.intInputVector) {
+			if (name.compare(config.intOutputVector.at(index))) {
 				//each Mapper implementation handles this
-				mapTo(index, name);
+				mapTo(index, name/*, type*/);
 			}
 		}
 	}
+}
+
+int Mapper::readConfiguration(std::string) {
+	//some reading of triples
+	//(interface_name, base_name, type)
+
+	//result
+	//filled input and output vectors
+	return 0;
 }
 
 /*

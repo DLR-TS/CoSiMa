@@ -25,6 +25,7 @@ public:
 
 	int update();
 	int mapToOtherInterfaces();
+	virtual int doStep() = 0;
 	Mapper* getMapper();
 
 protected:
