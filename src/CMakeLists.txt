@@ -14,4 +14,6 @@ add_executable (CoSimulationManager ${COSIMA_SOURCE})
 
 add_library(CoSimulationManagerLib ${COSIMA_SOURCE})
 
-target_link_libraries(CoSimulationManager PUBLIC open_simulation_interface_static)
+target_link_libraries(CoSimulationManager open_simulation_interface_static)
+
+target_link_libraries(CoSimulationManager yaml-cpp)
