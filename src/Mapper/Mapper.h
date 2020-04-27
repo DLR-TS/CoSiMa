@@ -3,9 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <variant>
 #include "../SimulationInterfaces/iSimulationData.h"
 #include "../SimulationInterfaces/internalState.h"
 
+typedef std::variant<int, float, double, bool, std::string> values_t;
 
 class MapperConfig {
 public:
@@ -13,7 +15,7 @@ public:
 	std::vector<std::string> intOutputVector;
 	std::vector<std::string> floatInputVector;
 	std::vector<std::string> floatOutputVector;
-	std::vector<std::string> doulbeInputVector;
+	std::vector<std::string> doubleInputVector;
 	std::vector<std::string> doubleOutputVector;
 	std::vector<std::string> boolInputVector;
 	std::vector<std::string> boolOutputVector;
@@ -34,7 +36,7 @@ private:
 	void filterInput(Mapper* outputMapper, internalState* state);
 
 protected:
-	virtual void mapTo(int index, std::string name) = 0;
+	virtual void mapTo(values_t value, std::string name, std::string type) = 0;
 };
 
 #endif // !MAPPER_H

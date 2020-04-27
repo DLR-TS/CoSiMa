@@ -15,12 +15,48 @@ int Mapper::extractInternalState(internalState* state)
 
 //called from output part of Mapper
 void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
-	//at the moment just for int 
+	//integer
 	for (unsigned int index = 0; index < outputMapper->config.intOutputVector.size(); index++) {
 		for (std::string name : config.intInputVector) {
 			if (name.compare(config.intOutputVector.at(index))) {
 				//each Mapper implementation handles this
-				mapTo(index, name/*, type*/);
+				mapTo(foreignState->integers.at(index), name, "integer");
+			}
+		}
+	}
+	//float
+	for (unsigned int index = 0; index < outputMapper->config.floatOutputVector.size(); index++) {
+		for (std::string name : config.floatInputVector) {
+			if (name.compare(config.floatOutputVector.at(index))) {
+				//each Mapper implementation handles this
+				mapTo(foreignState->floats.at(index), name, "float");
+			}
+		}
+	}
+	//double
+	for (unsigned int index = 0; index < outputMapper->config.doubleOutputVector.size(); index++) {
+		for (std::string name : config.doubleInputVector) {
+			if (name.compare(config.doubleOutputVector.at(index))) {
+				//each Mapper implementation handles this
+				mapTo(foreignState->doubles.at(index), name, "double");
+			}
+		}
+	}
+	//bool
+	for (unsigned int index = 0; index < outputMapper->config.boolOutputVector.size(); index++) {
+		for (std::string name : config.boolInputVector) {
+			if (name.compare(config.boolOutputVector.at(index))) {
+				//each Mapper implementation handles this
+				mapTo(foreignState->bools.at(index), name, "bool");
+			}
+		}
+	}
+	//string
+	for (unsigned int index = 0; index < outputMapper->config.stringOutputVector.size(); index++) {
+		for (std::string name : config.stringInputVector) {
+			if (name.compare(config.stringOutputVector.at(index))) {
+				//each Mapper implementation handles this
+				mapTo(foreignState->strings.at(index), name, "string");
 			}
 		}
 	}

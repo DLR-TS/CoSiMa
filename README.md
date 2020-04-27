@@ -23,7 +23,7 @@ in lib folder:
 - git clone https://github.com/jbeder/yaml-cpp.git
 - git clone https://github.com/modelon-community/fmi-library
 
-Tests
+Test frameworks in lib folder:
 
 - git clone https://github.com/catchorg/Catch2.git
 	- cd Catch2
