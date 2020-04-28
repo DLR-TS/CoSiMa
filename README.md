@@ -1,8 +1,15 @@
-# CoSiMa
+# CoSimulationManager for SETLevel4to5
 
-CoSimulationManager for SETLevel4to5
+## Installation Guide
 
-Installation Guide
+preparations:
+install (conan.io)[conan.io]
+add conan.exe to PATH environment variable
+
+in root folder:
+mkdir build && cd build
+conan install ..
+
 
 in lib folder:
 -  git clone https://github.com/protocolbuffers/protobuf.git
@@ -34,3 +41,7 @@ Test frameworks in lib folder:
 
 CMake
 and build CoSimulationManager
+
+## Used Libraries
+
+cmake-conan 0.15

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "SimulationInterfaces/iSimulationData.h"
+#include "simulation_interfaces/iSimulationData.h"
 
 static std::vector<iSimulationData*> simulationInterfaces;
 

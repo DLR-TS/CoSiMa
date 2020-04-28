@@ -1,19 +1,13 @@
 ﻿#version
 cmake_minimum_required (VERSION 3.8)
 
-add_subdirectory("Mapper")
-add_subdirectory("SimulationInterfaces")
+add_subdirectory("mapper")
+add_subdirectory("simulation_interfaces")
 
 #source
 set(COSIMA_SOURCE ${COSIMA_SOURCE}
-"CoSiMa.cpp" "CoSiMa.h"
-"SimulationInterfaceFactory.cpp" "SimulationInterfaceFactory.h"
+"${CMAKE_CURRENT_LIST_DIR}/SimulationInterfaceFactory.cpp" 
+
+PARENT_SCOPE
 )
 
-add_executable (CoSimulationManager ${COSIMA_SOURCE})
-
-add_library(CoSimulationManagerLib ${COSIMA_SOURCE})
-
-target_link_libraries(CoSimulationManager open_simulation_interface_static)
-
-target_link_libraries(CoSimulationManager yaml-cpp)

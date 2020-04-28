@@ -1,6 +1,6 @@
-#include "Mapper.h"
+#include "mapper/Mapper.h"
 #include <string>
-#include "../CoSiMa.h"
+#include "CoSiMa.h"
 
 //output part
 int Mapper::extractInternalState(internalState* state)
