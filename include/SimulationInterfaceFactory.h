@@ -2,7 +2,7 @@
 #define SIMULATIONINTERFACEFACTORY_H
 
 #include <string>
-#include "SimulationInterfaces/iSimulationData.h"
+#include "simulation_interfaces/iSimulationData.h"
 
 class SimulationInterfaceFactory {
 public:

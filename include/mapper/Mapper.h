@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <variant>
-#include "../SimulationInterfaces/iSimulationData.h"
-#include "../SimulationInterfaces/internalState.h"
+#include "../simulation_interfaces/iSimulationData.h"
+#include "../simulation_interfaces/internalState.h"
 
 typedef std::variant<int, float, double, bool, std::string> values_t;
 
