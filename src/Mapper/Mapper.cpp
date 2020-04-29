@@ -141,7 +141,7 @@ int Mapper::readConfiguration(std::string path, std::string interfaceName) {
 	return 0;
 }
 
-DataTypes getType(std::string type) {
+DataTypes Mapper::getType(std::string type) {
 	std::transform(type.begin(), type.end(), type.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	if (type.compare("string") == 0) {
