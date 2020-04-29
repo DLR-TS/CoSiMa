@@ -1,5 +1,5 @@
-#include "FMIBridge.h"
-#include "iSimulationData.h"
+#include "simulation_interfaces/FMIBridge.h"
+#include "simulation_interfaces/iSimulationData.h"
 #include <string>
 
 int FMIBridge::init(std::string scenario, float starttime, int mode) {

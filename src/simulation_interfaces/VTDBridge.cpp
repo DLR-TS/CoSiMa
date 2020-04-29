@@ -1,5 +1,5 @@
-#include "VTDBridge.h"
-#include "iSimulationData.h"
+#include "simulation_interfaces/VTDBridge.h"
+#include "simulation_interfaces/iSimulationData.h"
 #include <string>
 
 int VTDBridge::init(std::string scenario, float starttime, int mode) {

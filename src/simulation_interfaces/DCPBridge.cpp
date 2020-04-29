@@ -1,5 +1,5 @@
-#include "DCPBridge.h"
-#include "iSimulationData.h"
+#include "simulation_interfaces/DCPBridge.h"
+#include "simulation_interfaces/iSimulationData.h"
 #include <string>
 
 int DCPBridge::init(std::string scenario, float starttime, int mode) {

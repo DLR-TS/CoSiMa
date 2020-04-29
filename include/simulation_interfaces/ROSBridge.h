@@ -1,7 +1,7 @@
 #ifndef ROSBRIDGE_H
 #define ROSBRIDGE_H
 
-#include "iSimulationData.h"
+#include "simulation_interfaces/iSimulationData.h"
 #include "../Mapper/Mapper.h"
 
 class ROSBridge : iSimulationData

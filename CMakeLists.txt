@@ -60,9 +60,9 @@ add_subdirectory("include")
 
 #create library to
 
-add_library(CoSimulationManagerLib ${COSIMA_SOURCE})
+add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(CoSimulationManagerLib open_simulation_interface_static ${CONAN_LIBS})
+target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
 
-add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" )
-target_link_libraries(CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h" CoSimulationManagerLib)
+add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h")
+target_link_libraries(CoSimulationManager CoSimulationManagerLib)

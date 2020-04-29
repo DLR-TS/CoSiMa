@@ -1,5 +1,5 @@
-#include "ROSBridge.h"
-#include "iSimulationData.h"
+#include "simulation_interfaces/ROSBridge.h"
+#include "simulation_interfaces/iSimulationData.h"
 #include <string>
 
 int ROSBridge::init(std::string scenario, float starttime, int mode) {
