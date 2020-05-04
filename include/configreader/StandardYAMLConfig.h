@@ -1,3 +1,5 @@
+#ifndef STANDARDYAMLCONGIF_H
+#define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"
 
 struct VariableDefinitionMap {
@@ -9,12 +11,12 @@ public:
 
 struct InterfaceYAMLConfig {
 public:
+	std::string simulator;
 	std::string ip;
 	int port;
 	std::vector<VariableDefinitionMap> input_map;
 	std::vector<VariableDefinitionMap> output_map;
 };
-
 
 namespace YAML {
 	template<>
@@ -26,6 +28,7 @@ namespace YAML {
 
 		static bool decode(const Node& node, InterfaceYAMLConfig& config)
 		{
+			config.simulator = node["simulator"].as<std::string>();
 			config.ip = node["ip"].as<std::string>();
 			config.port = node["port"].as<int>();
 			config.input_map = node["input"].as<std::vector<VariableDefinitionMap>>();
@@ -52,3 +55,5 @@ namespace YAML {
 		}
 	};
 }
+
+#endif //!STANDARDYAMLCONGIF_H

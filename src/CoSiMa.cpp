@@ -5,17 +5,21 @@ int main()
 {
 	std::cout << "Hello CoSiMa." << std::endl;
 
-	//	FMIBridge test = FMIBridge();
 
 
-	std::vector<std::string> interfacenames;
-	//read parameters
-
+	//read config
+	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");//path shall be set as parameter of CoSiMa
+	std::vector<std::string>* interfacenames = reader.getInterfaceNames();
+	std::cout << "Hello CoSiMa2." << std::endl;
 	//choose protocol
+	//todo
 
 	//create objects in SimulationInterfaceFactory
-	for (std::string interfacename : interfacenames) {
-		simulationInterfaces.push_back(SimulationInterfaceFactory::makeInterface(interfacename));
+	for (std::string interfacename : *interfacenames) {
+		iSimulationData* iData = SimulationInterfaceFactory::makeInterface(interfacename);
+		//set parameters of config
+		reader.setConfig(iData->getMapper(), interfacename);
+		simulationInterfaces.push_back(iData);
 	}
 
 	//init interfaces

@@ -62,10 +62,8 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 	}
 }
 
-int Mapper::readConfiguration(std::string path, std::string interfaceName) {
+int Mapper::readConfiguration(InterfaceYAMLConfig yamlconfig) {
 
-	YAML::Node simulators = YAML::LoadFile(path);
-	InterfaceYAMLConfig yamlconfig = simulators[interfaceName].as<InterfaceYAMLConfig>();
 
 	port = yamlconfig.port;
 	ip = yamlconfig.ip;
@@ -100,7 +98,7 @@ int Mapper::readConfiguration(std::string path, std::string interfaceName) {
 			config.stringInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
 			break;
 		case ERROR:
-			std::cout << "Wrong definition of type in input_map of " << interfaceName << " . Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
+			std::cout << "Wrong definition of input_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
 
@@ -133,7 +131,7 @@ int Mapper::readConfiguration(std::string path, std::string interfaceName) {
 				config.stringOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
 				break;
 			case ERROR:
-				std::cout << "Wrong definition of type in output_map of " << interfaceName << " . Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
+				std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 				return 1;
 			}
 		}

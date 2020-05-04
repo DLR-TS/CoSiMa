@@ -54,7 +54,7 @@ protected:
 
 public:
 	int extractInternalState(internalState* pointer);
-	int readConfiguration(std::string path, std::string interfaceName);
+	int readConfiguration(InterfaceYAMLConfig config);
 
 private:
 	void filterInput(Mapper* outputMapper, internalState* state);
