@@ -8,15 +8,15 @@ int main()
 
 	//read config
 	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");//path shall be set as parameter of CoSiMa
-	std::vector<std::string>* interfacenames = reader.getInterfaceNames();
+	std::vector<std::string>* simulatornames = reader.getSimulatorNames();
 	//choose protocol
 	//todo
 
 	//create objects in SimulationInterfaceFactory
-	for (std::string interfacename : *interfacenames) {
-		iSimulationData* iData = SimulationInterfaceFactory::makeInterface(interfacename);
+	for (std::string simulator : *simulatornames) {
+		iSimulationData* iData = SimulationInterfaceFactory::makeInterface(simulator);
 		//set parameters of config
-		if (reader.setConfig(iData->getMapper(), interfacename)) {
+		if (reader.setConfig(iData->getMapper(), simulator)) {
 			std::cout << "Problem occured during interpretation of configuration file." << std::endl;
 			return 1;
 		}

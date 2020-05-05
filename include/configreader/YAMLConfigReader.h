@@ -11,8 +11,8 @@ class YAMLConfigReader {
 public:
 	YAMLConfigReader(std::string path);
 	
-	std::vector<std::string>* getInterfaceNames();
-	int setConfig(Mapper* mapper, std::string name);
+	std::vector<std::string>* getSimulatorNames();
+	int setConfig(Mapper* mapper, std::string simulatorName);
 
 private:
 	std::string path;
