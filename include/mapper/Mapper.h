@@ -11,7 +11,7 @@
 #include "configreader/StandardYAMLConfig.h"
 
 typedef std::variant<int, float, double, bool, std::string> values_t;
-typedef std::variant<InterfaceYAMLConfig> configVariants_t;
+typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig> configVariants_t;
 
 enum DataTypes
 {

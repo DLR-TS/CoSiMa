@@ -21,7 +21,7 @@
 
 class SimulationInterfaceFactory {
 public:
-	static iSimulationData* makeInterface(std::string description);
+	static iSimulationData* makeInterface(SupportedInterfaces interfaceName);
 
 };
 

@@ -6,6 +6,15 @@
 #include "../Mapper/Mapper.h"
 #include "internalState.h"
 
+enum SupportedInterfaces {
+	VTD,
+	ROS,
+	FMI,
+	UNREAL,
+	OSI,
+	SUMO,
+};
+
 class Mapper;
 
 class iSimulationData

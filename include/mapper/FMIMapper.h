@@ -7,6 +7,9 @@ class FMIMapper : Mapper {
 
 	void setConfiguration(/*FMICOnfig*/);
 	void mapTo(values_t value, std::string interfaceName, DataTypes type) override;
+
+public:
+	int readConfiguration(configVariants_t configVariants);
 };
 
 #endif // !FMIMAPPER_H

@@ -2,6 +2,11 @@
 #define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"
 
+struct SimulatorName {
+public:
+	std::string simulator;
+};
+
 struct VariableDefinitionMap {
 public:
 	std::string interface_name;
@@ -18,7 +23,27 @@ public:
 	std::vector<VariableDefinitionMap> output_map;
 };
 
+struct FMIInterfaceConfig {
+public:
+	std::string simulator;
+	std::string models;
+};
+
 namespace YAML {
+	template<>
+	struct convert<SimulatorName> {
+		static Node encode(const SimulatorName& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, SimulatorName& config)
+		{
+			config.simulator = node["simulator"].as<std::string>();
+			return true;
+		}
+	};
+
 	template<>
 	struct convert<InterfaceYAMLConfig> {
 		static Node encode(const InterfaceYAMLConfig& config) {
@@ -36,9 +61,7 @@ namespace YAML {
 			return true;
 		}
 	};
-}
 
-namespace YAML {
 	template<>
 	struct convert<VariableDefinitionMap> {
 		static Node encode(const VariableDefinitionMap& config) {
@@ -54,6 +77,22 @@ namespace YAML {
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<FMIInterfaceConfig> {
+		static Node encode(const FMIInterfaceConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, FMIInterfaceConfig& fmiInterface)
+		{
+			fmiInterface.simulator = node["simulator"].as<std::string>();
+			fmiInterface.models = node["models"].as<std::string>();
+			return true;
+		}
+	};
+
 }
 
 #endif //!STANDARDYAMLCONGIF_H
