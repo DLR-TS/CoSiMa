@@ -7,8 +7,8 @@ int main()
 
 
 	//read config
-	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");//path shall be set as parameter of CoSiMa
-	std::vector<SupportedInterfaces> simulatornames = *reader.getSimulatorNames();
+	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");// TODO: path shall be set as parameter of CoSiMa
+	const std::vector<SupportedInterfaces> simulatornames = reader.getSimulatorNames(); // TODO: write unit test for reader.getSimulatorNames
 	//choose protocol
 	//todo
 

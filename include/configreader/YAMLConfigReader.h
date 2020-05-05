@@ -12,7 +12,7 @@ class YAMLConfigReader {
 public:
 	YAMLConfigReader(std::string path);
 	
-	std::vector<SupportedInterfaces>* getSimulatorNames();
+	const std::vector<SupportedInterfaces> getSimulatorNames();
 	int setConfig(Mapper* mapper, SupportedInterfaces simulator);
 
 private:

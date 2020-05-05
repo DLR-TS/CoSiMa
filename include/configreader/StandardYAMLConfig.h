@@ -2,17 +2,52 @@
 #define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"
 
+/**
+ * \var std::string simulator
+ * helper object for deciding which mapping schema an interface needs. Is used for iterating over all existing simulators in the configuration file.
+ */
 struct SimulatorName {
 public:
 	std::string simulator;
 };
 
+/**
+ *\paragraph Naming definitions
+ * Within the CoSiMa we are using the following definitions for our host and the system we are interfacing with:
+
+  @startuml
+  node base_system
+ 
+  node interface_system_1
+  node interface_system_2
+
+  base_system <-- interface_system_1
+  base_system <-- interface_system_2
+  @enduml
+  
+ *
+ * \var std::string interface_name
+ * holds name of the variable in the interface system
+ * \var std::string base_name
+ * holds name of the variable in the base system
+ * \var std::string type
+ * holds type name of the variable
+ */
 struct VariableDefinitionMap {
 public:
 	std::string interface_name;
 	std::string base_name;
 	std::string type;
 };
+
+/**
+* \var std::string interface_name
+* holds name of the variable in the interface system
+* \var std::string base_name
+* holds name of the variable in the base system
+* \var std::string type
+* holds type name of the variable
+*/
 
 struct InterfaceYAMLConfig {
 public:
@@ -23,11 +58,24 @@ public:
 	std::vector<VariableDefinitionMap> output_map;
 };
 
+/**
+* \var std::string simulator
+* holds name of the variable in the interface system
+* \var std::string model
+* holds name of the variable in the base system
+
+*/
 struct FMIInterfaceConfig {
 public:
 	std::string simulator;
 	std::string models;
 };
+
+/**
+ * YAML-cpp converter for the above defined structs. Designed according to yaml-cpp tutorial: https://github.com/jbeder/yaml-cpp/wiki/Tutorial 
+
+ * 
+ */
 
 namespace YAML {
 	template<>

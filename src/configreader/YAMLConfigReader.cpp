@@ -5,13 +5,13 @@ YAMLConfigReader::YAMLConfigReader(std::string path) {
 	this->path = path;
 }
 
-std::vector<SupportedInterfaces>* YAMLConfigReader::getSimulatorNames() {
+const std::vector<SupportedInterfaces> YAMLConfigReader::getSimulatorNames() {
 	YAML::Node simulators = YAML::LoadFile(path);
-	std::vector<SupportedInterfaces> *simulatorNames = new std::vector<SupportedInterfaces>();
+	std::vector<SupportedInterfaces> simulatorNames; 
 
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName conf = simulators[i].as<SimulatorName>();
-		simulatorNames->push_back(nameToEnum(conf.simulator));
+		simulatorNames.push_back(nameToEnum(conf.simulator));
 	}
 	return simulatorNames;
 }
@@ -39,6 +39,13 @@ int YAMLConfigReader::setConfig(Mapper* mapper, SupportedInterfaces simulator) {
 	return 1;
 }
 
+
+/**
+ * \brief: compares strings to enum types
+ * \return: SupportedInterfaces
+ * enum type of interface
+ * 
+ */
 SupportedInterfaces YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	if (simulatorName == "VTD" || simulatorName == "vtd") {
 		return VTD;
