@@ -12,7 +12,7 @@ public:
 	YAMLConfigReader(std::string path);
 	
 	std::vector<std::string>* getInterfaceNames();
-	void setConfig(Mapper* mapper, std::string name);
+	int setConfig(Mapper* mapper, std::string name);
 
 private:
 	std::string path;

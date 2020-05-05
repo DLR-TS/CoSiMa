@@ -3,14 +3,12 @@
 
 int main()
 {
-	std::cout << "Hello CoSiMa." << std::endl;
-
+	std::cout << "Welcome to CoSiMa." << std::endl;
 
 
 	//read config
 	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");//path shall be set as parameter of CoSiMa
 	std::vector<std::string>* interfacenames = reader.getInterfaceNames();
-	std::cout << "Hello CoSiMa2." << std::endl;
 	//choose protocol
 	//todo
 
@@ -18,7 +16,10 @@ int main()
 	for (std::string interfacename : *interfacenames) {
 		iSimulationData* iData = SimulationInterfaceFactory::makeInterface(interfacename);
 		//set parameters of config
-		reader.setConfig(iData->getMapper(), interfacename);
+		if (reader.setConfig(iData->getMapper(), interfacename)) {
+			std::cout << "Problem occured during interpretation of configuration file." << std::endl;
+			return 1;
+		}
 		simulationInterfaces.push_back(iData);
 	}
 

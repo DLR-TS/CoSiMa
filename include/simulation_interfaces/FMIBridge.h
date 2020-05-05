@@ -6,6 +6,7 @@
 
 class FMIBridge : iSimulationData
 {
+public:
 	FMIBridge(Mapper* mapper) : iSimulationData(mapper) {};
 
 	int init(std::string scenario, float starttime, int mode) override;

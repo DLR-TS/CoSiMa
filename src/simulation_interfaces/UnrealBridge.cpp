@@ -39,3 +39,7 @@ void UnrealBridge::setFloat(std::vector<float>) {}
 void UnrealBridge::setDouble(std::vector<double>) {}
 void UnrealBridge::setBool(std::vector<bool>) {}
 void UnrealBridge::setString(std::vector<std::string>) {}
+
+int UnrealBridge::doStep() {
+	return 0;
+}

@@ -34,6 +34,10 @@ std::vector<std::string> VTDBridge::getString() {
 	return std::vector<std::string>();
 }
 
+int VTDBridge::doStep() {
+	return 0;
+}
+
 void VTDBridge::setInteger(std::vector<int>) {}
 void VTDBridge::setFloat(std::vector<float>) {}
 void VTDBridge::setDouble(std::vector<double>) {}

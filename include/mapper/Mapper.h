@@ -6,12 +6,12 @@
 #include <map>
 #include <variant>
 #include <iostream>
-#include "yaml-cpp/yaml.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/internalState.h"
 #include "configreader/StandardYAMLConfig.h"
 
 typedef std::variant<int, float, double, bool, std::string> values_t;
+typedef std::variant<InterfaceYAMLConfig> configVariants_t;
 
 enum DataTypes
 {
@@ -54,13 +54,13 @@ protected:
 
 public:
 	int extractInternalState(internalState* pointer);
-	int readConfiguration(InterfaceYAMLConfig config);
+	int readConfiguration(configVariants_t config);
 
 private:
 	void filterInput(Mapper* outputMapper, internalState* state);
 
 protected:
-	virtual void mapTo(values_t value, std::string name, DataTypes type) = 0;
+	virtual void mapTo(values_t value, std::string interfaceName, DataTypes type) = 0;
 	DataTypes getType(std::string);
 };
 

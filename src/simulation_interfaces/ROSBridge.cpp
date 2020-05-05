@@ -39,3 +39,7 @@ void ROSBridge::setFloat(std::vector<float>) {}
 void ROSBridge::setDouble(std::vector<double>) {}
 void ROSBridge::setBool(std::vector<bool>) {}
 void ROSBridge::setString(std::vector<std::string>) {}
+
+int ROSBridge::doStep(){
+	return 0;
+}

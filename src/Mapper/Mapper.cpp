@@ -1,5 +1,4 @@
 #include "mapper/Mapper.h"
-#include <string>
 #include "CoSiMa.h"
 
 //output part
@@ -62,8 +61,13 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 	}
 }
 
-int Mapper::readConfiguration(InterfaceYAMLConfig yamlconfig) {
+int Mapper::readConfiguration(configVariants_t configVariants) {
 
+	if (std::get_if<InterfaceYAMLConfig>(&configVariants) == nullptr) {
+		std::cout << "Wrong Configuration! Implement specific readConfiguration method for this interface." << std::endl;
+		return 1;
+	}
+	InterfaceYAMLConfig yamlconfig = std::get<InterfaceYAMLConfig>(configVariants);
 
 	port = yamlconfig.port;
 	ip = yamlconfig.ip;

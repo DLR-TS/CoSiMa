@@ -39,3 +39,7 @@ void SUMOBridge::setFloat(std::vector<float>) {}
 void SUMOBridge::setDouble(std::vector<double>) {}
 void SUMOBridge::setBool(std::vector<bool>) {}
 void SUMOBridge::setString(std::vector<std::string>) {}
+
+int SUMOBridge::doStep() {
+	return 0;
+}

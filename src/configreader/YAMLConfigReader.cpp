@@ -16,13 +16,14 @@ std::vector<std::string>* YAMLConfigReader::getInterfaceNames() {
 	return names;
 }
 
-void YAMLConfigReader::setConfig(Mapper* mapper, std::string name) {
+int YAMLConfigReader::setConfig(Mapper* mapper, std::string name) {
 	YAML::Node simulators = YAML::LoadFile(path);
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		InterfaceYAMLConfig conf = simulators[i].as<InterfaceYAMLConfig>();
 		if (conf.simulator.compare(name) == 0) {
-			mapper->readConfiguration(conf);
-			break;
+			return mapper->readConfiguration(conf);
 		}
 	}
+	std::cout << "Error no node found with name: " << name << std::endl;
+	return 1;
 }

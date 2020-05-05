@@ -6,6 +6,7 @@
 
 class SUMOBridge : iSimulationData
 {
+public:
 	SUMOBridge(Mapper* mapper) : iSimulationData(mapper) {};
 
 	int init(std::string scenario, float starttime, int mode) override;
@@ -23,6 +24,7 @@ class SUMOBridge : iSimulationData
 	void setDouble(std::vector<double>) override;
 	void setBool(std::vector<bool>) override;
 	void setString(std::vector<std::string>) override;
+	int doStep() override;
 };
 
 #endif // !SUMOBRIDGE_H
