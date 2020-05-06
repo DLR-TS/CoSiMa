@@ -13,17 +13,12 @@ public:
 	int connect(std::string) override;
 	int disconnect() override;
 
-	std::vector<int> getInteger() override;
-	std::vector<float> getFloat() override;
-	std::vector<double> getDouble() override;
-	std::vector<bool> getBool() override;
-	std::vector<std::string> getString() override;
+	std::vector<int> updateInteger() override;
+	std::vector<float> updateFloat() override;
+	std::vector<double> updateDouble() override;
+	std::vector<bool> updateBool() override;
+	std::vector<std::string> updateString() override;
 
-	void setInteger(std::vector<int>) override;
-	void setFloat(std::vector<float>) override;
-	void setDouble(std::vector<double>) override;
-	void setBool(std::vector<bool>) override;
-	void setString(std::vector<std::string>) override;
 };
 
 #endif // !DCPBRIDGE_H

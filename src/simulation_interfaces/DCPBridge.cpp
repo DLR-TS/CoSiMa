@@ -14,28 +14,22 @@ int DCPBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> DCPBridge::getInteger() {
+std::vector<int> DCPBridge::updateInteger() {
 	return std::vector<int>();
 }
 
-std::vector<float> DCPBridge::getFloat() {
+std::vector<float> DCPBridge::updateFloat() {
 	return std::vector<float>();
 }
 
-std::vector<double> DCPBridge::getDouble() {
+std::vector<double> DCPBridge::updateDouble() {
 	return std::vector<double>();
 }
 
-std::vector<bool> DCPBridge::getBool() {
+std::vector<bool> DCPBridge::updateBool() {
 	return std::vector<bool>();
 }
 
-std::vector<std::string> DCPBridge::getString() {
+std::vector<std::string> DCPBridge::updateString() {
 	return std::vector<std::string>();
 }
-
-void DCPBridge::setInteger(std::vector<int>) {}
-void DCPBridge::setFloat(std::vector<float>) {}
-void DCPBridge::setDouble(std::vector<double>) {}
-void DCPBridge::setBool(std::vector<bool>) {}
-void DCPBridge::setString(std::vector<std::string>) {}

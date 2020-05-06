@@ -18,28 +18,22 @@ int FMIBridge::doStep() {
 	return 0;
 }
 
-std::vector<int> FMIBridge::getInteger() {
+std::vector<int> FMIBridge::updateInteger() {
 	return std::vector<int>();
 }
 
-std::vector<float> FMIBridge::getFloat() {
+std::vector<float> FMIBridge::updateFloat() {
 	return std::vector<float>();
 }
 
-std::vector<double> FMIBridge::getDouble() {
+std::vector<double> FMIBridge::updateDouble() {
 	return std::vector<double>();
 }
 
-std::vector<bool> FMIBridge::getBool() {
+std::vector<bool> FMIBridge::updateBool() {
 	return std::vector<bool>();
 }
 
-std::vector<std::string> FMIBridge::getString() {
+std::vector<std::string> FMIBridge::updateString() {
 	return std::vector<std::string>();
 }
-
-void FMIBridge::setInteger(std::vector<int>) {}
-void FMIBridge::setFloat(std::vector<float>) {}
-void FMIBridge::setDouble(std::vector<double>) {}
-void FMIBridge::setBool(std::vector<bool>) {}
-void FMIBridge::setString(std::vector<std::string>) {}

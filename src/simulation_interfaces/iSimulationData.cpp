@@ -1,16 +1,16 @@
 #include "simulation_interfaces/iSimulationData.h"
 
 int iSimulationData::update() {
-	state.integers = getInteger();
-	state.floats = getFloat();
-	state.doubles = getDouble();
-	state.bools = getBool();
-	state.strings = getString();
+	state.integers = updateInteger();
+	state.floats = updateFloat();
+	state.doubles = updateDouble();
+	state.bools = updateBool();
+	state.strings = updateString();
 	return 0;
 }
 
-internalState* iSimulationData::getInternalState() {
-	return &state;
+const internalState iSimulationData::getInternalState() {
+	return state;
 }
 
 int iSimulationData::mapToOtherInterfaces() {

@@ -2,22 +2,25 @@
 #include "configreader/YAMLConfigReader.h"
 
 YAMLConfigReader::YAMLConfigReader(std::string path) {
-	this->path = path;
+	simulators = YAML::LoadFile(path);
 }
 
 const std::vector<SupportedInterfaces> YAMLConfigReader::getSimulatorNames() {
-	YAML::Node simulators = YAML::LoadFile(path);
 	std::vector<SupportedInterfaces> simulatorNames; 
 
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName conf = simulators[i].as<SimulatorName>();
-		simulatorNames.push_back(nameToEnum(conf.simulator));
+		SupportedInterfaces simName = nameToEnum(conf.simulator);
+		if (simName == SUPPORTEDINTERFACES_ERROR) {
+			std::cout << "Not supported simulator name in yaml configration file: " << conf.simulator << std::endl;
+			exit(1);
+		}
+		simulatorNames.push_back(simName);
 	}
 	return simulatorNames;
 }
 
 int YAMLConfigReader::setConfig(Mapper* mapper, SupportedInterfaces simulator) {
-	YAML::Node simulators = YAML::LoadFile(path);
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
 		if (nameToEnum(name.simulator) == simulator) {
@@ -39,30 +42,28 @@ int YAMLConfigReader::setConfig(Mapper* mapper, SupportedInterfaces simulator) {
 	return 1;
 }
 
-
-/**
- * \brief: compares strings to enum types
- * \return: SupportedInterfaces
- * enum type of interface
- * 
- */
 SupportedInterfaces YAMLConfigReader::nameToEnum(std::string simulatorName) {
-	if (simulatorName == "VTD" || simulatorName == "vtd") {
+	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+	if (simulatorName == "vtd") {
 		return VTD;
 	}
-	else if (simulatorName == "FMI" || simulatorName == "fmi") {
+	else if (simulatorName == "fmi") {
 		return FMI;
 	}
-	else if (simulatorName == "SUMO" || simulatorName == "sumo") {
+	else if (simulatorName == "sumo") {
 		return SUMO;
 	}
-	else if (simulatorName == "OSI" || simulatorName == "osi") {
+	else if (simulatorName == "osi") {
 		return OSI;
 	}
-	else if (simulatorName == "UE" || simulatorName == "UnrealEngine" || simulatorName == "Unreal" || simulatorName == "UNREAL") {
+	else if (simulatorName == "ue" || simulatorName == "unrealengine" || simulatorName == "unreal") {
 		return UNREAL;
 	}
-	else if (simulatorName == "ROS" || simulatorName == "ros") {
+	else if (simulatorName == "ros") {
 		return ROS;
+	}
+	else {
+		return SUPPORTEDINTERFACES_ERROR;
 	}
 }

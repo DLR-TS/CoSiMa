@@ -4,7 +4,7 @@
 //output part
 int Mapper::extractInternalState(internalState* state)
 {
-	for (auto simulationInterface : simulationInterfaces)
+	for (auto& simulationInterface : simulationInterfaces)
 	{
 		Mapper* inputMapper = simulationInterface->getMapper();
 		inputMapper->filterInput(this, state);
@@ -101,7 +101,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 			info.interfaceName = definition.interface_name;
 			config.stringInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
 			break;
-		case ERROR:
+		case DATATYPE_ERROR:
 			std::cout << "Wrong definition of input_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
@@ -134,7 +134,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 				info.interfaceName = definition.interface_name;
 				config.stringOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
 				break;
-			case ERROR:
+			case DATATYPE_ERROR:
 				std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 				return 1;
 			}
@@ -162,6 +162,6 @@ DataTypes Mapper::getType(std::string type) {
 		return INTEGER;
 	}
 	else {
-		return ERROR;
+		return DATATYPE_ERROR;
 	}
 }

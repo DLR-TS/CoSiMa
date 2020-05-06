@@ -19,9 +19,17 @@
 #include "mapper/UnrealMapper.h"
 #include "mapper/VTDMapper.h"
 
+/**
+* Factory of interface objects
+*/
 class SimulationInterfaceFactory {
 public:
-	static iSimulationData* makeInterface(SupportedInterfaces interfaceName);
+	/**
+	* Create interface class of given simulator interface.
+	* \param simulator simulator type to create
+	* \return simulator interface
+	*/
+	static iSimulationData* makeInterface(SupportedInterfaces simulator);
 
 };
 

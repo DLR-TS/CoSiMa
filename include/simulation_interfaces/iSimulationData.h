@@ -5,7 +5,9 @@
 #include <string>
 #include "../Mapper/Mapper.h"
 #include "internalState.h"
-
+/**
+* Enum containing all supported interfaces and error for parsing failures.
+*/
 enum SupportedInterfaces {
 	VTD,
 	ROS,
@@ -13,46 +15,109 @@ enum SupportedInterfaces {
 	UNREAL,
 	OSI,
 	SUMO,
+
+	SUPPORTEDINTERFACES_ERROR
 };
 
+//forward declaration
 class Mapper;
 
+/**
+* Abstract class for all simulation interfaces.
+*/
 class iSimulationData
 {
 protected:
+	/**
+	* Constructor of iSimulationData.
+	* \param mapper Mapper to be set.
+	*/
 	iSimulationData(Mapper* mapper) {
 		this->mapper = mapper;
 	}
-
+	/**
+	* Holds all input variables.
+	*/
 	internalState state;
+	/**
+	* Specific mapper of this interface.
+	*/
 	Mapper* mapper;
 
 public:
+	/**
+	* Initialize the interface.
+	* \param scenario Scenario identification.
+	* \param starttime Time of start.
+	* \param mode The mode to start in.
+	* \return Success status.
+	*/
 	virtual int init(std::string scenario, float starttime, int mode) = 0;
-	virtual int connect(std::string) = 0;
+	/**
+	* Connect with followed information.
+	* \param info Information to connect with simulator.
+	* \return Success status.
+	*/
+	virtual int connect(std::string info) = 0;
+	/**
+	* Disconnect from interface.
+	* \return Success status.
+	*/
 	virtual int disconnect() = 0;
-
+	/**
+	* Updates all data of each datatype in the internal state.
+	* \return Success status.
+	*/
 	int update();
+	/**
+	* Map all availible information of this interface to all other interfaces.
+	* \return Success status.
+	*/
 	int mapToOtherInterfaces();
+	/**
+	* Do simulation step.
+	* \return Success status.
+	*/
 	virtual int doStep() = 0;
+	/**
+	* \return Mapper of this interface.
+	*/
 	Mapper* getMapper();
 
 protected:
-	//getter: get Data from Simulation Interface
-	virtual std::vector<int> getInteger() = 0;
-	virtual std::vector<float> getFloat() = 0;
-	virtual std::vector<double> getDouble() = 0;
-	virtual std::vector<bool> getBool() = 0;
-	virtual std::vector<std::string> getString() = 0;
+	/**
+	* \return Vector of udpated interface output integer values.
+	*/
+	virtual std::vector<int> updateInteger() = 0;
+	/**
+	* \return Vector of updated interface output float values.
+	*/
+	virtual std::vector<float> updateFloat() = 0;
+	/**
+	* \return Vector of updated interface output double values.
+	*/
+	virtual std::vector<double> updateDouble() = 0;
+	/**
+	* \return Vector of updated interface output bool values.
+	*/
+	virtual std::vector<bool> updateBool() = 0;
+	/**
+	* \return Vector of updated interface output string values.
+	*/
+	virtual std::vector<std::string> updateString() = 0;
 public:
-	internalState* getInternalState();
+	/**
+	* \return Output variables of the interface.
+	*/
+	const internalState getInternalState();
 
 public:
-	//setter: set Data to Simulation Interface
-	virtual void setInteger(std::vector<int>) = 0;
-	virtual void setFloat(std::vector<float>) = 0;
-	virtual void setDouble(std::vector<double>) = 0;
-	virtual void setBool(std::vector<bool>) = 0;
-	virtual void setString(std::vector<std::string>) = 0;
+// not needed
+/*	virtual void setInteger(std::vector<int> ints) = 0;
+	virtual void setFloat(std::vector<float> floats) = 0;
+	virtual void setDouble(std::vector<double> doubles) = 0;
+	virtual void setBool(std::vector<bool> bools) = 0;
+	virtual void setString(std::vector<std::string> strings) = 0;*/
+
 };
 #endif // !ISIMULATIONDATA_H

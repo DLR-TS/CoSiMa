@@ -7,6 +7,9 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "configreader/YAMLConfigReader.h"
 
+/**
+* Vector that holds every simulation interface.
+*/
 static std::vector<iSimulationData*> simulationInterfaces;
 
 #endif // !COSIMA_H

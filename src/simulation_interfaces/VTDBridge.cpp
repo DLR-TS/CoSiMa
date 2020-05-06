@@ -14,32 +14,26 @@ int VTDBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> VTDBridge::getInteger() {
+std::vector<int> VTDBridge::updateInteger() {
 	return std::vector<int>();
 }
 
-std::vector<float> VTDBridge::getFloat() {
+std::vector<float> VTDBridge::updateFloat() {
 	return std::vector<float>();
 }
 
-std::vector<double> VTDBridge::getDouble() {
+std::vector<double> VTDBridge::updateDouble() {
 	return std::vector<double>();
 }
 
-std::vector<bool> VTDBridge::getBool() {
+std::vector<bool> VTDBridge::updateBool() {
 	return std::vector<bool>();
 }
 
-std::vector<std::string> VTDBridge::getString() {
+std::vector<std::string> VTDBridge::updateString() {
 	return std::vector<std::string>();
 }
 
 int VTDBridge::doStep() {
 	return 0;
 }
-
-void VTDBridge::setInteger(std::vector<int>) {}
-void VTDBridge::setFloat(std::vector<float>) {}
-void VTDBridge::setDouble(std::vector<double>) {}
-void VTDBridge::setBool(std::vector<bool>) {}
-void VTDBridge::setString(std::vector<std::string>) {}
