@@ -89,9 +89,10 @@ protected:
 public:
 	/**
 	* send values of internal states to other mappers (their interfaces).
+	* \param state own state
 	* \return success status
 	*/
-	int extractInternalState(internalState* state);
+	int extractInternalState(std::shared_ptr<internalState> state);
 	/**
 	* Read configuration and fill mapper configuration.
 	* \return success status
@@ -104,7 +105,7 @@ private:
 	* \param outputMapper The mapper with the output.
 	* \param state internal state of interface of output mapper to read values from
 	*/
-	void filterInput(Mapper* outputMapper, internalState* state);
+	void filterInput(Mapper* outputMapper, std::shared_ptr<internalState> state);
 
 protected:
 	/**
@@ -121,6 +122,8 @@ protected:
 	* \return Enum representation of data type.
 	*/
 	DataTypes getType(std::string type);
+public:
+	~Mapper() {};
 };
 
 #endif // !MAPPER_H

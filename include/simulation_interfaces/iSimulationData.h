@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "../Mapper/Mapper.h"
 #include "internalState.h"
 /**
@@ -19,7 +20,6 @@ enum SupportedInterfaces {
 	SUPPORTEDINTERFACES_ERROR
 };
 
-//forward declaration
 class Mapper;
 
 /**
@@ -27,7 +27,7 @@ class Mapper;
 */
 class iSimulationData
 {
-protected:
+public:
 	/**
 	* Constructor of iSimulationData.
 	* \param mapper Mapper to be set.
@@ -35,10 +35,11 @@ protected:
 	iSimulationData(Mapper* mapper) {
 		this->mapper = mapper;
 	}
+protected:
 	/**
 	* Holds all input variables.
 	*/
-	internalState state;
+	std::shared_ptr<internalState> state;
 	/**
 	* Specific mapper of this interface.
 	*/
@@ -109,7 +110,7 @@ public:
 	/**
 	* \return Output variables of the interface.
 	*/
-	const internalState getInternalState();
+	const std::shared_ptr<internalState> getInternalState();
 
 public:
 // not needed

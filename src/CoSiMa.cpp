@@ -1,13 +1,18 @@
 ﻿#include "CoSiMa.h"
 #include "SimulationInterfaceFactory.h"
 
-int main()
+int main(int argc, char *argv[])
 {
+	std::string path("D:/config.yaml");
+	for (int i = 1; i < argc; ++i) {
+		std::string currentArg = argv[i];
+		path = currentArg;//add more complex evaluation if necessary
+	}
 	std::cout << "Welcome to CoSiMa." << std::endl;
 
 
 	//read config
-	YAMLConfigReader reader = YAMLConfigReader("D:/config.yaml");// TODO: path shall be set as parameter of CoSiMa
+	YAMLConfigReader reader = YAMLConfigReader(path);
 	const std::vector<SupportedInterfaces> simulatornames = reader.getSimulatorNames(); // TODO: write unit test for reader.getSimulatorNames
 	//choose protocol
 	//todo

@@ -2,7 +2,7 @@
 #include "CoSiMa.h"
 
 //output part
-int Mapper::extractInternalState(internalState* state)
+int Mapper::extractInternalState(std::shared_ptr<internalState> state)
 {
 	for (auto& simulationInterface : simulationInterfaces)
 	{
@@ -13,13 +13,13 @@ int Mapper::extractInternalState(internalState* state)
 }
 
 //called from output part of Mapper
-void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
+void Mapper::filterInput(Mapper* outputMapper, std::shared_ptr<internalState> inputState) {
 	//integer
 	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.intOutputMap) {
 		for (std::pair<std::string, interfaceNameAndIndex> input : config.intInputMap) {
 			if (input.first.compare(output.first)) {
 				//each Mapper implementation handles this
-				mapTo(foreignState->integers.at(output.second.index), input.second.interfaceName, INTEGER);
+				mapTo(inputState->integers.at(output.second.index), input.second.interfaceName, INTEGER);
 			}
 		}
 	}
@@ -28,7 +28,7 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 		for (std::pair<std::string, interfaceNameAndIndex> input : config.floatInputMap) {
 			if (input.first.compare(output.first)) {
 				//each Mapper implementation handles this
-				mapTo(foreignState->floats.at(output.second.index), input.second.interfaceName, FLOAT);
+				mapTo(inputState->floats.at(output.second.index), input.second.interfaceName, FLOAT);
 			}
 		}
 	}
@@ -37,7 +37,7 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 		for (std::pair<std::string, interfaceNameAndIndex> input : config.doubleInputMap) {
 			if (input.first.compare(output.first)) {
 				//each Mapper implementation handles this
-				mapTo(foreignState->doubles.at(output.second.index), input.second.interfaceName, DOUBLE);
+				mapTo(inputState->doubles.at(output.second.index), input.second.interfaceName, DOUBLE);
 			}
 		}
 	}
@@ -46,7 +46,7 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 		for (std::pair<std::string, interfaceNameAndIndex> input : config.boolInputMap) {
 			if (input.first.compare(output.first)) {
 				//each Mapper implementation handles this
-				mapTo(foreignState->bools.at(output.second.index), input.second.interfaceName, BOOL);
+				mapTo(inputState->bools.at(output.second.index), input.second.interfaceName, BOOL);
 			}
 		}
 	}
@@ -55,7 +55,7 @@ void Mapper::filterInput(Mapper* outputMapper, internalState* foreignState) {
 		for (std::pair<std::string, interfaceNameAndIndex> input : config.stringInputMap) {
 			if (input.first.compare(output.first)) {
 				//each Mapper implementation handles this
-				mapTo(foreignState->strings.at(output.second.index), input.second.interfaceName, STRING);
+				mapTo(inputState->strings.at(output.second.index), input.second.interfaceName, STRING);
 			}
 		}
 	}
