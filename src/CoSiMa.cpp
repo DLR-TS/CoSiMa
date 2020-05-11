@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 	//create objects in SimulationInterfaceFactory
 	for (SupportedInterfaces simulator : simulatornames) {
-		iSimulationData* iData = SimulationInterfaceFactory::makeInterface(simulator);
+		std::shared_ptr<iSimulationData> iData = SimulationInterfaceFactory::makeInterface(simulator);
 		//set parameters of config
 		if (reader.setConfig(iData->getMapper(), simulator)) {
 			std::cout << "Problem occured during interpretation of configuration file." << std::endl;

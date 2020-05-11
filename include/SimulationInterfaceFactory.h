@@ -29,7 +29,7 @@ public:
 	* \param simulator simulator type to create
 	* \return simulator interface
 	*/
-	static iSimulationData* makeInterface(SupportedInterfaces simulator);
+	static std::shared_ptr<iSimulationData> makeInterface(SupportedInterfaces simulator);
 
 };
 

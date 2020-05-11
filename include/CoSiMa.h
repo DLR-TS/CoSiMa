@@ -10,6 +10,6 @@
 /**
 * Vector that holds every simulation interface.
 */
-static std::vector<iSimulationData*> simulationInterfaces;
+static std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
 
 #endif // !COSIMA_H
