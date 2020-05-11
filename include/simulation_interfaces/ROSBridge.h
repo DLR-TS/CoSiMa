@@ -7,7 +7,7 @@
 class ROSBridge : iSimulationData
 {
 public:
-	ROSBridge(Mapper* mapper) : iSimulationData(mapper) {};
+	ROSBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

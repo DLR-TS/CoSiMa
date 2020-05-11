@@ -7,7 +7,7 @@
 class FMIBridge : iSimulationData
 {
 public:
-	FMIBridge(Mapper* mapper) : iSimulationData(mapper) {};
+	FMIBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

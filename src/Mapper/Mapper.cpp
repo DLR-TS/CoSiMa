@@ -6,7 +6,7 @@ int Mapper::extractInternalState(std::shared_ptr<internalState> state)
 {
 	for (auto& simulationInterface : simulationInterfaces)
 	{
-		Mapper* inputMapper = simulationInterface->getMapper();
+		std::shared_ptr<Mapper> inputMapper = simulationInterface->getMapper();
 		inputMapper->filterInput(this, state);
 	}
 	return 0;

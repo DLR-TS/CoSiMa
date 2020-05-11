@@ -87,6 +87,7 @@ protected:
 	int port;
 
 public:
+	int testblah = 0;
 	/**
 	* send values of internal states to other mappers (their interfaces).
 	* \param state own state
@@ -97,7 +98,7 @@ public:
 	* Read configuration and fill mapper configuration.
 	* \return success status
 	*/
-	int readConfiguration(configVariants_t config);
+	virtual int readConfiguration(configVariants_t config);
 
 private:
 	/**

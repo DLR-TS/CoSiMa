@@ -25,7 +25,7 @@ public:
 	* \param mapper Mapper to be configured.
 	* \param simulator Read simulator configuration.
 	*/
-	int setConfig(Mapper* mapper, SupportedInterfaces simulator);
+	int setConfig(std::shared_ptr<Mapper> mapper, SupportedInterfaces simulator);
 
 private:
 	/**

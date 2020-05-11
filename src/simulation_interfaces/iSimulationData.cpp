@@ -17,6 +17,6 @@ int iSimulationData::mapToOtherInterfaces() {
 	return mapper->extractInternalState(state);
 }
 
-Mapper* iSimulationData::getMapper() {
-	return mapper; //TODO
+std::shared_ptr<Mapper> iSimulationData::getMapper() {
+	return mapper;
 }

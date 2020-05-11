@@ -32,7 +32,7 @@ public:
 	* Constructor of iSimulationData.
 	* \param mapper Mapper to be set.
 	*/
-	iSimulationData(Mapper* mapper) {
+	iSimulationData(std::shared_ptr<Mapper> mapper) {
 		this->mapper = mapper;
 	}
 protected:
@@ -43,7 +43,7 @@ protected:
 	/**
 	* Specific mapper of this interface.
 	*/
-	Mapper* mapper;
+	std::shared_ptr<Mapper> mapper;
 
 public:
 	/**
@@ -83,7 +83,7 @@ public:
 	/**
 	* \return Mapper of this interface.
 	*/
-	Mapper* getMapper();
+	std::shared_ptr<Mapper> getMapper();
 
 protected:
 	/**

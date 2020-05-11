@@ -20,7 +20,7 @@ const std::vector<SupportedInterfaces> YAMLConfigReader::getSimulatorNames() {
 	return simulatorNames;
 }
 
-int YAMLConfigReader::setConfig(Mapper* mapper, SupportedInterfaces simulator) {
+int YAMLConfigReader::setConfig(std::shared_ptr<Mapper> mapper, SupportedInterfaces simulator) {
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
 		if (nameToEnum(name.simulator) == simulator) {
@@ -31,7 +31,7 @@ int YAMLConfigReader::setConfig(Mapper* mapper, SupportedInterfaces simulator) {
 			case ROS:
 				return mapper->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
 			case FMI:
-				return ((FMIMapper*)mapper)->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
+				return mapper->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 			//case OSI:
 				//todo
 			}

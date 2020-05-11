@@ -7,7 +7,7 @@
 class DCPBridge : iSimulationData
 {
 public:
-	DCPBridge(Mapper* mapper) : iSimulationData(mapper) {};
+	DCPBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

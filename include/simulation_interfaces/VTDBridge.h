@@ -7,7 +7,7 @@
 class VTDBridge : iSimulationData
 {
 public:
-	VTDBridge(Mapper* mapper) : iSimulationData(mapper) {};
+	VTDBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 	
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

@@ -5,11 +5,13 @@
 
 class FMIMapper : Mapper {
 
+public:
+	FMIMapper() : Mapper() {};
+	int readConfiguration(configVariants_t config) override;
+
 	void setConfiguration(/*FMICOnfig*/);
 	void mapTo(values_t value, std::string interfaceName, DataTypes type) override;
 
-public:
-	int readConfiguration(configVariants_t configVariants);
 };
 
 #endif // !FMIMAPPER_H
