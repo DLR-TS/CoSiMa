@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 		std::string currentArg = argv[i];
 		path = currentArg;//add more complex evaluation if necessary
 	}
+
 	std::cout << "Welcome to CoSiMa." << std::endl;
 
 
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
 	}
 
 	//start simulationloop
-	while (true) {
+	while (true) {//TODO
 		for (auto simInterface : simulationInterfaces) {
 			//set data (read from internalstate)
 			simInterface->mapToOtherInterfaces();

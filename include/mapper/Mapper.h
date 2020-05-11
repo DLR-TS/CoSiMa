@@ -51,7 +51,7 @@ struct interfaceNameAndIndex {
 class MapperConfig {
 public:
 	//base_names to interface_names relation
-	std::map < std::string, interfaceNameAndIndex> intInputMap;
+	std::map<std::string, interfaceNameAndIndex> intInputMap;
 	std::map<std::string, interfaceNameAndIndex> intOutputMap;
 	std::map<std::string, interfaceNameAndIndex> floatInputMap;
 	std::map<std::string, interfaceNameAndIndex> floatOutputMap;

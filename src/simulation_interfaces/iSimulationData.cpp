@@ -18,5 +18,5 @@ int iSimulationData::mapToOtherInterfaces() {
 }
 
 Mapper* iSimulationData::getMapper() {
-	return nullptr; //TODO
+	return mapper; //TODO
 }
