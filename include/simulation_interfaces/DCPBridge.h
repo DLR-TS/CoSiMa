@@ -13,12 +13,8 @@ public:
 	int connect(std::string) override;
 	int disconnect() override;
 
-	std::vector<int> updateInteger() override;
-	std::vector<float> updateFloat() override;
-	std::vector<double> updateDouble() override;
-	std::vector<bool> updateBool() override;
-	std::vector<std::string> updateString() override;
-
+	int readOutputs() override;
+	int doStep() override;
 };
 
 #endif // !DCPBRIDGE_H

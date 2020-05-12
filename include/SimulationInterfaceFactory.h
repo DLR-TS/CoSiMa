@@ -25,12 +25,14 @@
 class SimulationInterfaceFactory {
 public:
 	/**
-	* Create interface class of given simulator interface.
-	* \param simulator simulator type to create
-	* \return simulator interface
+	Create interface class of given simulator interface.
+	\param simulator simulator type to create
+	\return simulator interface
 	*/
-	static std::shared_ptr<iSimulationData> makeInterface(SupportedInterfaces simulator);
+	static std::shared_ptr<iSimulationData> makeInterface(eSimulatorName simulator);
 
+private:
+	static std::shared_ptr<iSimulationData> createInterface(eSimulatorName simulator);
 };
 
 #endif // !SIMULATIONINTERFACEFACTORY_H

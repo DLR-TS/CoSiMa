@@ -14,24 +14,8 @@ int SUMOBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> SUMOBridge::updateInteger() {
-	return std::vector<int>();
-}
-
-std::vector<float> SUMOBridge::updateFloat() {
-	return std::vector<float>();
-}
-
-std::vector<double> SUMOBridge::updateDouble() {
-	return std::vector<double>();
-}
-
-std::vector<bool> SUMOBridge::updateBool() {
-	return std::vector<bool>();
-}
-
-std::vector<std::string> SUMOBridge::updateString() {
-	return std::vector<std::string>();
+int SUMOBridge::readOutputs() {
+	return 0;
 }
 
 int SUMOBridge::doStep() {

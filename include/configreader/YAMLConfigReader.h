@@ -19,13 +19,13 @@ public:
 	* Retrieve the names of all simulators.
 	* \return const vector of interfaces.
 	*/
-	const std::vector<SupportedInterfaces> getSimulatorNames();
+	const std::vector<eSimulatorName> getSimulatorNames();
 	/**
 	* Set config of simulator to given mapper.
-	* \param mapper Mapper to be configured.
-	* \param simulator Read simulator configuration.
+	* \param simulator Mapper to be configured.
+	* \param simulatorname Read simulator configuration of this name.
 	*/
-	int setConfig(std::shared_ptr<Mapper> mapper, SupportedInterfaces simulator);
+	int setConfig(std::shared_ptr<iSimulationData> simulator, eSimulatorName simulatorname);
 
 private:
 	/**
@@ -38,7 +38,7 @@ private:
 	* \param simulatorName String representation of simulator name.
 	* \return Enum representation of simulator name.
 	*/
-	SupportedInterfaces nameToEnum(std::string simulatorName);
+	eSimulatorName nameToEnum(std::string simulatorName);
 };
 
 #endif // !YAMLCONFIGREADER_H

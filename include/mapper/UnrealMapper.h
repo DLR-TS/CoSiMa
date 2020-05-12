@@ -5,7 +5,7 @@
 
 class UnrealMapper : Mapper {
 
-	void mapTo(values_t value, std::string interfaceName, DataTypes type) override;
+	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
 };
 
 #endif // !UNREALMAPPER_H

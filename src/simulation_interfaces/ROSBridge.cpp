@@ -14,24 +14,8 @@ int ROSBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> ROSBridge::updateInteger() {
-	return std::vector<int>();
-}
-
-std::vector<float> ROSBridge::updateFloat() {
-	return std::vector<float>();
-}
-
-std::vector<double> ROSBridge::updateDouble() {
-	return std::vector<double>();
-}
-
-std::vector<bool> ROSBridge::updateBool() {
-	return std::vector<bool>();
-}
-
-std::vector<std::string> ROSBridge::updateString() {
-	return std::vector<std::string>();
+int ROSBridge::readOutputs() {
+	return 0;
 }
 
 int ROSBridge::doStep(){

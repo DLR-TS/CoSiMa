@@ -1,9 +1,14 @@
 ﻿#include "SimulationInterfaceFactory.h"
 
-//	VTDBridge(Mapper* mapper) : iSimulationData(std::shared_ptr<Mapper>(mapper)) {};
+std::shared_ptr<iSimulationData> SimulationInterfaceFactory::makeInterface(eSimulatorName simulatorname) {
+	std::shared_ptr<iSimulationData> newInterface = createInterface(simulatorname);
+	//connect mapper with its interface
+	newInterface->getMapper()->setOwner(newInterface);
+	return newInterface;
+}
 
-std::shared_ptr<iSimulationData> SimulationInterfaceFactory::makeInterface(SupportedInterfaces simulator) {
-	switch (simulator) {
+std::shared_ptr<iSimulationData> SimulationInterfaceFactory::createInterface(eSimulatorName simulatorname) {
+	switch (simulatorname) {
 	case VTD:
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper()))));
 	case FMI:

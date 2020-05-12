@@ -1,64 +1,78 @@
 #include "mapper/Mapper.h"
 #include "CoSiMa.h"
 
-//output part
-int Mapper::extractInternalState(std::shared_ptr<internalState> state)
-{
-	for (auto& simulationInterface : simulationInterfaces)
+int Mapper::searchInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces) {
+	for (auto &simulationInterface : simulationInterfaces)
 	{
-		std::shared_ptr<Mapper> inputMapper = simulationInterface->getMapper();
-		inputMapper->filterInput(this, state);
+		std::shared_ptr<Mapper> outputMapper = simulationInterface->getMapper();
+		if (filterInput(outputMapper)) {
+			return 1;
+		}
 	}
 	return 0;
 }
 
-//called from output part of Mapper
-void Mapper::filterInput(Mapper* outputMapper, std::shared_ptr<internalState> inputState) {
+int Mapper::filterInput(std::shared_ptr<Mapper> outputMapper) {
 	//integer
-	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.intOutputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> input : config.intInputMap) {
-			if (input.first.compare(output.first)) {
+	for (std::pair<std::string, interfaceNameAndIndex> input : config.intInputMap) {
+		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.intOutputMap) {
+			if (input.first == output.first) {
 				//each Mapper implementation handles this
-				mapTo(inputState->integers.at(output.second.index), input.second.interfaceName, INTEGER);
+				int value = outputMapper->owner.lock()->getInternalState()->integers.at(output.second.index);
+				mapTo(value, input.second.interfaceName, INTEGER);
 			}
 		}
 	}
 	//float
-	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.floatOutputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> input : config.floatInputMap) {
-			if (input.first.compare(output.first)) {
+	for (std::pair<std::string, interfaceNameAndIndex> input : config.floatInputMap) {
+		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.floatOutputMap) {
+			if (input.first == output.first) {
 				//each Mapper implementation handles this
-				mapTo(inputState->floats.at(output.second.index), input.second.interfaceName, FLOAT);
+				float value = outputMapper->owner.lock()->getInternalState()->floats.at(output.second.index);
+				mapTo(value, input.second.interfaceName, FLOAT);
+				break;
 			}
 		}
 	}
 	//double
-	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.doubleOutputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> input : config.doubleInputMap) {
-			if (input.first.compare(output.first)) {
+	for (std::pair<std::string, interfaceNameAndIndex> input : config.doubleInputMap) {
+		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.doubleOutputMap) {
+			if (input.first == output.first) {
 				//each Mapper implementation handles this
-				mapTo(inputState->doubles.at(output.second.index), input.second.interfaceName, DOUBLE);
+				double value = outputMapper->owner.lock()->getInternalState()->doubles.at(output.second.index);
+				mapTo(value, input.second.interfaceName, DOUBLE);
+				break;
 			}
 		}
 	}
 	//bool
-	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.boolOutputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> input : config.boolInputMap) {
-			if (input.first.compare(output.first)) {
+	for (std::pair<std::string, interfaceNameAndIndex> input : config.boolInputMap) {
+		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.boolOutputMap) {
+			if (input.first == output.first) {
 				//each Mapper implementation handles this
-				mapTo(inputState->bools.at(output.second.index), input.second.interfaceName, BOOL);
+				bool value = outputMapper->owner.lock()->getInternalState()->bools.at(output.second.index);
+				mapTo(value, input.second.interfaceName, BOOL);
+				break;
 			}
 		}
 	}
-	//string
-	for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.stringOutputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> input : config.stringInputMap) {
-			if (input.first.compare(output.first)) {
+	//std::string
+	for (std::pair<std::string, interfaceNameAndIndex> input : config.stringInputMap) {
+		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.stringOutputMap) {
+			if (input.first == output.first) {
 				//each Mapper implementation handles this
-				mapTo(inputState->strings.at(output.second.index), input.second.interfaceName, STRING);
+				std::string value = outputMapper->owner.lock()->getInternalState()->strings.at(output.second.index);
+				mapTo(value, input.second.interfaceName, STRING);
+				break;
 			}
 		}
 	}
+	return 0;
+}
+
+int Mapper::writeInputError(std::string base_name) {
+	std::cout << "Input of variable could not be matched: base_name: " << base_name << std::endl;
+	return 1;
 }
 
 int Mapper::readConfiguration(configVariants_t configVariants) {
@@ -143,7 +157,52 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 	return 0;
 }
 
-DataTypes Mapper::getType(std::string type) {
+void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
+	switch(type) {
+	case BOOL:
+		for (auto const& entry : config.boolOutputMap)
+		{
+			if (entry.second.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->bools.at(entry.second.index) = std::get<bool>(value);
+				break;
+			}
+		}
+	case INTEGER:
+		for (auto const& entry : config.intOutputMap)
+		{
+			if (entry.second.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->integers.at(entry.second.index) = std::get<int>(value);
+				break;
+			}
+		}
+	case FLOAT:
+		for (auto const& entry : config.floatOutputMap)
+		{
+			if (entry.second.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->floats.at(entry.second.index) = std::get<float>(value);
+				break;
+			}
+		}
+	case DOUBLE:
+		for (auto const& entry : config.doubleOutputMap)
+		{
+			if (entry.second.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->doubles.at(entry.second.index) = std::get<double>(value);
+				break;
+			}
+		}
+	case STRING:
+		for (auto const& entry : config.stringOutputMap)
+		{
+			if (entry.second.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->strings.at(entry.second.index) = std::get<std::string>(value);
+				break;
+			}
+		}
+	}
+}
+
+eDataType Mapper::getType(std::string type) {
 	std::transform(type.begin(), type.end(), type.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	if (type.compare("string") == 0) {
@@ -164,4 +223,8 @@ DataTypes Mapper::getType(std::string type) {
 	else {
 		return DATATYPE_ERROR;
 	}
+}
+
+void Mapper::setOwner(std::shared_ptr<iSimulationData> owner) {
+	this->owner = owner;
 }

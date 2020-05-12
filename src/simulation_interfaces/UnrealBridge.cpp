@@ -14,24 +14,8 @@ int UnrealBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> UnrealBridge::updateInteger() {
-	return std::vector<int>();
-}
-
-std::vector<float> UnrealBridge::updateFloat() {
-	return std::vector<float>();
-}
-
-std::vector<double> UnrealBridge::updateDouble() {
-	return std::vector<double>();
-}
-
-std::vector<bool> UnrealBridge::updateBool() {
-	return std::vector<bool>();
-}
-
-std::vector<std::string> UnrealBridge::updateString() {
-	return std::vector<std::string>();
+int UnrealBridge::readOutputs() {
+	return 0;
 }
 
 int UnrealBridge::doStep() {

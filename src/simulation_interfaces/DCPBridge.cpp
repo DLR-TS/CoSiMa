@@ -14,22 +14,10 @@ int DCPBridge::disconnect() {
 	return 0;
 }
 
-std::vector<int> DCPBridge::updateInteger() {
-	return std::vector<int>();
+int DCPBridge::readOutputs() {
+	return 0;
 }
 
-std::vector<float> DCPBridge::updateFloat() {
-	return std::vector<float>();
-}
-
-std::vector<double> DCPBridge::updateDouble() {
-	return std::vector<double>();
-}
-
-std::vector<bool> DCPBridge::updateBool() {
-	return std::vector<bool>();
-}
-
-std::vector<std::string> DCPBridge::updateString() {
-	return std::vector<std::string>();
+int DCPBridge::doStep() {
+	return 0;
 }

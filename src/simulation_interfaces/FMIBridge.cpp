@@ -14,26 +14,10 @@ int FMIBridge::disconnect() {
 	return 0;
 }
 
-int FMIBridge::doStep() {
+int FMIBridge::readOutputs() {
 	return 0;
 }
 
-std::vector<int> FMIBridge::updateInteger() {
-	return std::vector<int>();
-}
-
-std::vector<float> FMIBridge::updateFloat() {
-	return std::vector<float>();
-}
-
-std::vector<double> FMIBridge::updateDouble() {
-	return std::vector<double>();
-}
-
-std::vector<bool> FMIBridge::updateBool() {
-	return std::vector<bool>();
-}
-
-std::vector<std::string> FMIBridge::updateString() {
-	return std::vector<std::string>();
+int FMIBridge::doStep() {
+	return 0;
 }

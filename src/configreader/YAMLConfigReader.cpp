@@ -2,16 +2,17 @@
 #include "configreader/YAMLConfigReader.h"
 
 YAMLConfigReader::YAMLConfigReader(std::string path) {
+	std::cout << "Load YAML file: " << path << std::endl;
 	simulators = YAML::LoadFile(path);
 }
 
-const std::vector<SupportedInterfaces> YAMLConfigReader::getSimulatorNames() {
-	std::vector<SupportedInterfaces> simulatorNames; 
+const std::vector<eSimulatorName> YAMLConfigReader::getSimulatorNames() {
+	std::vector<eSimulatorName> simulatorNames; 
 
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName conf = simulators[i].as<SimulatorName>();
-		SupportedInterfaces simName = nameToEnum(conf.simulator);
-		if (simName == SUPPORTEDINTERFACES_ERROR) {
+		eSimulatorName simName = nameToEnum(conf.simulator);
+		if (simName == SIMULATORNAME_ERROR) {
 			std::cout << "Not supported simulator name in yaml configration file: " << conf.simulator << std::endl;
 			exit(1);
 		}
@@ -20,29 +21,29 @@ const std::vector<SupportedInterfaces> YAMLConfigReader::getSimulatorNames() {
 	return simulatorNames;
 }
 
-int YAMLConfigReader::setConfig(std::shared_ptr<Mapper> mapper, SupportedInterfaces simulator) {
+int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, eSimulatorName simulatorname) {
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
-		if (nameToEnum(name.simulator) == simulator) {
-			switch (simulator) {
+		if (nameToEnum(name.simulator) == simulatorname) {
+			switch (simulatorname) {
 			case VTD:
 			case SUMO:
 			case UNREAL:
 			case ROS:
-				return mapper->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
+				return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
 			case FMI:
-				return mapper->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
+				return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 			//case OSI:
-				//todo
+				//TODO
 			}
 
 		}
 	}
-	std::cout << "Error no node found with name: " << simulator << std::endl;
+	std::cout << "Error no node found with name: " << simulatorname << std::endl;
 	return 1;
 }
 
-SupportedInterfaces YAMLConfigReader::nameToEnum(std::string simulatorName) {
+eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	if (simulatorName == "vtd") {
@@ -64,6 +65,6 @@ SupportedInterfaces YAMLConfigReader::nameToEnum(std::string simulatorName) {
 		return ROS;
 	}
 	else {
-		return SUPPORTEDINTERFACES_ERROR;
+		return SIMULATORNAME_ERROR;
 	}
 }

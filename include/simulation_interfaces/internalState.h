@@ -5,12 +5,12 @@
 #include <string>
 
 /**
-* Holds the state of an interface.
-* \var integers Vector of integer values of interface.
-* \var floats Vector of float values of interface.
-* \var doubles Vector of doulbe values of interface.
-* \var bools Vector of bool values of interface.
-* \var strings Vector of string values of interface.
+Holds the state of an interface.
+\var integers Vector of integer values of interface.
+\var floats Vector of float values of interface.
+\var doubles Vector of double values of interface.
+\var bools Vector of bool values of interface.
+\var strings Vector of string values of interface.
 */
 class internalState {
 public:
