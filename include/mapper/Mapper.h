@@ -10,6 +10,10 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/internalState.h"
 #include "configreader/StandardYAMLConfig.h"
+#include "mapper/NamesAndIndex.h"
+
+//forward declaration
+class BaseSystemInterface;
 
 /**
 * Basic value types
@@ -34,34 +38,22 @@ enum eDataType
 };
 
 /**
-* Contains information about variable interface name and its position in vector.
-* \var std::string interfaceName
-* holds the interface name of variable
-* \var int index
-* holds the index where the variable with the name is located
-*/
-struct interfaceNameAndIndex {
-	std::string interfaceName;
-	int index;
-};
-
-/**
 * Configuration of Mapper.
 * Contains the relation between base name and (interface name and index in data structure) for each datatype as well as input and output. 
 */
 class MapperConfig {
 public:
 	//base_names to interface_names relation
-	std::map<std::string, interfaceNameAndIndex> intInputMap;
-	std::map<std::string, interfaceNameAndIndex> intOutputMap;
-	std::map<std::string, interfaceNameAndIndex> floatInputMap;
-	std::map<std::string, interfaceNameAndIndex> floatOutputMap;
-	std::map<std::string, interfaceNameAndIndex> doubleInputMap;
-	std::map<std::string, interfaceNameAndIndex> doubleOutputMap;
-	std::map<std::string, interfaceNameAndIndex> boolInputMap;
-	std::map<std::string, interfaceNameAndIndex> boolOutputMap;
-	std::map<std::string, interfaceNameAndIndex> stringInputMap;
-	std::map<std::string, interfaceNameAndIndex> stringOutputMap;
+	std::list<NamesAndIndex> intInputList;
+	std::list<NamesAndIndex> intOutputList;
+	std::list<NamesAndIndex> floatInputList;
+	std::list<NamesAndIndex> floatOutputList;
+	std::list<NamesAndIndex> doubleInputList;
+	std::list<NamesAndIndex> doubleOutputList;
+	std::list<NamesAndIndex> boolInputList;
+	std::list<NamesAndIndex> boolOutputList;
+	std::list<NamesAndIndex> stringInputList;
+	std::list<NamesAndIndex> stringOutputList;
 };
 
 class iSimulationData;
@@ -102,7 +94,11 @@ public:
 	\param simulationInterfaces all other simulation interfaces
 	\return success status
 	*/
-	int searchInput();//std::shared_ptr<BaseSystemInterface> simulationInterfaces);
+	int searchInput(std::shared_ptr<BaseSystemInterface> simulationInterfaces);
+	/**
+	write output variables to base interface
+	*/
+	int writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Read configuration and fill mapper configuration.
 	\param config the decoding struct
@@ -110,24 +106,12 @@ public:
 	*/
 	virtual int readConfiguration(configVariants_t config);
 	/**
-	Maps the given value, name and type to the interface.
+	Maps the given value, name and type to the internalState
 	\param value value of the variable
 	\param interfaceName name of variable in interface context
 	\param type data type of variable
 	*/
 	void mapIn(values_t value, std::string interfaceName, eDataType type);
-
-private:
-	/**
-	Checks if values of outputmapper are in the input. Maps the matches.
-	\param outputMapper The mapper with the output.
-	*/
-	//int filterInput(std::shared_ptr<Mapper> outputMapper);
-	/**
-	writes an error message
-	\param base_name of variable that can not be filled by given outputs
-	*/
-	int writeInputError(std::string base_name);
 
 protected:
 	/**

@@ -1,6 +1,5 @@
-#include "simulation_interfaces/UnrealBridge.h"
-#include "simulation_interfaces/iSimulationData.h"
 #include <string>
+#include "simulation_interfaces/UnrealBridge.h"
 
 int UnrealBridge::init(std::string scenario, float starttime, int mode) {
 	return 0;

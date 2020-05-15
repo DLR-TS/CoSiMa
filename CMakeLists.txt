@@ -55,7 +55,7 @@ conan_basic_setup()
 
 #main project
 # set up variables that are used below
-add_subdirectory ("src")
+add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("test")
 #create library to
@@ -67,7 +67,7 @@ target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_inte
 #find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
 target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(test_CoSiMa ${CoSimulationManagerLib} Catch2)
+target_link_libraries(test_CoSiMa ${CoSimulationManagerLib} Catch)
 
 include(CTest)
 include(Catch)
