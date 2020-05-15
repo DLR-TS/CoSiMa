@@ -6,6 +6,7 @@
 #include <map>
 #include <variant>
 #include <iostream>
+#include "base_interfaces/BaseSystemInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/internalState.h"
 #include "configreader/StandardYAMLConfig.h"
@@ -101,7 +102,7 @@ public:
 	\param simulationInterfaces all other simulation interfaces
 	\return success status
 	*/
-	int searchInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces);
+	int searchInput();//std::shared_ptr<BaseSystemInterface> simulationInterfaces);
 	/**
 	Read configuration and fill mapper configuration.
 	\param config the decoding struct
@@ -121,7 +122,7 @@ private:
 	Checks if values of outputmapper are in the input. Maps the matches.
 	\param outputMapper The mapper with the output.
 	*/
-	int filterInput(std::shared_ptr<Mapper> outputMapper);
+	//int filterInput(std::shared_ptr<Mapper> outputMapper);
 	/**
 	writes an error message
 	\param base_name of variable that can not be filled by given outputs

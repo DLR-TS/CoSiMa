@@ -6,8 +6,15 @@ YAMLConfigReader::YAMLConfigReader(std::string path) {
 	simulators = YAML::LoadFile(path);
 }
 
-const std::vector<eSimulatorName> YAMLConfigReader::getSimulatorNames() {
-	std::vector<eSimulatorName> simulatorNames; 
+const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
+	std::vector<SingleYAMLConfig> names;
+	//counter for later tracking the amount of same interfaces with different configurations
+	std::map<eSimulatorName, int> counter;
+	for (int i = FMI; i != SIMULATORNAME_ERROR; i++)
+	{
+		eSimulatorName name = static_cast<eSimulatorName>(i);
+		counter.emplace(name, 0);
+	}
 
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName conf = simulators[i].as<SimulatorName>();
@@ -16,30 +23,37 @@ const std::vector<eSimulatorName> YAMLConfigReader::getSimulatorNames() {
 			std::cout << "Not supported simulator name in yaml configration file: " << conf.simulator << std::endl;
 			exit(1);
 		}
-		simulatorNames.push_back(simName);
+		std::map<eSimulatorName, int>::iterator countIter = counter.find(simName);
+		names.push_back(SingleYAMLConfig(simName, countIter->second));
+		countIter->second++;
 	}
-	return simulatorNames;
+	return names;
 }
 
-int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, eSimulatorName simulatorname) {
+int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname) {
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
-		if (nameToEnum(name.simulator) == simulatorname) {
-			switch (simulatorname) {
-			case VTD:
-			case SUMO:
-			case UNREAL:
-			case ROS:
-				return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
-			case FMI:
-				return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
-			//case OSI:
-				//TODO
+		int index = 0;
+		if (nameToEnum(name.simulator) == simulatorname.simulator) {
+			if (index == simulatorname.index) {
+				switch (simulatorname.simulator) {
+				case VTD:
+				case SUMO:
+				case UNREAL:
+				case ROS:
+					return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
+				case FMI:
+					return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
+					//case OSI:
+						//TODO
+				}
 			}
-
+			else {
+				index++;
+			}
 		}
 	}
-	std::cout << "Error no node found with name: " << simulatorname << std::endl;
+	std::cout << "Error no node found with name: " << simulatorname.simulator << std::endl;
 	return 1;
 }
 

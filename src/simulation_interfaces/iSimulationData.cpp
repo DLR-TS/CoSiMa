@@ -14,8 +14,8 @@ const std::shared_ptr<internalState> iSimulationData::getInternalState() {
 	return state;
 }
 
-int iSimulationData::mapInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces) {
-	return mapper->searchInput(simulationInterfaces);
+int iSimulationData::mapInput(){//std::shared_ptr<BaseSystemInterface> baseInterface) {
+	return mapper->searchInput();// baseInterface);
 }
 
 std::shared_ptr<Mapper> iSimulationData::getMapper() {

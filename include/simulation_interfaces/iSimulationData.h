@@ -4,20 +4,22 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "../Mapper/Mapper.h"
+#include "Mapper/Mapper.h"
 #include "internalState.h"
+
+
 /**
 * Enum containing all supported interfaces and error for parsing failures.
 */
 enum eSimulatorName {
+	FMI, //needs to be first
 	VTD,
 	ROS,
-	FMI,
 	UNREAL,
 	OSI,
 	SUMO,
 
-	SIMULATORNAME_ERROR
+	SIMULATORNAME_ERROR //needs to be last
 };
 
 class Mapper;
@@ -73,10 +75,10 @@ public:
 	//int readOutput();
 	/**
 	Search and map needed information of this interface from all other interfaces.
-	\param simulatornInterfaces all interfaces
+	\param baseInterface base interface
 	\return Success status.
 	*/
-	int mapInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces);
+	int mapInput();// std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Do simulation step.
 	\return Success status.

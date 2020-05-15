@@ -8,6 +8,18 @@
 #include "mapper/FMIMapper.h"
 #include "configreader/StandardYAMLConfig.h"
 
+class SingleYAMLConfig {
+public:
+	SingleYAMLConfig() {};
+	SingleYAMLConfig(eSimulatorName name, int index) {
+		this->index = index;
+		this->simulator = simulator;
+	};
+
+	int index;
+	eSimulatorName simulator;
+};
+
 class YAMLConfigReader {
 public:
 	/**
@@ -19,13 +31,13 @@ public:
 	* Retrieve the names of all simulators.
 	* \return const vector of interfaces.
 	*/
-	const std::vector<eSimulatorName> getSimulatorNames();
+	const std::vector<SingleYAMLConfig> getSimulatorNames();
 	/**
 	* Set config of simulator to given mapper.
 	* \param simulator Mapper to be configured.
 	* \param simulatorname Read simulator configuration of this name.
 	*/
-	int setConfig(std::shared_ptr<iSimulationData> simulator, eSimulatorName simulatorname);
+	int setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname);
 
 private:
 	/**
