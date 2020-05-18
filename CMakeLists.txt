@@ -21,6 +21,14 @@ conan_cmake_run(CONANFILE conanfile.txt
                 BASIC_SETUP CMAKE_TARGETS
                 BUILD missing)
 
+
+# FMI4cpp is not distributed as conan package, but still can use conan for dependancy management.
+conan_cmake_run(CONANFILE lib/FMI4cpp/conanfile.txt 
+                BASIC_SETUP CMAKE_TARGETS
+                BUILD missing)
+add_subdirectory(lib/FMI4cpp/ EXCLUDE_FROM_ALL)
+set(FMI4CPP_USING_CONAN ON)
+
 # include protobuf, yaml_cpp, catch2, fakeit
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -63,6 +71,9 @@ add_subdirectory("test")
 add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
+# FMI4cpp is not managed by conan, thus it is added here
+target_include_directories(CoSimulationManagerLib PUBLIC fmi4cpp)
+target_link_libraries(CoSimulationManagerLib fmi4cpp)
 
 #find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
