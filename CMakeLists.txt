@@ -47,9 +47,6 @@ conan_basic_setup()
 #fmi library
 # add_subdirectory("lib/fmi-library")
 
-# #yaml
-# add_subdirectory("lib/yaml-cpp")
-
 # #test libraries
 # add_subdirectory("lib/Catch2")
 # add_subdirectory("lib/FakeIt")

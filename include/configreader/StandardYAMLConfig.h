@@ -33,7 +33,7 @@ public:
  * \var std::string type
  * holds type name of the variable
  */
-struct VariableDefinitionMap {
+struct VariableDefinition {
 public:
 	std::string interface_name;
 	std::string base_name;
@@ -54,8 +54,8 @@ public:
 	std::string simulator;
 	std::string ip;
 	int port;
-	std::vector<VariableDefinitionMap> input_map;
-	std::vector<VariableDefinitionMap> output_map;
+	std::vector<VariableDefinition> inputs;
+	std::vector<VariableDefinition> outputs;
 };
 
 /**
@@ -104,20 +104,20 @@ namespace YAML {
 			config.simulator = node["simulator"].as<std::string>();
 			config.ip = node["ip"].as<std::string>();
 			config.port = node["port"].as<int>();
-			config.input_map = node["input"].as<std::vector<VariableDefinitionMap>>();
-			config.output_map = node["output"].as<std::vector<VariableDefinitionMap>>();
+			config.inputs = node["input"].as<std::vector<VariableDefinition>>();
+			config.outputs = node["output"].as<std::vector<VariableDefinition>>();
 			return true;
 		}
 	};
 
 	template<>
-	struct convert<VariableDefinitionMap> {
-		static Node encode(const VariableDefinitionMap& config) {
+	struct convert<VariableDefinition> {
+		static Node encode(const VariableDefinition& config) {
 			Node node;
 			return node;
 		}
 
-		static bool decode(const Node& node, VariableDefinitionMap& variableMap)
+		static bool decode(const Node& node, VariableDefinition& variableMap)
 		{
 			variableMap.interface_name = node["interface_name"].as<std::string>();
 			variableMap.base_name = node["base_name"].as<std::string>();

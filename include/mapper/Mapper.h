@@ -29,12 +29,12 @@ typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig> configVariants_t;
 */
 enum eDataType
 {
-	INTEGER,
-	FLOAT,
-	DOUBLE,
-	BOOL,
-	STRING,
-	DATATYPE_ERROR
+	INTEGERCOSIMA,
+	FLOATCOSIMA,
+	DOUBLECOSIMA,
+	BOOLCOSIMA,
+	STRINGCOSIMA,
+	DATATYPE_ERROR_COSIMA
 };
 
 /**
@@ -44,16 +44,16 @@ enum eDataType
 class MapperConfig {
 public:
 	//base_names to interface_names relation
-	std::list<NamesAndIndex> intInputList;
-	std::list<NamesAndIndex> intOutputList;
-	std::list<NamesAndIndex> floatInputList;
-	std::list<NamesAndIndex> floatOutputList;
-	std::list<NamesAndIndex> doubleInputList;
-	std::list<NamesAndIndex> doubleOutputList;
-	std::list<NamesAndIndex> boolInputList;
-	std::list<NamesAndIndex> boolOutputList;
-	std::list<NamesAndIndex> stringInputList;
-	std::list<NamesAndIndex> stringOutputList;
+	std::list<NamesAndIndex> intInputList {};
+	std::list<NamesAndIndex> intOutputList {};
+	std::list<NamesAndIndex> floatInputList {};
+	std::list<NamesAndIndex> floatOutputList {};
+	std::list<NamesAndIndex> doubleInputList {};
+	std::list<NamesAndIndex> doubleOutputList {};
+	std::list<NamesAndIndex> boolInputList {};
+	std::list<NamesAndIndex> boolOutputList {};
+	std::list<NamesAndIndex> stringInputList {};
+	std::list<NamesAndIndex> stringOutputList {};
 };
 
 class iSimulationData;
@@ -62,6 +62,11 @@ class iSimulationData;
 Abstract base class of all Mappers.
 */
 class Mapper {
+
+public:
+	Mapper() {
+		config = MapperConfig();
+	}
 
 private:
 	/**
