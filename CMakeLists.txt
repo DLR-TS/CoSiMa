@@ -56,7 +56,7 @@ conan_basic_setup()
 
 #main project
 # set up variables that are used below
-add_subdirectory ("src")
+add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("test")
 #create library to

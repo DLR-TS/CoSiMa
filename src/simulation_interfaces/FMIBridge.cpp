@@ -1,6 +1,5 @@
-#include "simulation_interfaces/FMIBridge.h"
-#include "simulation_interfaces/iSimulationData.h"
 #include <string>
+#include "simulation_interfaces/FMIBridge.h"
 
 int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	return 0;

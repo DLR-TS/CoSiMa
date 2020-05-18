@@ -1,78 +1,57 @@
 #include "mapper/Mapper.h"
 #include "CoSiMa.h"
 
-int Mapper::searchInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces) {
-	for (auto &simulationInterface : simulationInterfaces)
-	{
-		std::shared_ptr<Mapper> outputMapper = simulationInterface->getMapper();
-		if (filterInput(outputMapper)) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
-int Mapper::filterInput(std::shared_ptr<Mapper> outputMapper) {
+int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer
-	for (std::pair<std::string, interfaceNameAndIndex> input : config.intInputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.intOutputMap) {
-			if (input.first == output.first) {
-				//each Mapper implementation handles this
-				int value = outputMapper->owner.lock()->getInternalState()->integers.at(output.second.index);
-				mapTo(value, input.second.interfaceName, INTEGER);
-			}
-		}
+	for (const NamesAndIndex &input : config.intInputList) {
+		int value = baseInterface->getIntValue(input.baseName);
+		mapTo(value, input.interfaceName, INTEGER);
 	}
 	//float
-	for (std::pair<std::string, interfaceNameAndIndex> input : config.floatInputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.floatOutputMap) {
-			if (input.first == output.first) {
-				//each Mapper implementation handles this
-				float value = outputMapper->owner.lock()->getInternalState()->floats.at(output.second.index);
-				mapTo(value, input.second.interfaceName, FLOAT);
-				break;
-			}
-		}
+	for (const NamesAndIndex &input : config.floatInputList) {
+		float value = baseInterface->getFloatValue(input.baseName);
+		mapTo(value, input.interfaceName, FLOAT);
 	}
 	//double
-	for (std::pair<std::string, interfaceNameAndIndex> input : config.doubleInputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.doubleOutputMap) {
-			if (input.first == output.first) {
-				//each Mapper implementation handles this
-				double value = outputMapper->owner.lock()->getInternalState()->doubles.at(output.second.index);
-				mapTo(value, input.second.interfaceName, DOUBLE);
-				break;
-			}
-		}
+	for (const NamesAndIndex &input : config.doubleInputList) {
+		double value = baseInterface->getDoubleValue(input.baseName);
+		mapTo(value , input.interfaceName, DOUBLE);
 	}
 	//bool
-	for (std::pair<std::string, interfaceNameAndIndex> input : config.boolInputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.boolOutputMap) {
-			if (input.first == output.first) {
-				//each Mapper implementation handles this
-				bool value = outputMapper->owner.lock()->getInternalState()->bools.at(output.second.index);
-				mapTo(value, input.second.interfaceName, BOOL);
-				break;
-			}
-		}
+	for (const NamesAndIndex &input : config.boolInputList) {
+		bool value = baseInterface->getBoolValue(input.baseName);
+		mapTo(value, input.interfaceName, BOOL);
 	}
 	//std::string
-	for (std::pair<std::string, interfaceNameAndIndex> input : config.stringInputMap) {
-		for (std::pair<std::string, interfaceNameAndIndex> output : outputMapper->config.stringOutputMap) {
-			if (input.first == output.first) {
-				//each Mapper implementation handles this
-				std::string value = outputMapper->owner.lock()->getInternalState()->strings.at(output.second.index);
-				mapTo(value, input.second.interfaceName, STRING);
-				break;
-			}
-		}
+	for (const NamesAndIndex &input : config.stringInputList) {
+		std::string value = baseInterface->getStringValue(input.baseName);
+		mapTo(value, input.interfaceName, STRING);
 	}
 	return 0;
 }
 
-int Mapper::writeInputError(std::string base_name) {
-	std::cout << "Input of variable could not be matched: base_name: " << base_name << std::endl;
-	return 1;
+int Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
+	//integer
+	for (const NamesAndIndex &output : config.intOutputList) {
+		baseInterface->setIntValue(output.baseName, owner.lock()->getInternalState()->integers.at(output.index));
+	}
+	//float
+	for (const NamesAndIndex &output : config.floatOutputList) {
+		baseInterface->setFloatValue(output.baseName, owner.lock()->getInternalState()->floats.at(output.index));
+	}
+	//double
+	for (const NamesAndIndex &output : config.doubleOutputList) {
+		baseInterface->setDoubleValue(output.baseName, owner.lock()->getInternalState()->doubles.at(output.index));
+	}
+	//bool
+	for (const NamesAndIndex &output : config.boolOutputList) {
+		baseInterface->setBoolValue(output.baseName, owner.lock()->getInternalState()->bools.at(output.index));
+	}
+	//std::string
+	for (const NamesAndIndex &output : config.stringOutputList) {
+		baseInterface->setStringValue(output.baseName, owner.lock()->getInternalState()->strings.at(output.index));
+	}
+	return 0;
 }
 
 int Mapper::readConfiguration(configVariants_t configVariants) {
@@ -86,72 +65,51 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 	port = yamlconfig.port;
 	ip = yamlconfig.ip;
 
-	//fill input and output vectors
+	//fill input vectors
 	for (VariableDefinitionMap definition : yamlconfig.input_map) {
-		interfaceNameAndIndex info;
+
 		switch (getType(definition.type)) {
 		case BOOL:
-			info.index = (int) config.boolInputMap.size();
-			info.interfaceName = definition.interface_name;
-			config.boolInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
+			config.boolInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case INTEGER:
-			info.index = (int) config.intInputMap.size();
-			info.interfaceName = definition.interface_name;
-			config.intInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
+			config.intInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case FLOAT:
-			info.index = (int) config.floatInputMap.size();
-			info.interfaceName = definition.interface_name;
-			config.floatInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
+			config.floatInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case DOUBLE:
-			info.index = (int) config.doubleInputMap.size();
-			info.interfaceName = definition.interface_name;
-			config.doubleInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
+			config.doubleInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case STRING:
-			info.index = (int) config.stringInputMap.size();
-			info.interfaceName = definition.interface_name;
-			config.stringInputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
+			config.stringInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case DATATYPE_ERROR:
 			std::cout << "Wrong definition of input_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
-
-		for (VariableDefinitionMap definition : yamlconfig.output_map) {
-			interfaceNameAndIndex info;
-			switch (getType(definition.type)) {
-			case BOOL:
-				info.index = (int) config.boolOutputMap.size();
-				info.interfaceName = definition.interface_name;
-				config.boolOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
-				break;
-			case INTEGER:
-				info.index = (int) config.intOutputMap.size();
-				info.interfaceName = definition.interface_name;
-				config.intOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
-				break;
-			case FLOAT:
-				info.index = (int) config.floatOutputMap.size();
-				info.interfaceName = definition.interface_name;
-				config.floatOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
-				break;
-			case DOUBLE:
-				info.index = (int) config.doubleOutputMap.size();
-				info.interfaceName = definition.interface_name;
-				config.doubleOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
-				break;
-			case STRING:
-				info.index = (int) config.stringOutputMap.size();
-				info.interfaceName = definition.interface_name;
-				config.stringOutputMap.insert(std::pair<std::string, interfaceNameAndIndex>(definition.base_name, info));
-				break;
-			case DATATYPE_ERROR:
-				std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
-				return 1;
-			}
+	}
+	//fill output vectors
+	for (VariableDefinitionMap definition : yamlconfig.output_map) {
+		switch (getType(definition.type)) {
+		case BOOL:
+			config.boolOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			break;
+		case INTEGER:
+			config.intOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			break;
+		case FLOAT:
+			config.floatOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			break;
+		case DOUBLE:
+			config.doubleOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			break;
+		case STRING:
+			config.stringOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			break;
+		case DATATYPE_ERROR:
+			std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
+			return 1;
 		}
 	}
 	return 0;
@@ -160,42 +118,42 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 	switch(type) {
 	case BOOL:
-		for (auto const& entry : config.boolOutputMap)
+		for (NamesAndIndex const &entry : config.boolOutputList)
 		{
-			if (entry.second.interfaceName == interfaceName) {
-				owner.lock()->getInternalState()->bools.at(entry.second.index) = std::get<bool>(value);
+			if (entry.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->bools.at(entry.index) = std::get<bool>(value);
 				break;
 			}
 		}
 	case INTEGER:
-		for (auto const& entry : config.intOutputMap)
+		for (NamesAndIndex const &entry : config.intOutputList)
 		{
-			if (entry.second.interfaceName == interfaceName) {
-				owner.lock()->getInternalState()->integers.at(entry.second.index) = std::get<int>(value);
+			if (entry.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->integers.at(entry.index) = std::get<int>(value);
 				break;
 			}
 		}
 	case FLOAT:
-		for (auto const& entry : config.floatOutputMap)
+		for (NamesAndIndex const &entry : config.floatOutputList)
 		{
-			if (entry.second.interfaceName == interfaceName) {
-				owner.lock()->getInternalState()->floats.at(entry.second.index) = std::get<float>(value);
+			if (entry.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->floats.at(entry.index) = std::get<float>(value);
 				break;
 			}
 		}
 	case DOUBLE:
-		for (auto const& entry : config.doubleOutputMap)
+		for (NamesAndIndex const &entry : config.doubleOutputList)
 		{
-			if (entry.second.interfaceName == interfaceName) {
-				owner.lock()->getInternalState()->doubles.at(entry.second.index) = std::get<double>(value);
+			if (entry.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->doubles.at(entry.index) = std::get<double>(value);
 				break;
 			}
 		}
 	case STRING:
-		for (auto const& entry : config.stringOutputMap)
+		for (NamesAndIndex const &entry: config.stringOutputList)
 		{
-			if (entry.second.interfaceName == interfaceName) {
-				owner.lock()->getInternalState()->strings.at(entry.second.index) = std::get<std::string>(value);
+			if (entry.interfaceName == interfaceName) {
+				owner.lock()->getInternalState()->strings.at(entry.index) = std::get<std::string>(value);
 				break;
 			}
 		}

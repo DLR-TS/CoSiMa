@@ -1,6 +1,5 @@
-#include "simulation_interfaces/SUMOBridge.h"
-#include "simulation_interfaces/iSimulationData.h"
 #include <string>
+#include "simulation_interfaces/SUMOBridge.h"
 
 int SUMOBridge::init(std::string scenario, float starttime, int mode) {
 	return 0;

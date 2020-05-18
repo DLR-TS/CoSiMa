@@ -4,23 +4,27 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "../Mapper/Mapper.h"
+#include "base_interfaces/BaseSystemInterface.h"
+#include "Mapper/Mapper.h"
 #include "internalState.h"
+
+//forward declarations
+class BaseSystemInterface;
+class Mapper;
+
 /**
 * Enum containing all supported interfaces and error for parsing failures.
 */
 enum eSimulatorName {
+	FMI, //needs to be first
 	VTD,
 	ROS,
-	FMI,
 	UNREAL,
 	OSI,
 	SUMO,
 
-	SIMULATORNAME_ERROR
+	SIMULATORNAME_ERROR //needs to be last
 };
-
-class Mapper;
 
 /**
 Abstract class for all simulation interfaces.
@@ -67,16 +71,16 @@ public:
 	*/
 	virtual int disconnect() = 0;
 	/**
-	Updates all output data of each datatype in the internal state.
-	\return Success status.
-	*/
-	//int readOutput();
-	/**
 	Search and map needed information of this interface from all other interfaces.
-	\param simulatornInterfaces all interfaces
+	\param baseInterface base interface
 	\return Success status.
 	*/
-	int mapInput(std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces);
+	int mapInput(std::shared_ptr<BaseSystemInterface> baseInterface);
+	/**
+	Write output data of interface to base system
+	\return Success status.
+	*/
+	int writeTo(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Do simulation step.
 	\return Success status.
@@ -84,6 +88,7 @@ public:
 	virtual int doStep() = 0;
 	/**
 	update outputs of the interface
+	use the Mapper::mapIn method to load Outputs
 	*/
 	virtual int readOutputs() = 0;
 	/**
