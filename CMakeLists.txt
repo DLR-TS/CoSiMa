@@ -32,6 +32,7 @@ set(FMI4CPP_USING_CONAN ON)
 # include protobuf, yaml_cpp, catch2, fakeit
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 conan_basic_setup()
 
 # #protobuf
@@ -54,9 +55,6 @@ conan_basic_setup()
 #fmi library
 # add_subdirectory("lib/fmi-library")
 
-# #yaml
-# add_subdirectory("lib/yaml-cpp")
-
 # #test libraries
 # add_subdirectory("lib/Catch2")
 # add_subdirectory("lib/FakeIt")
@@ -75,10 +73,10 @@ target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_inte
 target_include_directories(CoSimulationManagerLib PUBLIC fmi4cpp)
 target_link_libraries(CoSimulationManagerLib fmi4cpp)
 
-#find_package(Catch2 REQUIRED)
+find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
 target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(test_CoSiMa ${CoSimulationManagerLib} Catch)
+target_link_libraries(test_CoSiMa CoSimulationManagerLib ${CONAN_LIBS} Catch2::Catch2)
 
 include(CTest)
 include(Catch)

@@ -18,7 +18,7 @@ const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
 
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName conf = simulators[i].as<SimulatorName>();
-		eSimulatorName simName = nameToEnum(conf.simulator);
+		const eSimulatorName simName = nameToEnum(conf.simulator);
 		if (simName == SIMULATORNAME_ERROR) {
 			std::cout << "Not supported simulator name in yaml configration file: " << conf.simulator << std::endl;
 			exit(1);
@@ -31,9 +31,9 @@ const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
 }
 
 int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname) {
+	int index = 0;
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
-		int index = 0;
 		if (nameToEnum(name.simulator) == simulatorname.simulator) {
 			if (index == simulatorname.index) {
 				switch (simulatorname.simulator) {
@@ -57,7 +57,7 @@ int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, Sing
 	return 1;
 }
 
-eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
+const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	if (simulatorName == "vtd") {

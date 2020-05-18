@@ -5,27 +5,27 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer
 	for (const NamesAndIndex &input : config.intInputList) {
 		int value = baseInterface->getIntValue(input.baseName);
-		mapTo(value, input.interfaceName, INTEGER);
+		mapTo(value, input.interfaceName, INTEGERCOSIMA);
 	}
 	//float
 	for (const NamesAndIndex &input : config.floatInputList) {
 		float value = baseInterface->getFloatValue(input.baseName);
-		mapTo(value, input.interfaceName, FLOAT);
+		mapTo(value, input.interfaceName, FLOATCOSIMA);
 	}
 	//double
 	for (const NamesAndIndex &input : config.doubleInputList) {
 		double value = baseInterface->getDoubleValue(input.baseName);
-		mapTo(value , input.interfaceName, DOUBLE);
+		mapTo(value , input.interfaceName, DOUBLECOSIMA);
 	}
 	//bool
 	for (const NamesAndIndex &input : config.boolInputList) {
 		bool value = baseInterface->getBoolValue(input.baseName);
-		mapTo(value, input.interfaceName, BOOL);
+		mapTo(value, input.interfaceName, BOOLCOSIMA);
 	}
 	//std::string
 	for (const NamesAndIndex &input : config.stringInputList) {
 		std::string value = baseInterface->getStringValue(input.baseName);
-		mapTo(value, input.interfaceName, STRING);
+		mapTo(value, input.interfaceName, STRINGCOSIMA);
 	}
 	return 0;
 }
@@ -66,48 +66,48 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 	ip = yamlconfig.ip;
 
 	//fill input vectors
-	for (VariableDefinitionMap definition : yamlconfig.input_map) {
+	for (VariableDefinition definition : yamlconfig.inputs) {
 
 		switch (getType(definition.type)) {
-		case BOOL:
+		case BOOLCOSIMA:
 			config.boolInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case INTEGER:
+		case INTEGERCOSIMA:
 			config.intInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case FLOAT:
+		case FLOATCOSIMA:
 			config.floatInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case DOUBLE:
+		case DOUBLECOSIMA:
 			config.doubleInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case STRING:
+		case STRINGCOSIMA:
 			config.stringInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case DATATYPE_ERROR:
+		case DATATYPE_ERROR_COSIMA:
 			std::cout << "Wrong definition of input_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
 	}
 	//fill output vectors
-	for (VariableDefinitionMap definition : yamlconfig.output_map) {
+	for (VariableDefinition definition : yamlconfig.outputs) {
 		switch (getType(definition.type)) {
-		case BOOL:
+		case BOOLCOSIMA:
 			config.boolOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case INTEGER:
+		case INTEGERCOSIMA:
 			config.intOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case FLOAT:
+		case FLOATCOSIMA:
 			config.floatOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case DOUBLE:
+		case DOUBLECOSIMA:
 			config.doubleOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case STRING:
+		case STRINGCOSIMA:
 			config.stringOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
-		case DATATYPE_ERROR:
+		case DATATYPE_ERROR_COSIMA:
 			std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
@@ -117,7 +117,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 
 void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 	switch(type) {
-	case BOOL:
+	case BOOLCOSIMA:
 		for (NamesAndIndex const &entry : config.boolOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
@@ -125,7 +125,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 				break;
 			}
 		}
-	case INTEGER:
+	case INTEGERCOSIMA:
 		for (NamesAndIndex const &entry : config.intOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
@@ -133,7 +133,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 				break;
 			}
 		}
-	case FLOAT:
+	case FLOATCOSIMA:
 		for (NamesAndIndex const &entry : config.floatOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
@@ -141,7 +141,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 				break;
 			}
 		}
-	case DOUBLE:
+	case DOUBLECOSIMA:
 		for (NamesAndIndex const &entry : config.doubleOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
@@ -149,7 +149,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 				break;
 			}
 		}
-	case STRING:
+	case STRINGCOSIMA:
 		for (NamesAndIndex const &entry: config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
@@ -164,22 +164,22 @@ eDataType Mapper::getType(std::string type) {
 	std::transform(type.begin(), type.end(), type.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	if (type.compare("string") == 0) {
-		return STRING;
+		return STRINGCOSIMA;
 	}
 	else if (type.compare("float") == 0) {
-		return FLOAT;
+		return FLOATCOSIMA;
 	}
 	else if (type.compare("double") == 0) {
-		return DOUBLE;
+		return DOUBLECOSIMA;
 	}
 	else if (type.compare("bool") == 0 || type.compare("boolean") == 0) {
-		return BOOL;
+		return BOOLCOSIMA;
 	}
 	else if (type.compare("int") == 0 || type.compare("integer") == 0) {
-		return INTEGER;
+		return INTEGERCOSIMA;
 	}
 	else {
-		return DATATYPE_ERROR;
+		return DATATYPE_ERROR_COSIMA;
 	}
 }
 
