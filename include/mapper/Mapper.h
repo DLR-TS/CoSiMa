@@ -90,11 +90,11 @@ public:
 	*/
 	virtual void setOwner(std::shared_ptr<iSimulationData> owner) final;
 	/**
-	search input of this mapper from all other mappers
-	\param simulationInterfaces all other simulation interfaces
+	search input of this mapper from base system interface
+	\param simulationInterface base system simulation interfaces
 	\return success status
 	*/
-	int searchInput(std::shared_ptr<BaseSystemInterface> simulationInterfaces);
+	int searchInput(std::shared_ptr<BaseSystemInterface> simulationInterface);
 	/**
 	write output variables to base interface
 	*/
