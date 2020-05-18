@@ -21,6 +21,19 @@ conan_cmake_run(CONANFILE conanfile.txt
                 BASIC_SETUP CMAKE_TARGETS
                 BUILD missing)
 
+option(GIT_SUBMODULE "Check submodules during build" OFF)
+if(GIT_SUBMODULE)
+	find_package(Git QUIET)
+	if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+		message(STATUS "Updating submodules")
+		execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+						WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+						RESULT_VARIABLE GIT_SUBMODULE_RESULT)
+		if(NOT GIT_SUBMODULE_RESULT EQUAL "0")
+			message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMODULE_RESULT}")
+		endif()
+	endif()
+endif()
 
 # FMI4cpp is not distributed as conan package, but still can use conan for dependancy management.
 conan_cmake_run(CONANFILE lib/FMI4cpp/conanfile.txt 
