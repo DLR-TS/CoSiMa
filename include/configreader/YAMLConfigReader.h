@@ -11,9 +11,9 @@
 class SingleYAMLConfig {
 public:
 	SingleYAMLConfig() {};
-	SingleYAMLConfig(eSimulatorName name, int index) {
+	SingleYAMLConfig(const eSimulatorName name, int index) {
 		this->index = index;
-		this->simulator = simulator;
+		this->simulator = name;
 	};
 
 	int index;
@@ -50,7 +50,7 @@ private:
 	* \param simulatorName String representation of simulator name.
 	* \return Enum representation of simulator name.
 	*/
-	eSimulatorName nameToEnum(std::string simulatorName);
+	const eSimulatorName nameToEnum(std::string simulatorName);
 };
 
 #endif // !YAMLCONFIGREADER_H

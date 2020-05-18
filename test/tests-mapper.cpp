@@ -3,13 +3,13 @@
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
 
-TEST_CASE("Read simulator names from config") {
-	std::shared_ptr<Mapper> mapper = std::shared_ptr<Mapper>((Mapper*)new FMIMapper());
+TEST_CASE("Testmapper 1") {
+	//std::shared_ptr<Mapper> mapper = std::shared_ptr<Mapper>((Mapper*)new FMIMapper());
 
 	//REQUIRE(names.size() == 3);
 }
 
-TEST_CASE("set configuration of simulator") {
+TEST_CASE("Testmapper 2") {
 
 }
 

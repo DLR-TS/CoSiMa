@@ -5,20 +5,20 @@
 #include "mapper/VTDMapper.h"
 
 TEST_CASE("Read simulator names from config") {
-	YAMLConfigReader reader("testconfig1.yaml");
+	YAMLConfigReader reader("../test/resources/testconfig1.yaml");
 
 	std::vector<SingleYAMLConfig> names = reader.getSimulatorNames();
 	REQUIRE(names.size() == 3);
-	REQUIRE(names.at(0).simulator == eSimulatorName::VTD);
+	REQUIRE(names.at(0).simulator == VTD);
 	REQUIRE(names.at(0).index == 0);
-	REQUIRE(names.at(1).simulator == eSimulatorName::FMI);
+	REQUIRE(names.at(1).simulator == FMI);
 	REQUIRE(names.at(1).index == 0);
-	REQUIRE(names.at(2).simulator == eSimulatorName::VTD);
+	REQUIRE(names.at(2).simulator == VTD);
 	REQUIRE(names.at(2).index == 1);
 }
 
 TEST_CASE("set configuration of simulator") {
-	YAMLConfigReader reader("testconfig1.yaml");
+	YAMLConfigReader reader("../test/resources/testconfig1.yaml");
 
 	SingleYAMLConfig conf;
 	conf.index = 1;
