@@ -8,19 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Download automatically, you can also just copy the conan.cmake file
-if(NOT EXISTS "conan/conan.cmake")
-   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake"
-                 "conan/conan.cmake")
-endif()
-
-include(conan/conan.cmake)
-
-conan_cmake_run(CONANFILE conanfile.txt 
-                BASIC_SETUP CMAKE_TARGETS
-                BUILD missing)
-
 option(GIT_SUBMODULE "Check submodules during build" OFF)
 if(GIT_SUBMODULE)
 	find_package(Git QUIET)
@@ -35,12 +22,26 @@ if(GIT_SUBMODULE)
 	endif()
 endif()
 
-# FMI4cpp is not distributed as conan package, but still can use conan for dependancy management.
-conan_cmake_run(CONANFILE lib/FMI4cpp/conanfile.txt 
+# Download automatically, you can also just copy the conan.cmake file
+if(NOT EXISTS "conan/conan.cmake")
+   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake"
+                 "conan/conan.cmake")
+endif()
+
+include(conan/conan.cmake)
+
+# get dependencies distributed as conan packages
+conan_cmake_run(CONANFILE conanfile.txt 
                 BASIC_SETUP CMAKE_TARGETS
                 BUILD missing)
+
+# FMI4cpp is not distributed as conan package, but still can use conan for dependancy management.
+conan_cmake_run(CONANFILE lib/FMI4cpp/conanfile.txt 
+                BUILD missing)
+set(FMI4CPP_USING_CONAN ON CACHE BOOL "Build FMI4cpp using conan" FORCE)
 add_subdirectory(lib/FMI4cpp/ EXCLUDE_FROM_ALL)
-set(FMI4CPP_USING_CONAN ON)
+
 
 # include protobuf, yaml_cpp, catch2, fakeit
 
