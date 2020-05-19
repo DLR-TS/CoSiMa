@@ -14,7 +14,7 @@ public:
 	int disconnect() override;
 
 	int readOutputs() override;
-	int doStep() override;
+	int doStep(double stepSize = 1) override;
 };
 
 #endif // !DCPBRIDGE_H
