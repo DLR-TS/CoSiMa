@@ -25,7 +25,19 @@ TEST_CASE("set configuration of simulator") {
 	conf.simulator = eSimulatorName::VTD;
 
 	std::shared_ptr<iSimulationData> vtdSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper())));
+	vtdSimulator->getMapper()->setOwner(vtdSimulator);
 
-	reader.setConfig(vtdSimulator, conf);
 	REQUIRE(reader.setConfig(vtdSimulator, conf) == 0);
+}
+
+TEST_CASE("set invalid configuration of simulator") {
+	YAMLConfigReader reader("../test/resources/testconfig1.yaml");
+
+	SingleYAMLConfig conf;
+	conf.index = 1;
+	conf.simulator = eSimulatorName::SIMULATORNAME_ERROR;
+
+	std::shared_ptr<iSimulationData> vtdSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper())));
+
+	REQUIRE(reader.setConfig(vtdSimulator, conf) == 1);
 }

@@ -25,6 +25,10 @@ int main(int argc, char *argv[])
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator);
+		if (newInterface == nullptr){
+			std::cout << "Failed to create a simulator." << std::endl;
+			exit(1);
+		}
 		//set parameters of config
 		if (reader.setConfig(newInterface, simulatorname)) {
 			std::cout << "Problem occured during interpretation of configuration file." << std::endl;
@@ -43,6 +47,11 @@ int main(int argc, char *argv[])
 		simInterface->init("Scenario", 0.0, 0); //TODO set as parameters?
 	}
 
+	simulationLoop(simulationInterfaces, baseSystem);
+	return 0;
+}
+
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem) {
 	//start simulationloop
 	bool continueSimulationLoop = true;
 
@@ -69,5 +78,4 @@ int main(int argc, char *argv[])
 			simInterface->writeTo(baseSystem);
 		}
 	}
-	return 0;
 }
