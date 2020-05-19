@@ -9,6 +9,11 @@
 #include "internalState.h"
 
 //forward declarations
+/**
+* Basic value types
+*/
+typedef std::variant<int, float, double, bool, std::string> values_t;
+enum eDataType;
 class BaseSystemInterface;
 class Mapper;
 
@@ -100,6 +105,20 @@ public:
 	\return Output variables of the interface.
 	*/
 	const std::shared_ptr<internalState> getInternalState();
+
+protected:
+	/**
+	Maps the given value, name and type to the interface.
+	Called by Mapper::mapTo because the interface context is required, which is not known to the mapper.
+	\param value value of the variable
+	\param interfaceName name of variable in interface context
+	\param type data type of variable
+	*/
+	virtual void mapTo(values_t value, std::string interfaceName, eDataType type) = 0;
+	////friend Mapper::mapTo to allow access to mapTo for delegation
+	//friend void Mapper::mapTo(values_t value, std::string interfaceName, eDataType type);
+	// friendship cannot be reduced to single member function because it is not in the forward decleration and thus unknown
+	friend class Mapper;
 
 };
 #endif // !ISIMULATIONDATA_H

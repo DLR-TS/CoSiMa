@@ -120,19 +120,19 @@ public:
 
 protected:
 	/**
-	Maps the given value, name and type to the interface.
-	\param value value of the variable
-	\param interfaceName name of variable in interface context
-	\param type data type of variable
-	*/
-	virtual void mapTo(values_t value, std::string interfaceName, eDataType type) = 0;
-	
-	/**
 	Converts data type strings to enum values.
 	\param type String representation of data type.
 	\return Enum representation of data type.
 	*/
 	eDataType getType(std::string type);
+
+	/**
+	Maps the given value, name and type to the interface.
+	\param value value of the variable
+	\param interfaceName name of variable in interface context
+	\param type data type of variable
+	*/
+	void mapTo(values_t value, std::string interfaceName, eDataType type);
 };
 
 #endif // !MAPPER_H

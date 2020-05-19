@@ -3,14 +3,9 @@
 
 #include "iSimulationData.h"
 #include "../Mapper/Mapper.h"
-#include "fmi4cpp/fmi4cpp.hpp"
 
 class FMIBridge : iSimulationData
 {
-private:
-	std::unique_ptr<fmi4cpp::fmi2::cs_fmu> coSimFMU;
-	std::unique_ptr<fmi4cpp::fmi2::cs_slave> coSimFMUInstance;
-
 public:
 	FMIBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 
@@ -19,7 +14,10 @@ public:
 	int disconnect() override;
 
 	int readOutputs() override;
-	int doStep(double stepSize = 1) override;
+	int doStep() override;
+
+protected:
+	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
 };
 
 #endif // !FMIBRIDGE_H
