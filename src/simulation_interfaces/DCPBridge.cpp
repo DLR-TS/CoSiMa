@@ -18,6 +18,6 @@ int DCPBridge::readOutputs() {
 	return 0;
 }
 
-int DCPBridge::doStep() {
+int DCPBridge::doStep(double stepSize) {
 	return 0;
 }

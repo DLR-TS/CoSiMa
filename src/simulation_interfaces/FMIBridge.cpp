@@ -17,6 +17,6 @@ int FMIBridge::readOutputs() {
 	return 0;
 }
 
-int FMIBridge::doStep() {
+int FMIBridge::doStep(double stepSize) {
 	return 0;
 }
