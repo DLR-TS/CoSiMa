@@ -20,3 +20,7 @@ int VTDBridge::readOutputs() {
 int VTDBridge::doStep() {
 	return 0;
 }
+
+void VTDBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
+
+}

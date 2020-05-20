@@ -10,7 +10,6 @@ public:
 	int readConfiguration(configVariants_t config) override;
 
 	void setConfiguration(/*FMICOnfig*/);
-	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
 
 };
 
