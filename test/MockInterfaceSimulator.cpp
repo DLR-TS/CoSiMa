@@ -3,7 +3,7 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "mapper/Mapper.h" 
 
-class MockInterfaceSimulator : iSimulationData {
+class MockInterfaceSimulator : public iSimulationData {
 public:
 	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 

@@ -73,39 +73,44 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 			config.boolInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
 			break;
 		case INTEGERCOSIMA:
-			config.intInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.intInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.intInputList.size()));
 			break;
 		case FLOATCOSIMA:
-			config.floatInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.floatInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.floatInputList.size()));
 			break;
 		case DOUBLECOSIMA:
-			config.doubleInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.doubleInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.doubleInputList.size()));
 			break;
 		case STRINGCOSIMA:
-			config.stringInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.stringInputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.stringInputList.size()));
 			break;
 		case DATATYPE_ERROR_COSIMA:
 			std::cout << "Wrong definition of input_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
 			return 1;
 		}
 	}
-	//fill output vectors
+	//fill output vectors and internalState for temporary storage
 	for (VariableDefinition definition : yamlconfig.outputs) {
 		switch (getType(definition.type)) {
 		case BOOLCOSIMA:
-			config.boolOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.boolOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolOutputList.size()));
+			owner.lock()->getInternalState()->bools.push_back(0);
 			break;
 		case INTEGERCOSIMA:
-			config.intOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.intOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.intOutputList.size()));
+			owner.lock()->getInternalState()->integers.push_back(0);
 			break;
 		case FLOATCOSIMA:
-			config.floatOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.floatOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.floatOutputList.size()));
+			owner.lock()->getInternalState()->floats.push_back(0);
 			break;
 		case DOUBLECOSIMA:
-			config.doubleOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.doubleOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.doubleOutputList.size()));
+			owner.lock()->getInternalState()->doubles.push_back(0);
 			break;
 		case STRINGCOSIMA:
-			config.stringOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.boolInputList.size()));
+			config.stringOutputList.push_back(NamesAndIndex(definition.base_name, definition.interface_name, (int)config.stringOutputList.size()));
+			owner.lock()->getInternalState()->strings.push_back("");
 			break;
 		case DATATYPE_ERROR_COSIMA:
 			std::cout << "Wrong definition of type in output_map. Allowed are: string, int, (integer), float, double, bool, (boolean)" << std::endl;
@@ -153,6 +158,8 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 		for (NamesAndIndex const &entry: config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
+				std::string a = std::get<std::string>(value);
+				std::cout << a << std::endl;
 				owner.lock()->getInternalState()->strings.at(entry.index) = std::get<std::string>(value);
 				break;
 			}

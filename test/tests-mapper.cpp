@@ -28,6 +28,7 @@ TEST_CASE("Request variable from base system") {
 	config.inputs = inputs;
 	config.outputs = outputs;
 
+	//test begin
 	mapper->readConfiguration(config);
 	mapper->searchInput(base_simulator_ptr);
 
@@ -35,11 +36,11 @@ TEST_CASE("Request variable from base system") {
 	REQUIRE(basesimulator->requestedVariables.at(0) == "VERYBASENAME");
 }
 
-TEST_CASE("Mapping in internalstate the outputs of interfaces") {
+TEST_CASE("Mapping the outputs of interfaces to the internalstate") {
 	MockBaseSimulator* basesimulator = new MockBaseSimulator();
 	MockMapper* n = new MockMapper();
 	Mapper* mapper = (Mapper*)n;
-	MockInterfaceSimulator* interface_simulator = new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper));
+	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
 	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
 
 	InterfaceYAMLConfig config;
@@ -57,19 +58,56 @@ TEST_CASE("Mapping in internalstate the outputs of interfaces") {
 	VariableDefinition definition2;
 	definition2.base_name = "VERYBASENAME2";
 	definition2.interface_name = "MUCHINTERFACE2";
-	definition2.type = "string";
+	definition2.type = "int";
 	outputs.push_back(definition2);
 
 	config.inputs = inputs;
 	config.outputs = outputs;
 
-	mapper->readConfiguration(config);
-	//Problems:
-	//mapper->setOwner(std::shared_ptr<iSimulationData>((iSimulationData*)interface_simulator));
+	interface_simulator->getMapper()->setOwner(interface_simulator);
+	interface_simulator->getMapper()->readConfiguration(config);
+	
+	std::string value1 = "CRAZYVALUE";
+	int value2 = 1289;
 
-	//mapper->mapIn("CRAZYVALUE", "MUCHINTERFACE", eDataType::STRINGCOSIMA);
-	//mapper->mapIn("CRAZYVALUE123", "MUCHINTERFACE2", eDataType::STRINGCOSIMA);
+	//test begin
+	interface_simulator->getMapper()->mapIn(value1, "MUCHINTERFACE", eDataType::STRINGCOSIMA);
+	interface_simulator->getMapper()->mapIn(value2, "MUCHINTERFACE2", eDataType::INTEGERCOSIMA);
 
-	//REQUIRE(interface_simulator->getInternalState()->strings.at(0) == "CRAZYVALUE");
-	//REQUIRE(interface_simulator->getInternalState()->strings.at(1) == "CRAZYVALUE123");
+	REQUIRE(interface_simulator->getInternalState()->strings.at(0) == "CRAZYVALUE");
+	REQUIRE(interface_simulator->getInternalState()->integers.at(0) == 1289);
 }
+
+TEST_CASE(){
+	MockBaseSimulator* basesimulator = new MockBaseSimulator();
+	MockMapper* n = new MockMapper();
+	Mapper* mapper = (Mapper*)n;
+	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
+	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
+	
+	InterfaceYAMLConfig config;
+	config.ip = "12.34.56.78";
+	config.port = 1000;
+	std::vector<VariableDefinition> inputs;
+	std::vector<VariableDefinition> outputs;
+
+	VariableDefinition definition;
+	definition.base_name = "VERYBASENAME";
+	definition.interface_name = "MUCHINTERFACE";
+	definition.type = "string";
+	outputs.push_back(definition);
+
+	config.inputs = inputs;
+	config.outputs = outputs;
+
+	interface_simulator->getMapper()->setOwner(interface_simulator);
+	interface_simulator->getMapper()->readConfiguration(config);
+
+	std::string value = "testvalue";
+	mapper->mapIn(value, "MUCHINTERFACE", STRINGCOSIMA);
+
+	//test begin
+	mapper->writeOutput(base_simulator_ptr);
+
+	REQUIRE(basesimulator->stringvalue == "testvalue");
+};

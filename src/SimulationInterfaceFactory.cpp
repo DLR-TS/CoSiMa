@@ -3,7 +3,9 @@
 std::shared_ptr<iSimulationData> SimulationInterfaceFactory::makeInterface(eSimulatorName simulatorname) {
 	std::shared_ptr<iSimulationData> newInterface = createInterface(simulatorname);
 	//connect mapper with its interface
-	newInterface->getMapper()->setOwner(newInterface);
+	if (newInterface != nullptr) {
+		newInterface->getMapper()->setOwner(newInterface);
+	}
 	return newInterface;
 }
 
@@ -22,6 +24,8 @@ std::shared_ptr<iSimulationData> SimulationInterfaceFactory::createInterface(eSi
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new UnrealBridge(std::shared_ptr<Mapper>((Mapper*)new UnrealMapper()))));
 	case ROS:
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new ROSBridge(std::shared_ptr<Mapper>((Mapper*)new ROSMapper()))));
+	case SIMULATORNAME_ERROR:
+		std::cout << "Try to create a simulatorinterface which is not defined." << std::endl;
 	}
 	return nullptr;
 }
