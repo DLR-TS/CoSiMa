@@ -1,14 +1,14 @@
 ﻿#include "CoSiMa.h"
+#include <filesystem>
 
 int main(int argc, char *argv[])
 {
-	/*
-	Two same (FMI) interfaces in the yaml configuration will create two seperate interfaces. Not two with the same configuration.
-	*/
 	std::cout << "Welcome to CoSiMa." << std::endl << std::endl;
 
+	std::cout << std::filesystem::current_path() << std::endl << std::endl;
+
 	//start parameter
-	std::string path("D:/config.yaml");
+	std::string path("../config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		path = currentArg;//add more complex evaluation if necessary
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	//read config
 	YAMLConfigReader reader = YAMLConfigReader(path);
-	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames(); // TODO: write unit test for reader.getSimulatorNames
+	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
 	
 	/**
 	* Vector that holds every simulation interface.
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
 	//choose protocol
 	//TODO
-	std::shared_ptr <BaseSystemInterface> baseSystem = std::shared_ptr <BaseSystemInterface>((BaseSystemInterface*) new DominionInterface());
+	std::shared_ptr<BaseSystemInterface> baseSystem = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*) new DominionInterface());
 
 
 	//init interfaces
@@ -58,7 +58,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 	while (continueSimulationLoop) {
 
 		//read from base_system
-		for (auto simInterface : simulationInterfaces) {
+		for (auto &simInterface : simulationInterfaces) {
 			//read from baseSystem, sort in internalState and write to interface
 			if (simInterface->mapInput(baseSystem)) {
 				std::cout << "Error in input matching." << std::endl;
@@ -66,12 +66,12 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 			}
 		}
 
-		for (auto simInterface : simulationInterfaces) {
+		for (auto &simInterface : simulationInterfaces) {
 			//do simulaton step
 			simInterface->doStep();
 		}
 
-		for (auto simInterface : simulationInterfaces) {
+		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
 			simInterface->readOutputs();
 			//and write to base system
