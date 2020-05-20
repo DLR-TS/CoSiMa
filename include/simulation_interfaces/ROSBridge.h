@@ -14,7 +14,7 @@ public:
 	int disconnect() override;
 
 	int readOutputs() override;
-	int doStep() override;
+	int doStep(double stepSize = 1) override;
 
 protected:
 	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
