@@ -167,6 +167,10 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 	}
 }
 
+void Mapper::mapTo(values_t value, std::string interfaceName, eDataType type) {
+	owner.lock()->mapTo(value, interfaceName, type);
+}
+
 eDataType Mapper::getType(std::string type) {
 	std::transform(type.begin(), type.end(), type.begin(),
 		[](unsigned char c) { return std::tolower(c); });

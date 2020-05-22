@@ -15,6 +15,9 @@ public:
 
 	int readOutputs() override;
 	int doStep() override;
+
+protected:
+	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
 };
 
 #endif // !ROSBRIDGE_H

@@ -20,3 +20,7 @@ int ROSBridge::readOutputs() {
 int ROSBridge::doStep(){
 	return 0;
 }
+
+void ROSBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
+
+}
