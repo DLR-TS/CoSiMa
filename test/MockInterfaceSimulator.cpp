@@ -23,7 +23,7 @@ public:
 		return 0;
 	}
 
-	int doStep() {
+	int doStep(double stepSize = 1) {
 		return 0;
 	}
 
