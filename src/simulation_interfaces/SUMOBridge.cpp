@@ -17,7 +17,7 @@ int SUMOBridge::readOutputs() {
 	return 0;
 }
 
-int SUMOBridge::doStep() {
+int SUMOBridge::doStep(double stepSize) {
 	return 0;
 }
 

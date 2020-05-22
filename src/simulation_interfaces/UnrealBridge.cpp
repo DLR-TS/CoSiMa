@@ -17,7 +17,7 @@ int UnrealBridge::readOutputs() {
 	return 0;
 }
 
-int UnrealBridge::doStep() {
+int UnrealBridge::doStep(double stepSize) {
 	return 0;
 }
 
