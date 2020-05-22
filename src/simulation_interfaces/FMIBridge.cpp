@@ -20,3 +20,7 @@ int FMIBridge::readOutputs() {
 int FMIBridge::doStep() {
 	return 0;
 }
+
+void FMIBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
+
+}

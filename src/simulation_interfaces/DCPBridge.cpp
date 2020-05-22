@@ -21,3 +21,7 @@ int DCPBridge::readOutputs() {
 int DCPBridge::doStep() {
 	return 0;
 }
+
+void DCPBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
+
+}

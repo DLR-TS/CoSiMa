@@ -27,6 +27,10 @@ public:
 		return 0;
 	}
 
+	void mapTo(values_t value, std::string interfaceName, eDataType type) {
+	
+	}
+
 	std::shared_ptr<internalState> getInternalState() {
 		return getInternalState();
 	}

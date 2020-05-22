@@ -12,6 +12,7 @@ TEST_CASE("Request variable from base system") {
 	MockBaseSimulator* basesimulator= new MockBaseSimulator();
 	Mapper* mapper = (Mapper*)new MockMapper();
 	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*) basesimulator);
+	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
 
 	InterfaceYAMLConfig config;
 	config.ip = "12.34.56.78";
@@ -27,6 +28,8 @@ TEST_CASE("Request variable from base system") {
 
 	config.inputs = inputs;
 	config.outputs = outputs;
+
+	mapper->setOwner(interface_simulator);
 
 	//test begin
 	mapper->readConfiguration(config);
