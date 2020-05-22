@@ -17,7 +17,7 @@ int VTDBridge::readOutputs() {
 	return 0;
 }
 
-int VTDBridge::doStep() {
+int VTDBridge::doStep(double stepSize) {
 	return 0;
 }
 

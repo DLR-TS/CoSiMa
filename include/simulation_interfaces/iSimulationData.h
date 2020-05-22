@@ -90,7 +90,7 @@ public:
 	Do simulation step.
 	\return Success status.
 	*/
-	virtual int doStep() = 0;
+	virtual int doStep(double stepSize = 1) = 0;
 	/**
 	update outputs of the interface
 	use the Mapper::mapIn method to load Outputs
