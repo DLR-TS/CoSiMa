@@ -68,12 +68,11 @@ public:
 		config = MapperConfig();
 	}
 
-private:
+protected:
 	/**
 	Configuration of Mapper.
 	*/
 	MapperConfig config;
-protected:
 	//most interfaces need these
 
 	/**
