@@ -3,7 +3,7 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "mapper/Mapper.h" 
 
-class MockInterfaceSimulator : iSimulationData {
+class MockInterfaceSimulator : public iSimulationData {
 public:
 	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 
@@ -23,8 +23,12 @@ public:
 		return 0;
 	}
 
-	int doStep() {
+	int doStep(double stepSize = 1) {
 		return 0;
+	}
+
+	void mapTo(values_t value, std::string interfaceName, eDataType type) {
+	
 	}
 
 	std::shared_ptr<internalState> getInternalState() {

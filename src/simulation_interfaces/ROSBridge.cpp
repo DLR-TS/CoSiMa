@@ -17,7 +17,7 @@ int ROSBridge::readOutputs() {
 	return 0;
 }
 
-int ROSBridge::doStep(double stepSize){
+int ROSBridge::doStep(double stepSize) {
 	return 0;
 }
 

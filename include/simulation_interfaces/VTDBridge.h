@@ -18,6 +18,7 @@ public:
 
 protected:
 	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
+
 };
 
 #endif // !VTDBRIDGE_H

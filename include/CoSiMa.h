@@ -10,4 +10,7 @@
 #include "configreader/YAMLConfigReader.h"
 #include "SimulationInterfaceFactory.h"
 
+
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem);
+
 #endif // !COSIMA_H
