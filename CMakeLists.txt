@@ -36,7 +36,7 @@ conan_cmake_run(CONANFILE conanfile.txt
                 BASIC_SETUP CMAKE_TARGETS
                 BUILD missing)
 
-# FMI4cpp is not distributed as conan package, but still can use conan for dependancy management.
+# FMI4cpp is not distributed as conan package, but still can use conan for dependency management.
 conan_cmake_run(CONANFILE lib/FMI4cpp/conanfile.txt 
                 BUILD missing)
 set(FMI4CPP_USING_CONAN ON CACHE BOOL "Build FMI4cpp using conan" FORCE)

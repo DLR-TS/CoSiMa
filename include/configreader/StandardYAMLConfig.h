@@ -60,9 +60,9 @@ public:
 
 /**
 * \var std::string simulator
-* holds name of the variable in the interface system
+* name of simulator type
 * \var std::string model
-* holds name of the variable in the base system
+* path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
 
 */
 struct FMIInterfaceConfig {
