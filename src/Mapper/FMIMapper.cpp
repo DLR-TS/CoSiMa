@@ -26,53 +26,89 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	auto coSimFMU = fmu->as_cs_fmu();
 	auto modelDescription = coSimFMU->get_model_description();
 
-	//cast iSimulationData to FMIBridge to move co-simulation FMU into it
-	auto bridge = std::dynamic_pointer_cast<FMIBridge>(owner.lock());
+	//cast iSimulationData to FMIBridge to move co-simulation FMU into it (would be nicer if using public inheritance)
+	//auto bridge = std::dynamic_pointer_cast<FMIBridge>(owner.lock());
+	auto bridge = (FMIBridge*)owner.lock().get();
 	bridge->coSimFMU = std::move(coSimFMU);
+
+	auto state = owner.lock()->getInternalState();
 
 	//TODO need basename definitions for base interface
 	for (const auto& var : *modelDescription->model_variables) {
 		// cannot switch on outputVar.value_type because fmi4cpp uses strings and cannot use getType because type name 'Real' is not defined (maps to some floating point type, typically double) 
-		if (var.is_boolean()) {
-			if (fmi4cpp::fmi2::causality::input == var.causality) {
-				config.boolInputList.push_back(NamesAndIndex(var.name, var.name, (int)config.boolInputList.size()));
+		if (fmi4cpp::fmi2::causality::input == var.causality || fmi4cpp::fmi2::causality::parameter == var.causality) {
+			// FMI p56: Variables with causality = "parameter" or "input", as well as variables with variability = "constant", must have a "start" value.
+			// return value 11833 if "start" is missing
+			if (var.is_boolean()) {
+				auto boolVar = var.as_boolean();
+				if (boolVar.start().has_value()) {
+					config.boolInputList.push_back(NamesAndIndex(var.name, var.name, (int)state->bools.size()));
+					state->bools.push_back(boolVar.start().value());
+				}
+				else {
+					return 11833;
+				}
 			}
-			else if (fmi4cpp::fmi2::causality::output == var.causality) {
-				config.boolOutputList.push_back(NamesAndIndex(var.name, var.name, (int)config.boolOutputList.size()));
+			else if (var.is_enumeration() || var.is_integer()) {
+				auto intVar = var.as_integer();
+				if (intVar.start().has_value()) {
+					config.intInputList.push_back(NamesAndIndex(var.name, var.name, (int)state->integers.size()));
+					state->integers.push_back(intVar.start().value());
+				}
+				else {
+					return 11833;
+				}
+			}
+			else if (var.is_real()) {
+				auto realVar = var.as_real();
+				if (realVar.start().has_value()) {
+					if (typeid(fmi2Real) == typeid(double)) {
+						config.doubleInputList.push_back(NamesAndIndex(var.name, var.name, (int)state->doubles.size()));
+						state->doubles.push_back(realVar.start().value());
+
+					}
+					else {
+						config.floatInputList.push_back(NamesAndIndex(var.name, var.name, (int)state->floats.size()));
+						state->floats.push_back(realVar.start().value());
+					}
+				}
+				else {
+					return 11833;
+				}
+			}
+			else /*if (var.is_string())*/ {
+				auto stringVar = var.as_string();
+				if (stringVar.start().has_value()) {
+					config.stringInputList.push_back(NamesAndIndex(var.name, var.name, (int)state->strings.size()));
+					state->strings.push_back(stringVar.start().value());
+				}
+				else {
+					return 11833;
+				}
 			}
 		}
-		else if (var.is_enumeration() || var.is_integer()) {
-			if (fmi4cpp::fmi2::causality::input == var.causality) {
-				config.intInputList.push_back(NamesAndIndex(var.name, var.name, (int)config.intInputList.size()));
+		else if (fmi4cpp::fmi2::causality::output == var.causality || fmi4cpp::fmi2::causality::calculatedParameter == var.causality) {
+			if (var.is_boolean()) {
+				config.boolOutputList.push_back(NamesAndIndex(var.name, var.name, (int)state->bools.size()));
+				state->bools.push_back(bool());
 			}
-			else if (fmi4cpp::fmi2::causality::output == var.causality) {
-				config.intOutputList.push_back(NamesAndIndex(var.name, var.name, (int)config.intOutputList.size()));
+			else if (var.is_enumeration() || var.is_integer()) {
+				config.intOutputList.push_back(NamesAndIndex(var.name, var.name, (int)state->integers.size()));
+				state->integers.push_back(int());
 			}
-		}
-		else if (var.is_real()) {
-			if (typeid(fmi2Real) == typeid(double)) {
-				if (fmi4cpp::fmi2::causality::input == var.causality) {
-					config.doubleInputList.push_back(NamesAndIndex(var.name, var.name, (int)config.doubleInputList.size()));
+			else if (var.is_real()) {
+				if (typeid(fmi2Real) == typeid(double)) {
+					config.doubleOutputList.push_back(NamesAndIndex(var.name, var.name, (int)state->doubles.size()));
+					state->doubles.push_back(double());
 				}
-				else if (fmi4cpp::fmi2::causality::output == var.causality) {
-					config.doubleOutputList.push_back(NamesAndIndex(var.name, var.name, (int)config.doubleOutputList.size()));
-				}
-			}
-			else {
-				if (fmi4cpp::fmi2::causality::input == var.causality) {
-					config.floatInputList.push_back(NamesAndIndex(var.name, var.name, (int)config.floatInputList.size()));
-				}
-				else if (fmi4cpp::fmi2::causality::output == var.causality) {
-					config.floatOutputList.push_back(NamesAndIndex(var.name, var.name, (int)config.floatOutputList.size()));
+				else {
+					config.floatOutputList.push_back(NamesAndIndex(var.name, var.name, (int)state->floats.size()));
+					state->floats.push_back(float());
 				}
 			}
-		}
-		else /*if (var.is_string())*/ {
-			if (fmi4cpp::fmi2::causality::input == var.causality) {
-				config.stringInputList.push_back(NamesAndIndex(var.name, var.name, (int)config.stringInputList.size()));
-			}
-			else if (fmi4cpp::fmi2::causality::output == var.causality) {
-				config.stringOutputList.push_back(NamesAndIndex(var.name, var.name, (int)config.stringOutputList.size()));
+			else /*if (var.is_string())*/ {
+				config.stringOutputList.push_back(NamesAndIndex(var.name, var.name, (int)state->strings.size()));
+				state->strings.push_back(std::string());
 			}
 		}
 	}

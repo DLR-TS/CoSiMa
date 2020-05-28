@@ -39,21 +39,21 @@ enum eDataType
 
 /**
 * Configuration of Mapper.
-* Contains the relation between base name and (interface name and index in data structure) for each datatype as well as input and output. 
+* Contains the relation between base name and (interface name and index in data structure) for each datatype as well as input and output.
 */
 class MapperConfig {
 public:
 	//base_names to interface_names relation
-	std::list<NamesAndIndex> intInputList {};
-	std::list<NamesAndIndex> intOutputList {};
-	std::list<NamesAndIndex> floatInputList {};
-	std::list<NamesAndIndex> floatOutputList {};
-	std::list<NamesAndIndex> doubleInputList {};
-	std::list<NamesAndIndex> doubleOutputList {};
-	std::list<NamesAndIndex> boolInputList {};
-	std::list<NamesAndIndex> boolOutputList {};
-	std::list<NamesAndIndex> stringInputList {};
-	std::list<NamesAndIndex> stringOutputList {};
+	std::list<NamesAndIndex> intInputList{};
+	std::list<NamesAndIndex> intOutputList{};
+	std::list<NamesAndIndex> floatInputList{};
+	std::list<NamesAndIndex> floatOutputList{};
+	std::list<NamesAndIndex> doubleInputList{};
+	std::list<NamesAndIndex> doubleOutputList{};
+	std::list<NamesAndIndex> boolInputList{};
+	std::list<NamesAndIndex> boolOutputList{};
+	std::list<NamesAndIndex> stringInputList{};
+	std::list<NamesAndIndex> stringOutputList{};
 };
 
 class iSimulationData;
