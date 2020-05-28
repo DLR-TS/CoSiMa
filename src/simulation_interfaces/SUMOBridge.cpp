@@ -21,6 +21,6 @@ int SUMOBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void SUMOBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int SUMOBridge::readTo() {
+	return 0;
 }

@@ -21,6 +21,6 @@ int UnrealBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void UnrealBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int UnrealBridge::readTo() {
+	return 0;
 }

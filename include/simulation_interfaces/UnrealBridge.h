@@ -17,7 +17,7 @@ public:
 	int doStep(double stepSize = 1) override;
 
 protected:
-	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
+	int readTo() override;
 	
 };
 

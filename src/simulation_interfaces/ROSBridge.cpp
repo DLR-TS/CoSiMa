@@ -17,10 +17,10 @@ int ROSBridge::readOutputs() {
 	return 0;
 }
 
-int ROSBridge::doStep(double stepSize){
+int ROSBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void ROSBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int ROSBridge::readTo() {
+	return 0;
 }

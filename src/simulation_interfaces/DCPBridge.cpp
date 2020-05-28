@@ -22,6 +22,6 @@ int DCPBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void DCPBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int DCPBridge::readTo() {
+	return 0;
 }

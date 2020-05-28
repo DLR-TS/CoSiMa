@@ -117,6 +117,13 @@ public:
 	\param type data type of variable
 	*/
 	void mapIn(values_t value, std::string interfaceName, eDataType type);
+	/**
+	Retrieves the value mapped to the given name and type from the internalState
+	\param interfaceName name of the variable in interface context
+	\param type data type of variable
+	\return mapped value in internalState
+	*/
+	values_t mapOut(std::string interfaceName, eDataType type);
 
 protected:
 	/**
@@ -126,13 +133,6 @@ protected:
 	*/
 	eDataType getType(std::string type);
 
-	/**
-	Maps the given value, name and type to the interface.
-	\param value value of the variable
-	\param interfaceName name of variable in interface context
-	\param type data type of variable
-	*/
-	void mapTo(values_t value, std::string interfaceName, eDataType type);
 };
 
 #endif // !MAPPER_H

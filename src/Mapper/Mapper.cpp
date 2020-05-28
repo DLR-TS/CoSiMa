@@ -5,27 +5,27 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer
 	for (const NamesAndIndex &input : config.intInputList) {
 		int value = baseInterface->getIntValue(input.baseName);
-		mapTo(value, input.interfaceName, INTEGERCOSIMA);
+		owner.lock()->getInternalState()->integers.at(input.index) = value;
 	}
 	//float
 	for (const NamesAndIndex &input : config.floatInputList) {
 		float value = baseInterface->getFloatValue(input.baseName);
-		mapTo(value, input.interfaceName, FLOATCOSIMA);
+		owner.lock()->getInternalState()->floats.at(input.index) = value;
 	}
 	//double
 	for (const NamesAndIndex &input : config.doubleInputList) {
 		double value = baseInterface->getDoubleValue(input.baseName);
-		mapTo(value , input.interfaceName, DOUBLECOSIMA);
+		owner.lock()->getInternalState()->doubles.at(input.index) = value;
 	}
 	//bool
 	for (const NamesAndIndex &input : config.boolInputList) {
 		bool value = baseInterface->getBoolValue(input.baseName);
-		mapTo(value, input.interfaceName, BOOLCOSIMA);
+		owner.lock()->getInternalState()->bools.at(input.index) = value;
 	}
 	//std::string
 	for (const NamesAndIndex &input : config.stringInputList) {
 		std::string value = baseInterface->getStringValue(input.baseName);
-		mapTo(value, input.interfaceName, STRINGCOSIMA);
+		owner.lock()->getInternalState()->strings.at(input.index) = value;
 	}
 	return 0;
 }
@@ -121,7 +121,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 }
 
 void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
-	switch(type) {
+	switch (type) {
 	case BOOLCOSIMA:
 		for (NamesAndIndex const &entry : config.boolOutputList)
 		{
@@ -155,7 +155,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 			}
 		}
 	case STRINGCOSIMA:
-		for (NamesAndIndex const &entry: config.stringOutputList)
+		for (NamesAndIndex const &entry : config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				std::string a = std::get<std::string>(value);
@@ -167,9 +167,49 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 	}
 }
 
-void Mapper::mapTo(values_t value, std::string interfaceName, eDataType type) {
-	owner.lock()->mapTo(value, interfaceName, type);
+values_t Mapper::mapOut(std::string interfaceName, eDataType type)
+{
+	switch (type) {
+	case BOOLCOSIMA:
+		for (NamesAndIndex const &entry : config.boolOutputList)
+		{
+			if (entry.interfaceName == interfaceName) {
+				return owner.lock()->getInternalState()->bools.at(entry.index);
+			}
+		}
+	case INTEGERCOSIMA:
+		for (NamesAndIndex const &entry : config.intOutputList)
+		{
+			if (entry.interfaceName == interfaceName) {
+				return owner.lock()->getInternalState()->integers.at(entry.index);
+			}
+		}
+	case FLOATCOSIMA:
+		for (NamesAndIndex const &entry : config.floatOutputList)
+		{
+			if (entry.interfaceName == interfaceName) {
+				return owner.lock()->getInternalState()->floats.at(entry.index);
+			}
+		}
+	case DOUBLECOSIMA:
+		for (NamesAndIndex const &entry : config.doubleOutputList)
+		{
+			if (entry.interfaceName == interfaceName) {
+				return owner.lock()->getInternalState()->doubles.at(entry.index);
+			}
+		}
+	case STRINGCOSIMA:
+		for (NamesAndIndex const &entry : config.stringOutputList)
+		{
+			if (entry.interfaceName == interfaceName) {
+				return owner.lock()->getInternalState()->strings.at(entry.index);
+			}
+		}
+	}
+	//TODO really use throw?
+	throw 42;
 }
+
 
 eDataType Mapper::getType(std::string type) {
 	std::transform(type.begin(), type.end(), type.begin(),

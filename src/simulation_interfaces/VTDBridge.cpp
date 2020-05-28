@@ -21,6 +21,6 @@ int VTDBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void VTDBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int VTDBridge::readTo() {
+	return 0;
 }
