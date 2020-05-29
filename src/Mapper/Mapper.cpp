@@ -15,7 +15,7 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//double
 	for (const NamesAndIndex &input : config.doubleInputList) {
 		double value = baseInterface->getDoubleValue(input.baseName);
-		mapTo(value , input.interfaceName, DOUBLECOSIMA);
+		mapTo(value, input.interfaceName, DOUBLECOSIMA);
 	}
 	//bool
 	for (const NamesAndIndex &input : config.boolInputList) {
@@ -121,50 +121,57 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 }
 
 void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
-	switch(type) {
+	switch (type) {
 	case BOOLCOSIMA:
 		for (NamesAndIndex const &entry : config.boolOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				owner.lock()->getInternalState()->bools.at(entry.index) = std::get<bool>(value);
-				break;
+				return;
 			}
 		}
+		break;
 	case INTEGERCOSIMA:
 		for (NamesAndIndex const &entry : config.intOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				owner.lock()->getInternalState()->integers.at(entry.index) = std::get<int>(value);
-				break;
+				return;
 			}
 		}
+		break;
 	case FLOATCOSIMA:
 		for (NamesAndIndex const &entry : config.floatOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				owner.lock()->getInternalState()->floats.at(entry.index) = std::get<float>(value);
-				break;
+				return;
 			}
 		}
+		break;
 	case DOUBLECOSIMA:
 		for (NamesAndIndex const &entry : config.doubleOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				owner.lock()->getInternalState()->doubles.at(entry.index) = std::get<double>(value);
-				break;
+				return;
 			}
 		}
+		break;
 	case STRINGCOSIMA:
-		for (NamesAndIndex const &entry: config.stringOutputList)
+		for (NamesAndIndex const &entry : config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				std::string a = std::get<std::string>(value);
 				std::cout << a << std::endl;
 				owner.lock()->getInternalState()->strings.at(entry.index) = std::get<std::string>(value);
-				break;
+				return;
 			}
 		}
+		break;
 	}
+	std::cout << "Mapper.cpp(Mapper::mapIn): Could not map variable " << interfaceName << " of type " << std::boolalpha
+		<< type << " to internal state because there is no variable of such name and type to map to." << std::endl;
 }
 
 void Mapper::mapTo(values_t value, std::string interfaceName, eDataType type) {
