@@ -9,7 +9,9 @@ int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	//	//TODO set up stepFinished callback
 	//}
 
+	//Instance name cannot be set with FMU4cpp. The model identifier is used automatically instead
 	coSimSlave = coSimFMU->new_instance();
+
 	//TODO where to get the stop time and tolerance (both optional)?
 	coSimSlave->setup_experiment((fmi2Real)starttime);
 	//TODO set variables with initial==exact or initial==approx
@@ -34,15 +36,15 @@ int FMIBridge::readOutputs() {
 	auto const model_description = coSimFMU->get_model_description();
 	//iterate over unknowns declared as output
 	for (auto const& unknown : model_description->model_structure->outputs) {
-		// translate unknown into scalar_variable
-		auto const& outputVar = (*model_description->model_variables.get())[unknown.index];
+		// use index to translate unknown into scalar_variable. FMU ScalarVariable index begins at 1
+		auto const& outputVar = (*model_description->model_variables.get())[unknown.index - 1];
 
 		// cannot switch on outputVar.value_type because fmi4cpp uses strings and 'real' has no match in Mapper::getType
 		// Map output value into internal preStepState
 		if (outputVar.is_boolean()) {
 			fmi2Boolean boolean;
 			coSimSlave->read_boolean(outputVar.value_reference, boolean);
-			mapper->mapIn(boolean, outputVar.name, eDataType::BOOLCOSIMA);
+			mapper->mapIn((bool)boolean, outputVar.name, eDataType::BOOLCOSIMA);
 		}
 		else if (outputVar.is_enumeration() || outputVar.is_integer()) {
 			fmi2Integer integer;
@@ -52,7 +54,8 @@ int FMIBridge::readOutputs() {
 		else if (outputVar.is_real()) {
 			fmi2Real real;
 			coSimSlave->read_real(outputVar.value_reference, real);
-			const values_t value = real;//TODO skip this test and always use double? default fmi2TypesPlatform.h uses double
+			const values_t value = real;
+			//TODO skip this test and always use double? default fmi2TypesPlatform.h uses double
 			if (nullptr != std::get_if<double>(&value)) {
 				mapper->mapIn(real, outputVar.name, eDataType::DOUBLECOSIMA);
 			}
@@ -110,6 +113,7 @@ int FMIBridge::doStep(double stepSize) {
 }
 
 void FMIBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
+	//TODO also fill internal state?? --> Issue !9
 	auto const& variable = coSimSlave->get_model_description()->get_variable_by_name(interfaceName);
 	switch (type)
 	{
@@ -123,7 +127,7 @@ void FMIBridge::mapTo(values_t value, std::string interfaceName, eDataType type)
 	case DOUBLECOSIMA:
 	case FLOATCOSIMA:
 	{
-		//TODO this will break when fmi2Real is not defined as double but value somehow is!!
+		//TODO this will break when fmi2Real is not defined as double but value somehow is
 		const fmi2Real real = std::get<fmi2Real>(value);
 		coSimSlave->write_real(variable.value_reference, real);
 		break;
