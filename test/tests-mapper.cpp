@@ -1,7 +1,6 @@
 #include "catch2/catch.hpp"
 
 #include "mapper/Mapper.h"
-#include "mapper/FMIMapper.h"
 #include "MockBaseSimulator.cpp"
 #include "MockInterfaceSimulator.cpp"
 #include "MockMapper.cpp"

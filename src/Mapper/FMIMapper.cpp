@@ -69,7 +69,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 					}
 					else {
 						config.floatInputList.push_back(NamesAndIndex(modelDescription->model_identifier + "." + var.name, var.name, (int)state->floats.size()));
-						state->floats.push_back(realVar.start().value());
+						state->floats.push_back((float)realVar.start().value());
 					}
 				}
 				else {

@@ -93,7 +93,8 @@ int FMIBridge::doStep(double stepSize) {
 		case fmi4cpp::status::Error:
 			return -2;//TODO decide on common error return values
 		case fmi4cpp::status::Discard:
-			if (!preStepState) {
+			//If a pre step state could be captured and the slave supports step size variation, try performing smaller substeps instead of one stepSize step
+			if (!preStepState || !coSimSlave->get_model_description()->can_handle_variable_communication_step_size) {
 				return 2;
 			}
 			//restore state before failed step
