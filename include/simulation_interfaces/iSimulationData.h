@@ -43,11 +43,10 @@ public:
 	*/
 	iSimulationData(std::shared_ptr<Mapper> mapper) {
 		this->mapper = mapper;
-		this->state = std::make_shared<internalState>();
+
 	}
 protected:
 	/**
-	Holds all input variables.
 	Holds a copy of the simulator interface variables.
 	*/
 	std::shared_ptr<internalState> state;
@@ -101,10 +100,6 @@ public:
 	\return Mapper of this interface.
 	*/
 	std::shared_ptr<Mapper> getMapper();
-	/**
-	\return Output variables of the interface.
-	*/
-	const std::shared_ptr<internalState> getInternalState();
 
 	/**
 	Reads the internal state into the simulation interface.
