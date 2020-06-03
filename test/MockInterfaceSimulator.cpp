@@ -19,7 +19,7 @@ public:
 		return 0;
 	}
 
-	int readOutputs() {
+	int writeToInternalState() {
 		return 0;
 	}
 
@@ -27,7 +27,7 @@ public:
 		return 0;
 	}
 
-	int readTo() {
+	int readFromInternalState() {
 		return 0;
 	}
 

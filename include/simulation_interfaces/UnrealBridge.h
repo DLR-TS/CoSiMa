@@ -13,11 +13,11 @@ public:
 	int connect(std::string) override;
 	int disconnect() override;
 
-	int readOutputs() override;
+	int writeToInternalState() override;
 	int doStep(double stepSize = 1) override;
 
 protected:
-	int readTo() override;
+	int readFromInternalState() override;
 	
 };
 

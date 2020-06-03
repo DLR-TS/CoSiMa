@@ -48,6 +48,7 @@ public:
 protected:
 	/**
 	Holds all input variables.
+	Holds a copy of the simulator interface variables.
 	*/
 	std::shared_ptr<internalState> state;
 	/**
@@ -80,22 +81,22 @@ public:
 	\param baseInterface base interface
 	\return Success status.
 	*/
-	int mapInput(std::shared_ptr<BaseSystemInterface> baseInterface);
+	int mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Write output data of interface to base system
 	\return Success status.
 	*/
-	int writeTo(std::shared_ptr<BaseSystemInterface> baseInterface);
+	int mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Do simulation step.
 	\return Success status.
 	*/
 	virtual int doStep(double stepSize = 1) = 0;
 	/**
-	update outputs of the interface
-	use the Mapper::mapIn method to load Outputs
+	update outputs of the interface in the internal state
+	uses the Mapper::mapToInternalState method to write outputs
 	*/
-	virtual int readOutputs() = 0;
+	virtual int writeToInternalState() = 0;
 	/**
 	\return Mapper of this interface.
 	*/
@@ -108,7 +109,7 @@ public:
 	/**
 	Reads the internal state into the simulation interface.
 	*/
-	virtual int readTo() = 0;
+	virtual int readFromInternalState() = 0;
 
 };
 #endif // !ISIMULATIONDATA_H

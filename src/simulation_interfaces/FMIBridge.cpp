@@ -13,7 +13,7 @@ int FMIBridge::disconnect() {
 	return 0;
 }
 
-int FMIBridge::readOutputs() {
+int FMIBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -21,6 +21,6 @@ int FMIBridge::doStep(double stepSize) {
 	return 0;
 }
 
-int FMIBridge::readTo() {
+int FMIBridge::readFromInternalState() {
 	return 0;
 }

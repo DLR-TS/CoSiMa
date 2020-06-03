@@ -74,11 +74,11 @@ TEST_CASE("Mapping the outputs of interfaces to the internalstate") {
 	int value2 = 1289;
 
 	//test begin
-	interface_simulator->getMapper()->mapIn(value1, "MUCHINTERFACE", eDataType::STRINGCOSIMA);
-	interface_simulator->getMapper()->mapIn(value2, "MUCHINTERFACE2", eDataType::INTEGERCOSIMA);
+	interface_simulator->getMapper()->mapToInternalState(value1, "MUCHINTERFACE", eDataType::STRINGCOSIMA);
+	interface_simulator->getMapper()->mapToInternalState(value2, "MUCHINTERFACE2", eDataType::INTEGERCOSIMA);
 
-	REQUIRE(interface_simulator->getInternalState()->strings.at(0) == "CRAZYVALUE");
-	REQUIRE(interface_simulator->getInternalState()->integers.at(0) == 1289);
+	REQUIRE(interface_simulator->getMapper()->getInternalState()->strings.at(0) == "CRAZYVALUE");
+	REQUIRE(interface_simulator->getMapper()->getInternalState()->integers.at(0) == 1289);
 }
 
 TEST_CASE(){
@@ -107,7 +107,7 @@ TEST_CASE(){
 	interface_simulator->getMapper()->readConfiguration(config);
 
 	std::string value = "testvalue";
-	mapper->mapIn(value, "MUCHINTERFACE", STRINGCOSIMA);
+	mapper->mapToInternalState(value, "MUCHINTERFACE", STRINGCOSIMA);
 
 	//test begin
 	mapper->writeOutput(base_simulator_ptr);

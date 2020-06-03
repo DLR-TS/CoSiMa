@@ -60,7 +60,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		//read from base_system
 		for (auto &simInterface : simulationInterfaces) {
 			//read from baseSystem, sort in internalState and write to interface
-			if (simInterface->mapInput(baseSystem)) {
+			if (simInterface->mapToInterfaceSystem(baseSystem)) {
 				std::cout << "Error in input matching." << std::endl;
 				continueSimulationLoop = false;
 			}
@@ -73,9 +73,9 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 
 		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
-			simInterface->readOutputs();
+			simInterface->writeToInternalState();
 			//and write to base system
-			simInterface->writeTo(baseSystem);
+			simInterface->mapFromInterfaceSystem(baseSystem);
 		}
 	}
 }

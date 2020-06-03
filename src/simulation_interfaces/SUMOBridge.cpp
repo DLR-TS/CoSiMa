@@ -13,7 +13,7 @@ int SUMOBridge::disconnect() {
 	return 0;
 }
 
-int SUMOBridge::readOutputs() {
+int SUMOBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -21,6 +21,6 @@ int SUMOBridge::doStep(double stepSize) {
 	return 0;
 }
 
-int SUMOBridge::readTo() {
+int SUMOBridge::readFromInternalState() {
 	return 0;
 }

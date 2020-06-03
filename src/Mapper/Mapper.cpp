@@ -120,7 +120,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 	return 0;
 }
 
-void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
+void Mapper::mapToInternalState(values_t value, std::string interfaceName, eDataType type) {
 	switch (type) {
 	case BOOLCOSIMA:
 		for (NamesAndIndex const &entry : config.boolOutputList)
@@ -167,7 +167,7 @@ void Mapper::mapIn(values_t value, std::string interfaceName, eDataType type) {
 	}
 }
 
-values_t Mapper::mapOut(std::string interfaceName, eDataType type)
+values_t Mapper::mapFromInternalState(std::string interfaceName, eDataType type)
 {
 	switch (type) {
 	case BOOLCOSIMA:

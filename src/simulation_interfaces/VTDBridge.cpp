@@ -13,7 +13,7 @@ int VTDBridge::disconnect() {
 	return 0;
 }
 
-int VTDBridge::readOutputs() {
+int VTDBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -21,6 +21,6 @@ int VTDBridge::doStep(double stepSize) {
 	return 0;
 }
 
-int VTDBridge::readTo() {
+int VTDBridge::readFromInternalState() {
 	return 0;
 }
