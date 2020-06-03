@@ -133,29 +133,37 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 		{
 			if (entry.interfaceName == interfaceName) {
 				state->bools.at(entry.index) = std::get<bool>(value);
+				return;
 			}
 		}
+		break;
 	case INTEGERCOSIMA:
 		for (NamesAndIndex const &entry : config.intOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				state->integers.at(entry.index) = std::get<int>(value);
+				return;
 			}
 		}
+		break;
 	case FLOATCOSIMA:
 		for (NamesAndIndex const &entry : config.floatOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				state->floats.at(entry.index) = std::get<float>(value);
+				return;
 			}
 		}
+		break;
 	case DOUBLECOSIMA:
 		for (NamesAndIndex const &entry : config.doubleOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				state->doubles.at(entry.index) = std::get<double>(value);
+				return;
 			}
 		}
+		break;
 	case STRINGCOSIMA:
 		for (NamesAndIndex const &entry : config.stringOutputList)
 		{
@@ -163,52 +171,63 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 				std::string a = std::get<std::string>(value);
 				std::cout << a << std::endl;
 				state->strings.at(entry.index) = std::get<std::string>(value);
+				return;
 			}
 		}
+		break;
 	}
+	//Not found
+	//TODO really use throw?
+	throw 404;
 }
 
 values_t Mapper::mapFromInternalState(std::string interfaceName, eDataType type)
 {
 	switch (type) {
 	case BOOLCOSIMA:
-		for (NamesAndIndex const &entry : config.boolOutputList)
+		for (NamesAndIndex const &entry : config.boolInputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				return state->bools.at(entry.index);
 			}
 		}
+		break;
 	case INTEGERCOSIMA:
-		for (NamesAndIndex const &entry : config.intOutputList)
+		for (NamesAndIndex const &entry : config.intInputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				return state->integers.at(entry.index);
 			}
 		}
+		break;
 	case FLOATCOSIMA:
-		for (NamesAndIndex const &entry : config.floatOutputList)
+		for (NamesAndIndex const &entry : config.floatInputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				return state->floats.at(entry.index);
 			}
 		}
+		break;
 	case DOUBLECOSIMA:
-		for (NamesAndIndex const &entry : config.doubleOutputList)
+		for (NamesAndIndex const &entry : config.doubleInputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				return state->doubles.at(entry.index);
 			}
 		}
+		break;
 	case STRINGCOSIMA:
-		for (NamesAndIndex const &entry : config.stringOutputList)
+		for (NamesAndIndex const &entry : config.stringInputList)
 		{
 			if (entry.interfaceName == interfaceName) {
 				return state->strings.at(entry.index);
 			}
 		}
+		break;
 	}
+	//Not found
 	//TODO really use throw?
-	throw 42;
+	throw 404;
 }
 
 
