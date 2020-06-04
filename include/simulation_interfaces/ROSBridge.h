@@ -14,11 +14,10 @@ public:
 	int disconnect() override;
 
 	int writeToInternalState() override;
+	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
 
-protected:
-	int readFromInternalState() override;
-	
+
 };
 
 #endif // !ROSBRIDGE_H

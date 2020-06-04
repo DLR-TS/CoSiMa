@@ -14,10 +14,9 @@ public:
 	int disconnect() override;
 
 	int writeToInternalState() override;
+	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
 
-	int readFromInternalState() override;
-	
 };
 
 #endif // !UNREALBRIDGE_H
