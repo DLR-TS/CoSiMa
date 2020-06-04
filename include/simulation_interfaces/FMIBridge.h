@@ -14,10 +14,8 @@ public:
 	int disconnect() override;
 
 	int writeToInternalState() override;
-	int doStep(double stepSize = 1) override;
-
-protected:
 	int readFromInternalState() override;
+	int doStep(double stepSize = 1) override;
 
 };
 
