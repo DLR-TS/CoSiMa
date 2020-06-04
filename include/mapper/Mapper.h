@@ -69,12 +69,11 @@ public:
 		this->state = std::make_shared<internalState>();
 	}
 
-private:
+protected:
 	/**
 	Configuration of Mapper.
 	*/
 	MapperConfig config;
-protected:
 	//most interfaces need these
 
 	/**
