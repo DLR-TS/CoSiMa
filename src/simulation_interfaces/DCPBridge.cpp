@@ -14,7 +14,7 @@ int DCPBridge::disconnect() {
 	return 0;
 }
 
-int DCPBridge::readOutputs() {
+int DCPBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -22,6 +22,6 @@ int DCPBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void DCPBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int DCPBridge::readFromInternalState() {
+	return 0;
 }

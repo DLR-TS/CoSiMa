@@ -13,7 +13,7 @@ int UnrealBridge::disconnect() {
 	return 0;
 }
 
-int UnrealBridge::readOutputs() {
+int UnrealBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -21,6 +21,6 @@ int UnrealBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void UnrealBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int UnrealBridge::readFromInternalState() {
+	return 0;
 }

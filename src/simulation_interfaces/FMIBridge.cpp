@@ -31,7 +31,7 @@ int FMIBridge::disconnect() {
 	return 0;
 }
 
-int FMIBridge::readOutputs() {
+int FMIBridge::writeToInternalState() {
 
 	auto const model_description = coSimFMU->get_model_description();
 	//iterate over unknowns declared as output
@@ -44,12 +44,12 @@ int FMIBridge::readOutputs() {
 		if (outputVar.is_boolean()) {
 			fmi2Boolean boolean;
 			coSimSlave->read_boolean(outputVar.value_reference, boolean);
-			mapper->mapIn((bool)boolean, outputVar.name, eDataType::BOOLCOSIMA);
+			mapper->mapToInternalState((bool)boolean, outputVar.name, eDataType::BOOLCOSIMA);
 		}
 		else if (outputVar.is_enumeration() || outputVar.is_integer()) {
 			fmi2Integer integer;
 			coSimSlave->read_integer(outputVar.value_reference, integer);
-			mapper->mapIn(integer, outputVar.name, eDataType::INTEGERCOSIMA);
+			mapper->mapToInternalState(integer, outputVar.name, eDataType::INTEGERCOSIMA);
 		}
 		else if (outputVar.is_real()) {
 			fmi2Real real;
@@ -57,16 +57,16 @@ int FMIBridge::readOutputs() {
 			const values_t value = real;
 			//TODO skip this test and always use double? default fmi2TypesPlatform.h uses double
 			if (nullptr != std::get_if<double>(&value)) {
-				mapper->mapIn(real, outputVar.name, eDataType::DOUBLECOSIMA);
+				mapper->mapToInternalState(real, outputVar.name, eDataType::DOUBLECOSIMA);
 			}
 			else {
-				mapper->mapIn(real, outputVar.name, eDataType::FLOATCOSIMA);
+				mapper->mapToInternalState(real, outputVar.name, eDataType::FLOATCOSIMA);
 			}
 		}
 		else {
 			fmi2String string;
 			coSimSlave->read_string(outputVar.value_reference, string);
-			mapper->mapIn(string, outputVar.name, eDataType::STRINGCOSIMA);
+			mapper->mapToInternalState(string, outputVar.name, eDataType::STRINGCOSIMA);
 		}
 		//}
 	}
@@ -113,43 +113,52 @@ int FMIBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void FMIBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-	//TODO also fill internal state?? --> Issue !9
-	auto const& variable = coSimSlave->get_model_description()->get_variable_by_name(interfaceName);
-	switch (type)
-	{
-	case INTEGERCOSIMA:
-	{
-		const fmi2Integer integer = std::get<fmi2Integer>(value);
-		coSimSlave->write_integer(variable.value_reference, integer);
-		break;
+int FMIBridge::readFromInternalState() {
+	auto const modelDescription = coSimSlave->get_model_description();
+	// The following would have to loop twice, because it cannot filter for multiple causalities at once
+	//std::vector<fmi4cpp::fmi2::scalar_variable> inputs;
+	//modelDescription->model_variables->getByCausality(fmi4cpp::fmi2::causality::input, inputs);
+	//modelDescription->model_variables->getByCausality(fmi4cpp::fmi2::causality::parameter, inputs);
+	// Explicit loop to filter is faster:
+	for (auto const& variable : *(modelDescription->model_variables)) {
+
+		if (fmi4cpp::fmi2::causality::input == variable.causality
+			|| fmi4cpp::fmi2::causality::parameter == variable.causality) {
+
+			if (variable.is_integer())
+			{
+				const values_t value = mapper->mapFromInternalState(variable.name, eDataType::INTEGERCOSIMA);
+				const fmi2Integer integer = std::get<fmi2Integer>(value);
+				coSimSlave->write_integer(variable.value_reference, integer);
+			}
+			//FMI specifies only 'Real'. No discrimination of precision
+			else if (variable.is_real())
+			{
+				const values_t value = mapper->mapFromInternalState(variable.name,
+					typeid(fmi2Real) == typeid(double) ? eDataType::DOUBLECOSIMA : eDataType::FLOATCOSIMA);
+				const fmi2Real real = std::get<fmi2Real>(value);
+				coSimSlave->write_real(variable.value_reference, real);
+			}
+			else if (variable.is_boolean())
+			{
+				const values_t value = mapper->mapFromInternalState(variable.name, eDataType::BOOLCOSIMA);
+				const fmi2Boolean boolean = std::get<bool>(value);
+				coSimSlave->write_boolean(variable.value_reference, boolean);
+			}
+			else if (variable.is_string())
+			{
+				const values_t value = mapper->mapFromInternalState(variable.name, eDataType::STRINGCOSIMA);
+				const fmi2String str = std::get<std::string>(value).c_str();
+				coSimSlave->write_string(variable.value_reference, str);
+			}
+			else {
+				//this would indicate and error in FMI4cpp...
+				std::cerr << "FMIBridge::mapTo encountered unsupported type " << variable.type_name() << std::endl;
+				return -1;
+			}
+		}
 	}
-	//FMI specifies only 'Real'. No discrimination of precision
-	case DOUBLECOSIMA:
-	case FLOATCOSIMA:
-	{
-		//TODO this will break when fmi2Real is not defined as double but value somehow is
-		const fmi2Real real = std::get<fmi2Real>(value);
-		coSimSlave->write_real(variable.value_reference, real);
-		break;
-	}
-	case BOOLCOSIMA:
-	{
-		const fmi2Boolean boolean = std::get<bool>(value);
-		coSimSlave->write_boolean(variable.value_reference, boolean);
-		break;
-	}
-	case STRINGCOSIMA:
-	{
-		const fmi2String str = std::get<std::string>(value).c_str();
-		coSimSlave->write_string(variable.value_reference, str);
-		break;
-	}
-	case DATATYPE_ERROR_COSIMA:
-	default:
-		std::cerr << "FMIBridge::mapTo encountered unsupported type " << type << std::endl;
-		break;
-	}
+	return 0;
 }
 
 inline FMIBridge::FMUSlaveStateWrapper::FMUSlaveStateWrapper(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {

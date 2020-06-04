@@ -13,7 +13,7 @@ int ROSBridge::disconnect() {
 	return 0;
 }
 
-int ROSBridge::readOutputs() {
+int ROSBridge::writeToInternalState() {
 	return 0;
 }
 
@@ -21,6 +21,6 @@ int ROSBridge::doStep(double stepSize) {
 	return 0;
 }
 
-void ROSBridge::mapTo(values_t value, std::string interfaceName, eDataType type) {
-
+int ROSBridge::readFromInternalState() {
+	return 0;
 }

@@ -31,8 +31,6 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	auto bridge = (FMIBridge*)owner.lock().get();
 	bridge->coSimFMU = std::move(coSimFMU);
 
-	auto state = owner.lock()->getInternalState();
-
 	//TODO need basename definitions for base interface. Current implementation prepends the modelIdentifier, separated with "."
 	for (const auto& var : *modelDescription->model_variables) {
 		// cannot switch on outputVar.value_type because fmi4cpp uses strings and cannot use getType because type name 'Real' is not defined (maps to some floating point type, typically double) 

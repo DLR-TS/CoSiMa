@@ -41,11 +41,11 @@ public:
 	int connect(std::string info) override;
 	int disconnect() override;
 
-	int readOutputs() override;
+	int writeToInternalState() override;
 	int doStep(double stepSize = 1) override;
 
 protected:
-	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
+	int readFromInternalState() override;
 
 };
 

@@ -31,7 +31,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 		REQUIRE(0 == mapper->readConfiguration(config));
 		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
 
-		auto state = simulationInterface->getInternalState();
+		auto state = simulationInterface->getMapper()->getInternalState();
 
 		std::vector<std::string> inputNames = {
 			"real_fixed_param",
@@ -48,7 +48,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			"bool_out" };
 
 
-		SECTION("Use different values as fmu input: 0") {
+		SECTION("Use different values as fmu input: variant 0") {
 			const bool boolvalue = true;
 			const double doublevalue = 1.23;
 			const float floatvalue = 3.21f;
@@ -60,7 +60,8 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			baseInterface->intvalue = intvalue;
 			baseInterface->stringvalue = stringvalue;
 
-			REQUIRE(0 == simulationInterface->mapInput(baseSystem));
+			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			REQUIRE(0 == simulationInterface->readFromInternalState());
 
 			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
 				return std::any_of(baseInterface->requestedVariables.begin(), baseInterface->requestedVariables.end(),
@@ -75,8 +76,8 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			//REQUIRE(std::all_of(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
 
 			REQUIRE(0 == simulationInterface->doStep(1e-5));
-			REQUIRE(0 == simulationInterface->readOutputs());
-			REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 
 			// Feedthrough shouldn't change the values, same for the FMU interface
 			REQUIRE(doublevalue == baseInterface->doublevalue);
@@ -86,13 +87,14 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			REQUIRE(false == baseInterface->boolvalue);
 			baseInterface->stringvalue = "FMI is awesome!";
 			baseInterface->boolvalue = boolvalue;
-			REQUIRE(0 == simulationInterface->mapInput(baseSystem));
-			REQUIRE(0 == simulationInterface->readOutputs());
+			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			REQUIRE(0 == simulationInterface->readFromInternalState());
 			baseInterface->boolvalue = !boolvalue;
-			REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 			REQUIRE(boolvalue == baseInterface->boolvalue);
 		}
-		SECTION("Use different values as fmu input: a") {
+		SECTION("Use different values as fmu input: variant a") {
 			const bool boolvalue = false;
 			const double doublevalue = 1e23;
 			const float floatvalue = 3.14f;
@@ -104,7 +106,8 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			baseInterface->intvalue = intvalue;
 			baseInterface->stringvalue = stringvalue;
 
-			REQUIRE(0 == simulationInterface->mapInput(baseSystem));
+			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			REQUIRE(0 == simulationInterface->readFromInternalState());
 
 			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
 				return std::any_of(baseInterface->requestedVariables.begin(), baseInterface->requestedVariables.end(),
@@ -119,8 +122,8 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			//REQUIRE(std::all_of(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
 
 			REQUIRE(0 == simulationInterface->doStep(1e-3));
-			REQUIRE(0 == simulationInterface->readOutputs());
-			REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 
 			// Feedthrough shouldn't change the values, same for the FMU interface
 			REQUIRE(doublevalue == baseInterface->doublevalue);
@@ -130,9 +133,10 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			REQUIRE(false == baseInterface->boolvalue);
 			baseInterface->stringvalue = "FMI is awesome!";
 			baseInterface->boolvalue = boolvalue;
-			REQUIRE(0 == simulationInterface->mapInput(baseSystem));
-			REQUIRE(0 == simulationInterface->readOutputs());
-			REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			REQUIRE(0 == simulationInterface->readFromInternalState());
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 			REQUIRE(boolvalue == baseInterface->boolvalue);
 		}
 	}
@@ -148,7 +152,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 1, 0));
 
 		SECTION("Negative stepSize should fail") {
-			REQUIRE(0 == simulationInterface->mapInput(baseSystem));
+			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
 			REQUIRE(0 != simulationInterface->doStep(-1e-3));
 		}
 		SECTION("Positive stepSize is OK") {
@@ -156,18 +160,18 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			SECTION("Two steps of 0.8s") {
 				baseInterface->intvalue = -1;
 
-				REQUIRE(0 == simulationInterface->mapInput(baseSystem));
+				REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
 				REQUIRE(0 == simulationInterface->doStep(.8f));
-				REQUIRE(0 == simulationInterface->readOutputs());
-				REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+				REQUIRE(0 == simulationInterface->writeToInternalState());
+				REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 
 				//output 'counter' depends on time t. At t=0: counter = 0, for t in (0,1]: counter=1, for t in (1,2]: counter=2,...
 				REQUIRE(2 == baseInterface->intvalue);//t = 1.8
 
 				//REQUIRE(0 == simulationInterface->mapInput(baseSystem));
 				REQUIRE(0 == simulationInterface->doStep(.8f));
-				REQUIRE(0 == simulationInterface->readOutputs());
-				REQUIRE(0 == simulationInterface->writeTo(baseSystem));
+				REQUIRE(0 == simulationInterface->writeToInternalState());
+				REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
 
 				REQUIRE(3 == baseInterface->intvalue);//t = 2.6
 			}
