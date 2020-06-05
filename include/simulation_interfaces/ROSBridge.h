@@ -2,12 +2,12 @@
 #define ROSBRIDGE_H
 
 #include "simulation_interfaces/iSimulationData.h"
-#include "../Mapper/Mapper.h"
+#include "../mapper/Mapper.h"
 
 class ROSBridge : iSimulationData
 {
 public:
-	ROSBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
+	ROSBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;
