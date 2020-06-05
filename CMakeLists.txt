@@ -85,7 +85,7 @@ add_subdirectory("include")
 add_subdirectory("test")
 #create library to
 
-add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
+add_library(CoSimulationManagerLib STATIC ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
 # FMI4cpp is not managed by conan, thus it is added here
