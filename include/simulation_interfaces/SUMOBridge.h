@@ -2,12 +2,12 @@
 #define SUMOBRIDGE_H
 
 #include "iSimulationData.h"
-#include "../Mapper/Mapper.h"
+#include "../mapper/Mapper.h"
 
 class SUMOBridge : iSimulationData
 {
 public:
-	SUMOBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
+	SUMOBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

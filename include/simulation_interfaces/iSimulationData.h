@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include "base_interfaces/BaseSystemInterface.h"
-#include "Mapper/Mapper.h"
+#include "mapper/Mapper.h"
 #include "internalState.h"
 
 //forward declarations
@@ -20,7 +20,8 @@ class Mapper;
 /**
 * Enum containing all supported interfaces and error for parsing failures.
 */
-enum eSimulatorName {
+enum eSimulatorName
+{
 	FMI, //needs to be first
 	VTD,
 	ROS,
@@ -41,10 +42,12 @@ public:
 	Constructor of iSimulationData.
 	\param mapper Mapper to be set.
 	*/
-	iSimulationData(std::shared_ptr<Mapper> mapper) {
+	iSimulationData(std::shared_ptr<Mapper> mapper)
+	{
 		this->mapper = mapper;
 
 	}
+
 protected:
 	/**
 	Holds a copy of the simulator interface variables.
