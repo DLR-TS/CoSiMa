@@ -39,21 +39,21 @@ enum eDataType
 
 /**
 * Configuration of Mapper.
-* Contains the relation between base name and (interface name and index in data structure) for each datatype as well as input and output. 
+* Contains the relation between base name and (interface name and index in data structure) for each datatype as well as input and output.
 */
 class MapperConfig {
 public:
 	//base_names to interface_names relation
-	std::list<NamesAndIndex> intInputList {};
-	std::list<NamesAndIndex> intOutputList {};
-	std::list<NamesAndIndex> floatInputList {};
-	std::list<NamesAndIndex> floatOutputList {};
-	std::list<NamesAndIndex> doubleInputList {};
-	std::list<NamesAndIndex> doubleOutputList {};
-	std::list<NamesAndIndex> boolInputList {};
-	std::list<NamesAndIndex> boolOutputList {};
-	std::list<NamesAndIndex> stringInputList {};
-	std::list<NamesAndIndex> stringOutputList {};
+	std::list<NamesAndIndex> intInputList{};
+	std::list<NamesAndIndex> intOutputList{};
+	std::list<NamesAndIndex> floatInputList{};
+	std::list<NamesAndIndex> floatOutputList{};
+	std::list<NamesAndIndex> doubleInputList{};
+	std::list<NamesAndIndex> doubleOutputList{};
+	std::list<NamesAndIndex> boolInputList{};
+	std::list<NamesAndIndex> boolOutputList{};
+	std::list<NamesAndIndex> stringInputList{};
+	std::list<NamesAndIndex> stringOutputList{};
 };
 
 class iSimulationData;
@@ -65,7 +65,8 @@ class Mapper {
 
 public:
 	Mapper() {
-		config = MapperConfig();
+		this->config = MapperConfig();
+		this->state = std::make_shared<internalState>();
 	}
 
 protected:
@@ -83,6 +84,10 @@ protected:
 	Port of interface. Used by almost all mapper implementations.
 	*/
 	int port;
+	/**
+	Holds a copy of the simulator interface variables.
+	*/
+	std::shared_ptr<internalState> state;
 	/**
 	This interface has this mapper
 	*/
@@ -115,7 +120,18 @@ public:
 	\param interfaceName name of variable in interface context
 	\param type data type of variable
 	*/
-	void mapIn(values_t value, std::string interfaceName, eDataType type);
+	void mapToInternalState(values_t value, std::string interfaceName, eDataType type);
+	/**
+	Retrieves the value mapped to the given name and type from the internalState
+	\param interfaceName name of the variable in interface context
+	\param type data type of variable
+	\return mapped value in internalState
+	*/
+	values_t mapFromInternalState(std::string interfaceName, eDataType type);
+	/**
+	Get state variable buffer for this interface
+	*/
+	std::shared_ptr<internalState> getInternalState();
 
 protected:
 	/**
@@ -125,13 +141,6 @@ protected:
 	*/
 	eDataType getType(std::string type);
 
-	/**
-	Maps the given value, name and type to the interface.
-	\param value value of the variable
-	\param interfaceName name of variable in interface context
-	\param type data type of variable
-	*/
-	void mapTo(values_t value, std::string interfaceName, eDataType type);
 };
 
 #endif // !MAPPER_H

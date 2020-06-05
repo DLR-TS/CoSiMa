@@ -43,11 +43,11 @@ public:
 	*/
 	iSimulationData(std::shared_ptr<Mapper> mapper) {
 		this->mapper = mapper;
-		this->state = std::make_shared<internalState>();
+
 	}
 protected:
 	/**
-	Holds all input variables.
+	Holds a copy of the simulator interface variables.
 	*/
 	std::shared_ptr<internalState> state;
 	/**
@@ -80,45 +80,31 @@ public:
 	\param baseInterface base interface
 	\return Success status.
 	*/
-	int mapInput(std::shared_ptr<BaseSystemInterface> baseInterface);
+	int mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Write output data of interface to base system
 	\return Success status.
 	*/
-	int writeTo(std::shared_ptr<BaseSystemInterface> baseInterface);
+	int mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Do simulation step.
 	\return Success status.
 	*/
 	virtual int doStep(double stepSize = 1) = 0;
 	/**
-	update outputs of the interface
-	use the Mapper::mapIn method to load Outputs
+	update outputs of the interface in the internal state
+	uses the Mapper::mapToInternalState method to write outputs
 	*/
-	virtual int readOutputs() = 0;
+	virtual int writeToInternalState() = 0;
 	/**
 	\return Mapper of this interface.
 	*/
 	std::shared_ptr<Mapper> getMapper();
-public:
-	/**
-	\return Output variables of the interface.
-	*/
-	const std::shared_ptr<internalState> getInternalState();
 
-protected:
 	/**
-	Maps the given value, name and type to the interface.
-	Called by Mapper::mapTo because the interface context is required, which is not known to the mapper.
-	\param value value of the variable
-	\param interfaceName name of variable in interface context
-	\param type data type of variable
+	Reads the internal state into the simulation interface.
 	*/
-	virtual void mapTo(values_t value, std::string interfaceName, eDataType type) = 0;
-	////friend Mapper::mapTo to allow access to mapTo for delegation
-	//friend void Mapper::mapTo(values_t value, std::string interfaceName, eDataType type);
-	// friendship cannot be reduced to single member function because it is not in the forward decleration and thus unknown
-	friend class Mapper;
+	virtual int readFromInternalState() = 0;
 
 };
 #endif // !ISIMULATIONDATA_H

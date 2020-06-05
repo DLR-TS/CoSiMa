@@ -50,7 +50,6 @@ add_subdirectory(lib/FMI4cpp/ EXCLUDE_FROM_ALL)
 
 
 # include protobuf, yaml_cpp, catch2, fakeit
-
 include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 conan_basic_setup()
@@ -86,7 +85,7 @@ add_subdirectory("include")
 add_subdirectory("test")
 #create library to
 
-add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
+add_library(CoSimulationManagerLib STATIC ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
 # FMI4cpp is not managed by conan, thus it is added here
@@ -97,6 +96,20 @@ find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
 target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(test_CoSiMa CoSimulationManagerLib ${CONAN_LIBS} Catch2::Catch2)
+
+#copy test resources to build folder
+add_custom_command(TARGET test_CoSiMa PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         make_directory $<TARGET_FILE_DIR:test_CoSiMa>/../test/resources/)
+#Feedthrough_cs_me.fmu contains definitions for both me and cs => created copies with edited modelDescription.xml
+add_custom_command(TARGET test_CoSiMa PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy_if_different
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig1.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_cs.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_me.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Stair.fmu
+						 $<TARGET_FILE_DIR:test_CoSiMa>/../test/resources/)
 
 include(CTest)
 include(Catch)

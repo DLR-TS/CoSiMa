@@ -13,12 +13,11 @@ public:
 	int connect(std::string) override;
 	int disconnect() override;
 
-	int readOutputs() override;
+	int writeToInternalState() override;
+	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
 
-protected:
-	void mapTo(values_t value, std::string interfaceName, eDataType type) override;
-	
+
 };
 
 #endif // !ROSBRIDGE_H
