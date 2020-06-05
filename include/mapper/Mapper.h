@@ -84,6 +84,23 @@ protected:
 	Port of interface. Used by almost all mapper implementations.
 	*/
 	int port;
+
+	/*
+	Input and output handling with the internal state should go as follows:
+
+	1.  Mapper::readConfiguration fills MapperConfig while also reserving space in the internal state. MapperConfig holds a variable name to index mapping for variable names in both the base and simulation interface. The index indicates the respective value in the internal state.
+		Input values are copied from the base interface to the simulation interface as follows:
+
+		1.	iSimulationData::mapToInterfaceSystem(baseSystem) maps input values from the given base interface into the internal state buffer of the simulation interface.
+		2.	iSimulationData::readFromInternalState() reads input values needed by the simulation interface from the internal state, utilizing the Mapper::mapFromInternalState(interfaceName, type) function (formerly known as Mapper::MapIn), and writes them to the simulation interface.
+
+
+	2.	Output values are copied from the simulation interface to the base interface as follows:
+
+		1.  iSimulationData::writeToInternalState() reads output values from the simulation interface and writes them to the internal state using the Mapper::mapToInternalState(value, interfaceName, type) function (formerly known as Mapper::MapTo).
+		2.	iSimulationData::mapFromInterfaceSystem(baseSystem) maps output values from the simulation interface's internal state buffer to the base interface.
+	*/
+
 	/**
 	Holds a copy of the simulator interface variables.
 	*/

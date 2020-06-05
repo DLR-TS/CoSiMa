@@ -12,7 +12,7 @@
 #include <chrono>
 
 
-class FMIBridge : iSimulationData
+class FMIBridge : public iSimulationData
 {
 	friend class FMIMapper;
 private:
@@ -44,7 +44,6 @@ public:
 	int writeToInternalState() override;
 	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
-
 };
 
 #endif // !FMIBRIDGE_H

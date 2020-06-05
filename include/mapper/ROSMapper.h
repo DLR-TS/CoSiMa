@@ -3,7 +3,7 @@
 
 #include "Mapper.h"
 
-class ROSMapper : Mapper {
+class ROSMapper : public Mapper {
 
 };
 

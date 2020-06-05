@@ -14,7 +14,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 
 	FMIInterfaceConfig interfaceConfig = std::get<FMIInterfaceConfig>(configVariants);
 
-	//TODO retrieve FMU location from SSP -  currently interprets ssp file node as FMU path for testing
+	//TODO retrieve FMU location from SSP - currently interprets ssp file node as FMU path for testing
 
 	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.models));
 	if (!fmu->supports_cs()) {
@@ -26,9 +26,12 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	auto coSimFMU = fmu->as_cs_fmu();
 	auto modelDescription = coSimFMU->get_model_description();
 
-	//cast iSimulationData to FMIBridge to move co-simulation FMU into it (would be nicer if using public inheritance)
-	//auto bridge = std::dynamic_pointer_cast<FMIBridge>(owner.lock());
-	auto bridge = (FMIBridge*)owner.lock().get();
+	//cast iSimulationData to FMIBridge to move co-simulation FMU into it
+	auto bridge = std::dynamic_pointer_cast<FMIBridge>(owner.lock());
+	if (!bridge) {
+		//Incompatible owner; Not a FMIBridge
+		return 2142;
+	}
 	bridge->coSimFMU = std::move(coSimFMU);
 
 	//TODO need basename definitions for base interface. Current implementation prepends the modelIdentifier, separated with "."

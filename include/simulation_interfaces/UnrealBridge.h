@@ -4,7 +4,7 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "../mapper/Mapper.h"
 
-class UnrealBridge : iSimulationData
+class UnrealBridge : public iSimulationData
 {
 public:
 	UnrealBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};

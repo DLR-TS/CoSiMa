@@ -56,7 +56,7 @@ int FMIBridge::writeToInternalState() {
 			coSimSlave->read_real(outputVar.value_reference, real);
 			const values_t value = real;
 			//TODO skip this test and always use double? default fmi2TypesPlatform.h uses double
-			if (nullptr != std::get_if<double>(&value)) {
+			if (typeid(fmi2Real) == typeid(double)) {
 				mapper->mapToInternalState(real, outputVar.name, eDataType::DOUBLECOSIMA);
 			}
 			else {
@@ -80,7 +80,7 @@ int FMIBridge::doStep(double stepSize) {
 	//TODO support rollback in case step is incomplete?
 	auto preStepState = FMUSlaveStateWrapper::tryGetStateOf(coSimSlave);
 
-	//TODO step by stepSize
+	// step by stepSize
 	if (!coSimSlave->step(stepSize)) {
 		while (fmi4cpp::status::Pending == coSimSlave->last_status()) {
 			//wait for asynchronous fmu to finish

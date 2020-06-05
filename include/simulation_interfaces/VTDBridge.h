@@ -4,7 +4,7 @@
 #include "iSimulationData.h"
 #include "../Mapper/Mapper.h"
 
-class VTDBridge : iSimulationData
+class VTDBridge : public iSimulationData
 {
 public:
 	VTDBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};

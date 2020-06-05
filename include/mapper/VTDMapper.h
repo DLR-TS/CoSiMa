@@ -3,7 +3,7 @@
 
 #include "Mapper.h"
 
-class VTDMapper : Mapper {
+class VTDMapper : public Mapper {
 
 };
 
