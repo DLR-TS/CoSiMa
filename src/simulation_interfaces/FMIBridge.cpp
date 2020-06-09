@@ -138,7 +138,7 @@ int FMIBridge::readFromInternalState() {
 		if (fmi4cpp::fmi2::causality::input == variable.causality
 			|| fmi4cpp::fmi2::causality::parameter == variable.causality) {
 
-			/*	From FMI 2.0 Specification, section 2.2.7:
+			/*	From FMI 2.0 Specification, section 2.2.7, reduced to co-simulation relevant parts:
 
 			fmi2SetXXX can be called on any variable with variability ≠ "constant" before initialization
 			(before calling fmi2EnterInitializationMode)
@@ -150,15 +150,10 @@ int FMIBridge::readFromInternalState() {
 			-	if initial = "exact" [in order to set the corresponding start value], or
 			-	if causality = "input" [in order to provide new values for inputs]
 
-			fmi2SetXXX can be called on any variable for ModelExchange at an event instant (after calling
-			fmi2EnterEventMode and before fmi2EnterContinuousTimeMode is called), and for CoSimulation at every communication point,
+			fmi2SetXXX can be called on any variable for CoSimulation at every communication point,
 			-	if causality = "parameter" and variability = "tunable" [in order to change the value of the
 				tunable parameter at an event instant or at a communication point], or
 			-	if causality = "input" [in order to provide new values for inputs]
-
-			fmi2SetXXX can be called on any variable for ModelExchange in Continuous-Time Mode
-			-	if causality = "input" and variability = "continuous"
-				[in order to provide new values for inputs during continuous integration]
 			*/
 
 			if (!enteredInitializationMode) {
