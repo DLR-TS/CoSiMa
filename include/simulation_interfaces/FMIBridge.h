@@ -18,6 +18,8 @@ class FMIBridge : public iSimulationData
 private:
 	std::unique_ptr<fmi4cpp::fmi2::cs_fmu> coSimFMU;
 	std::shared_ptr<fmi4cpp::fmi2::cs_slave> coSimSlave;
+	bool enteredInitializationMode;
+	bool leftInitializationMode;
 
 
 	class FMUSlaveStateWrapper {

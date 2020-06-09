@@ -1,4 +1,4 @@
-#include <string>
+﻿#include <string>
 #include "simulation_interfaces/FMIBridge.h"
 
 int FMIBridge::init(std::string scenario, float starttime, int mode) {
@@ -9,6 +9,11 @@ int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	//	//TODO set up stepFinished callback
 	//}
 
+	if (enteredInitializationMode) {
+		//already initialized
+		return -99;
+	}
+
 	//Instance name cannot be set with FMU4cpp. The model identifier is used automatically instead
 	coSimSlave = coSimFMU->new_instance();
 
@@ -16,10 +21,11 @@ int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	coSimSlave->setup_experiment((fmi2Real)starttime);
 	//TODO set variables with initial==exact or initial==approx
 	coSimSlave->enter_initialization_mode();
-	//TODO set independent and continuous-time variables with initial==exact
-	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
-	//TODO get (calculated or dependent) values and derivatives, if needed
-	coSimSlave->exit_initialization_mode();
+	////TODO set independent and continuous-time variables with initial==exact
+	////TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
+	////TODO get (calculated or dependent) values and derivatives, if needed
+	//coSimSlave->exit_initialization_mode();
+	enteredInitializationMode = true;
 	return 0;
 }
 
@@ -77,6 +83,13 @@ int FMIBridge::doStep(double stepSize) {
 	//TODO set independent tunable parameters
 	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
 
+	if (!enteredInitializationMode) {
+		return -999;
+	}
+	else if (!leftInitializationMode) {
+		coSimSlave->exit_initialization_mode();
+	}
+
 	//TODO support rollback in case step is incomplete?
 	auto preStepState = FMUSlaveStateWrapper::tryGetStateOf(coSimSlave);
 
@@ -124,6 +137,51 @@ int FMIBridge::readFromInternalState() {
 
 		if (fmi4cpp::fmi2::causality::input == variable.causality
 			|| fmi4cpp::fmi2::causality::parameter == variable.causality) {
+
+			/*	From FMI 2.0 Specification, section 2.2.7:
+
+			fmi2SetXXX can be called on any variable with variability ≠ "constant" before initialization
+			(before calling fmi2EnterInitializationMode)
+			-	if initial = "exact" or "approx" [in order to set the corresponding start value].
+				[Note that this prevents any changes to the input before fmi2EnterInitializationMode is called.]
+
+			fmi2SetXXX can be called on any variable with variability ≠ "constant" during initialization (after
+			calling fmi2EnterInitializationMode and before fmi2ExitInitializationMode is called)
+			-	if initial = "exact" [in order to set the corresponding start value], or
+			-	if causality = "input" [in order to provide new values for inputs]
+
+			fmi2SetXXX can be called on any variable for ModelExchange at an event instant (after calling
+			fmi2EnterEventMode and before fmi2EnterContinuousTimeMode is called), and for CoSimulation at every communication point,
+			-	if causality = "parameter" and variability = "tunable" [in order to change the value of the
+				tunable parameter at an event instant or at a communication point], or
+			-	if causality = "input" [in order to provide new values for inputs]
+
+			fmi2SetXXX can be called on any variable for ModelExchange in Continuous-Time Mode
+			-	if causality = "input" and variability = "continuous"
+				[in order to provide new values for inputs during continuous integration]
+			*/
+
+			if (!enteredInitializationMode) {
+				if (!(fmi4cpp::fmi2::initial::exact == variable.initial || fmi4cpp::fmi2::initial::approx == variable.initial)) {
+					// Only variables of variability ≠ 'constant' and initial of either 'exact' or 'approx' can be set before entering initialization mode
+					// -> calculated parameters with initial = 'approx' can ONLY be set here
+					continue;
+				}
+			}
+			else if (!leftInitializationMode) {
+				if (fmi4cpp::fmi2::initial::approx == variable.initial) {
+					// Variables of 'approx' initial can only be set before initialization mode
+					continue;
+				}
+			}
+			else {
+
+				if (fmi4cpp::fmi2::variability::fixed == variable.variability /*|| fmi4cpp::fmi2::initial::approx == variable.initial*/) {
+					// Variables of 'fixed' variability cannot change after leaving initialization mode
+					// For variables of causality 'parameter' this leaves only 'tunable' as valid choice for variability
+					continue;
+				}
+			}
 
 			if (variable.is_integer())
 			{
