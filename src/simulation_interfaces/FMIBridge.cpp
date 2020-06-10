@@ -88,6 +88,7 @@ int FMIBridge::doStep(double stepSize) {
 	}
 	else if (!leftInitializationMode) {
 		coSimSlave->exit_initialization_mode();
+		leftInitializationMode = true;
 	}
 
 	//TODO support rollback in case step is incomplete?
