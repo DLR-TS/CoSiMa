@@ -2,7 +2,7 @@
 
 #include "base_interfaces/BaseSystemInterface.h"
 
-class MockBaseSimulator : BaseSystemInterface {
+class MockBaseSimulator : public BaseSystemInterface {
 
 public:
 	int intvalue;
