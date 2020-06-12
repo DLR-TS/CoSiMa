@@ -1,0 +1,3 @@
+[submodule "lib"]
+	path = lib
+	url = ../cosima_externals.git
