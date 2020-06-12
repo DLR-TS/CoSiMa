@@ -11,9 +11,6 @@
 before_script:
   - echo $CI_BUILD_REF
   - echo $CI_PROJECT_DIR
-  - echo "Replacing submodules with '../CoSiMa_externals'"
-  - mv externals.gitmodules .gitmodules
-  - git submodules sync --recursive
 
 stages:
   - prepare
