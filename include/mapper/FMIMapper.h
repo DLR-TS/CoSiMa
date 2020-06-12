@@ -7,7 +7,7 @@
 #define NOMINMAX
 #include "fmi4cpp/fmi4cpp.hpp"
 
-class FMIMapper : Mapper {
+class FMIMapper : public Mapper {
 
 	friend class FMIBridge;
 public:

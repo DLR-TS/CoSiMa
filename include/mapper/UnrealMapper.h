@@ -3,7 +3,7 @@
 
 #include "Mapper.h"
 
-class UnrealMapper : Mapper {
+class UnrealMapper : public Mapper {
 
 };
 

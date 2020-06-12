@@ -8,10 +8,10 @@
 
 TEST_CASE("Request variable from base system") {
 
-	MockBaseSimulator* basesimulator = new MockBaseSimulator();
-	Mapper* mapper = (Mapper*)new MockMapper();
-	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
-	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
+	std::shared_ptr<MockBaseSimulator> basesimulator = std::make_shared<MockBaseSimulator>();
+	std::shared_ptr<Mapper> mapper = std::make_shared<Mapper>();
+	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = basesimulator;
+	std::shared_ptr<iSimulationData> interface_simulator = std::make_shared<MockInterfaceSimulator>(mapper);
 
 	InterfaceYAMLConfig config;
 	config.ip = "12.34.56.78";
@@ -39,11 +39,9 @@ TEST_CASE("Request variable from base system") {
 }
 
 TEST_CASE("Mapping the outputs of interfaces to the internalstate") {
-	MockBaseSimulator* basesimulator = new MockBaseSimulator();
-	MockMapper* n = new MockMapper();
-	Mapper* mapper = (Mapper*)n;
-	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
-	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
+	std::shared_ptr<MockBaseSimulator> basesimulator = std::make_shared<MockBaseSimulator>();
+	std::shared_ptr<Mapper> mapper = std::make_shared<MockMapper>();
+	std::shared_ptr<iSimulationData> interface_simulator = std::make_shared<MockInterfaceSimulator>(mapper);
 
 	InterfaceYAMLConfig config;
 	config.ip = "12.34.56.78";
@@ -81,11 +79,10 @@ TEST_CASE("Mapping the outputs of interfaces to the internalstate") {
 }
 
 TEST_CASE() {
-	MockBaseSimulator* basesimulator = new MockBaseSimulator();
-	MockMapper* n = new MockMapper();
-	Mapper* mapper = (Mapper*)n;
-	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
-	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
+	std::shared_ptr<MockBaseSimulator> basesimulator = std::make_shared<MockBaseSimulator>();
+	std::shared_ptr<Mapper> mapper = std::make_shared<MockMapper>();
+	std::shared_ptr<iSimulationData> interface_simulator = std::make_shared<MockInterfaceSimulator>(mapper);
+	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = basesimulator;
 
 	InterfaceYAMLConfig config;
 	config.ip = "12.34.56.78";
@@ -115,11 +112,10 @@ TEST_CASE() {
 };
 
 TEST_CASE("Read a YAML-config into internal state and back") {
-	MockBaseSimulator* basesimulator = new MockBaseSimulator();
-	MockMapper* n = new MockMapper();
-	Mapper* mapper = (Mapper*)n;
-	std::shared_ptr<iSimulationData> interface_simulator = std::shared_ptr<iSimulationData>(new MockInterfaceSimulator(std::shared_ptr<Mapper>(mapper)));
-	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)basesimulator);
+	std::shared_ptr<MockBaseSimulator> basesimulator = std::make_shared<MockBaseSimulator>();
+	std::shared_ptr<Mapper> mapper = std::make_shared<MockMapper>();
+	std::shared_ptr<iSimulationData> interface_simulator = std::make_shared<MockInterfaceSimulator>(mapper);
+	std::shared_ptr<BaseSystemInterface> base_simulator_ptr = basesimulator;
 
 	InterfaceYAMLConfig config;
 	config.ip = "12.34.56.78";

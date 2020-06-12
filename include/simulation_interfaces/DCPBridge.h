@@ -4,7 +4,7 @@
 #include "iSimulationData.h"
 #include "../mapper/Mapper.h"
 
-class DCPBridge : iSimulationData
+class DCPBridge : public iSimulationData
 {
 public:
 	DCPBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};
