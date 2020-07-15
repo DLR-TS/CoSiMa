@@ -22,48 +22,41 @@ int OSIBridge::writeToInternalState() {
 
 int OSIBridge::writeToInternalState(address address, eOSIMessage messageType)
 {
-	bool parseSuccess = false;
 	switch (messageType) {
 	case SensorViewMessage:
-		parseSuccess = sensorView.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		if(!sensorView.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
 		}
 		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(sensorView.SerializeAsString(), SensorViewMessage);
 		break;
 	case SensorViewConfigurationMessage:
-		parseSuccess = sensorViewConfiguration.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		if(!sensorViewConfiguration.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
 		}
 		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(sensorViewConfiguration.SerializeAsString(), SensorViewConfigurationMessage);
 		break;
 	case SensorDataMessage:
-		parseSuccess = sensorData.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		if(!sensorData.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
 		}
 		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(sensorData.SerializeAsString(), SensorDataMessage);
 		break;
 	case GroundTruthMessage:
-		parseSuccess = groundTruth.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		if(!groundTruth.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
 		}
 		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(groundTruth.SerializeAsString(), SensorViewConfigurationMessage);
 		break;
 	case SL45TrafficCommandMessage:
-		//parseSuccess = trafficCommand.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		//if(!trafficCommand.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
-		}
+		//}
 		//std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(trafficCommand.SerializeAsString(), SL45TrafficCommandMessage);
 		break;
 	case SL45InVehicleSensorDataMessage:
-		//parseSuccess = inVehicleSensorData.ParseFromArray((const void*)address.addr.address, address.size);
-		if (parseSuccess == false) {
+		//if(!inVehicleSensorData.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
-		}
+		//}
 		//std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(inVehicleSensorData.SerializeAsString(), SL45InVehicleSensorDataMessage);
 		break;
 	}

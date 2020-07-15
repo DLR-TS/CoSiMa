@@ -25,8 +25,7 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//std::string
 	for (const NamesAndIndex &input : config.stringInputList) {
 		std::string value = baseInterface->getStringValue(input.baseName);
-		//state->strings.at(input.index) = value;
-		state->strings[input.index] = value;
+		state->strings.at(input.index) = value;
 	}
 	return 0;
 }
