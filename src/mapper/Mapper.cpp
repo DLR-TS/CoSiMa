@@ -167,7 +167,6 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 		for (NamesAndIndex const &entry : config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
-				std::string a = std::get<std::string>(value);
 				state->strings.at(entry.index) = std::get<std::string>(value);
 				return;
 			}

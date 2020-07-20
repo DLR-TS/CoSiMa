@@ -83,26 +83,38 @@ int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) 
 	switch (messageType) {
 	case SensorViewMessage:
 		sensorView.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SensorViewMessage));
+		address.size = sensorView.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
 		sensorView.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case SensorViewConfigurationMessage:
 		sensorViewConfiguration.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SensorViewConfigurationMessage));
+		address.size = sensorViewConfiguration.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
 		sensorViewConfiguration.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case SensorDataMessage:
 		sensorData.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SensorDataMessage));
+		address.size = sensorData.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
 		sensorData.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case GroundTruthMessage:
 		groundTruth.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(GroundTruthMessage));
+		address.size = groundTruth.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
 		groundTruth.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case SL45TrafficCommandMessage:
 		//trafficCommand.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(TrafficCommandMessage));
+		//address.size = trafficCommand.ByteSizeLong();
+		//address.addr.address = (unsigned long long)malloc(address.size);
 		//trafficCommand.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case SL45InVehicleSensorDataMessage:
 		//inVehicleSensorData.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(InVehicleSensorDataMessage));
+		//address.size = inVehicleSensorData.ByteSizeLong();
+		//address.addr.address = (unsigned long long)malloc(address.size);
 		//inVehicleSensorData.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	}

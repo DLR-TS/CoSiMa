@@ -46,10 +46,34 @@ public:
 	*/
 	int readConfiguration(configVariants_t configVariants) override;
 
+protected:
+	class OSMPFMUSlaveStateWrapper {
+	private:
+		//cs_slave creating this fmu state is needed later for freeing the memory again
+		std::shared_ptr<fmi4cpp::fmi2::cs_slave> coSimSlave;
+
+		OSMPFMUSlaveStateWrapper(std::shared_ptr < fmi4cpp::fmi2::cs_slave> slave);
+
+	public:
+		~OSMPFMUSlaveStateWrapper();
+
+		fmi4cpp::fmi4cppFMUstate state;
+		static std::optional<OSMPFMUSlaveStateWrapper> tryGetStateOf(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave);
+	};
+
 private:
 	//fmi4cpp::fmi4cppFMUstate state;
 	std::unique_ptr<fmi4cpp::fmi2::cs_fmu> coSimFMU;
 	std::shared_ptr<fmi4cpp::fmi2::cs_slave> coSimSlave;
+
+	/**
+	stores the field \"valid\" from fmi
+	*/
+	bool valid = true;
+	/**
+	stores the field \"count\" from fmi
+	*/
+	int count;
 };
 
 #endif // !OSMPBRIDGE_H

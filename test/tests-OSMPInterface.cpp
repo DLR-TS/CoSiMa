@@ -5,6 +5,7 @@
 #include "simulation_interfaces/FMIBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
 
+std::string osimessage = "";
 
 TEST_CASE("OSMP Test") {
 
@@ -64,21 +65,64 @@ TEST_CASE("OSMP Test") {
 	}
 
 	SECTION("Loading of OSMP FMU") {
-		//TODO
 		std::shared_ptr<iSimulationData> simulationInterface = std::shared_ptr<iSimulationData>((iSimulationData*)bridge);
 		mapper->setOwner(simulationInterface);
 
-		//insert section here
-		OSMPInterfaceConfig config;
+		SECTION("Dummy Source") {
+			OSMPInterfaceConfig config;
 
-		//rodo
-		config.model = "D:/Git/SETLevel 4 to 5/cosima/test/resources/Feedthrough_cs.fmu";
-		//config.model = "../test/resources/osmpfmu.fmu";
+			config.model = "../test/resources/OSMPDummySource.fmu";
+			OSIMessageConfig message1;
+			message1.base_name = "SensorView";
+			message1.interface_name = "SensorView";
 
-		REQUIRE(0 == mapper->readConfiguration(config));
-		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
+			config.outputs.push_back(message1);
 
-		//auto state = simulationInterface->getMapper()->getInternalState();
+			REQUIRE(0 == mapper->readConfiguration(config));
+			REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
 
+			REQUIRE(0 == simulationInterface->doStep());
+
+			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() == 0);
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() != 0);
+			osimessage = simulationInterface->getMapper()->getInternalState()->strings.at(0);
+		}
+
+		SECTION("Dummy Sensor") {
+			OSMPInterfaceConfig config;
+
+			config.model = "../test/resources/OSMPDummySensor.fmu";
+			OSIMessageConfig message1;
+			message1.base_name = "SensorView";
+			message1.interface_name = "SensorView";
+			config.inputs.push_back(message1);
+
+			OSIMessageConfig message2;
+			message2.base_name = "SensorData";
+			message2.interface_name = "SensorData";
+			config.outputs.push_back(message2);
+
+			REQUIRE(0 == mapper->readConfiguration(config));
+			REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
+
+			REQUIRE(0 == simulationInterface->doStep());
+
+			//no input no output
+			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() == 0);
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() == 0);
+
+			//use output of testcase before as input
+
+			REQUIRE(osimessage.size() != 0);
+			simulationInterface->getMapper()->getInternalState()->strings.at(0) = osimessage;
+			REQUIRE(0 == simulationInterface->readFromInternalState());
+			//do step
+			REQUIRE(0 == simulationInterface->doStep());
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			//output has overwritten input
+			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0) != osimessage);
+		}
 	}
 }

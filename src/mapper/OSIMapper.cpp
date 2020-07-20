@@ -38,8 +38,9 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
 			state->strings.push_back(std::string());
 		}
+		int inputsize = (int)state->strings.size();
 		for (auto output : interfaceConfig.outputs) {
-			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
+			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size() - inputsize));
 			state->strings.push_back(std::string());
 		}
 	}

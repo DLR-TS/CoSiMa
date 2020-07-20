@@ -66,6 +66,11 @@ int OSMPBridge::writeToInternalState() {
 			saveToAddressMap(outputVar.name, integer);
 		}
 	}
+	if (!valid) {
+		std::cout << "OSMP config not valid" << std::endl;
+		return 1;
+	}
+	//write all messages to internal state
 	for (auto address : addresses) {
 		OSIBridge::writeToInternalState(address.second, getMessageType(address.first));
 	}
@@ -76,7 +81,7 @@ int OSMPBridge::readFromInternalState() {
 	auto const model_description = coSimFMU->get_model_description();
 	//iterate over unknowns declared as output and create AddressMap
 	for (auto const& inputVar : *(model_description->model_variables)) {
-		if (inputVar.causality == fmi4cpp::fmi2::causality::output && inputVar.is_integer()) {
+		if (inputVar.causality == fmi4cpp::fmi2::causality::input && inputVar.is_integer()) {
 			fmi2Integer integer;
 			coSimSlave->read_integer(inputVar.value_reference, integer);
 			saveToAddressMap(inputVar.name, integer);
@@ -88,7 +93,7 @@ int OSMPBridge::readFromInternalState() {
 	}
 	//set pointers of messages
 	for (auto const& inputVar : *(model_description->model_variables)) {
-		if (inputVar.causality == fmi4cpp::fmi2::causality::output && inputVar.is_integer()) {
+		if (inputVar.causality == fmi4cpp::fmi2::causality::input && inputVar.is_integer()) {
 			for (auto address : addresses) {
 				if (inputVar.name.find(address.first) != std::string::npos) {
 					if (inputVar.name.find(".hi") != std::string::npos) {
@@ -108,10 +113,55 @@ int OSMPBridge::readFromInternalState() {
 int OSMPBridge::doStep(double stepSize) {
 	//TODO
 	//which parts of FMIBridge::doStep are needed?
-	return OSIBridge::doStep(stepSize);
+		//TODO set independent tunable parameters
+	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
+
+	//TODO support rollback in case step is incomplete?
+	auto preStepState = OSMPFMUSlaveStateWrapper::tryGetStateOf(coSimSlave);
+
+	//TODO step by stepSize
+	if (!coSimSlave->step(stepSize)) {
+		while (fmi4cpp::status::Pending == coSimSlave->last_status()) {
+			//wait for asynchronous fmu to finish
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
+
+		switch (coSimSlave->last_status()) {
+		case fmi4cpp::status::Fatal:
+			return -1;//TODO decide on common error return values
+		case fmi4cpp::status::Error:
+			return -2;//TODO decide on common error return values
+		case fmi4cpp::status::Discard:
+			//If a pre step state could be captured and the slave supports step size variation, try performing smaller substeps instead of one stepSize step
+			if (!preStepState || !coSimSlave->get_model_description()->can_handle_variable_communication_step_size) {
+				return 2;
+			}
+			//restore state before failed step
+			coSimSlave->set_fmu_state(preStepState.value().state);
+			// perform some smaller substeps
+			int substeps = 2;
+			for (int i = 0; i < substeps; i++) {
+				int err = doStep(stepSize / 2);
+				if (0 != err) {
+					return 2;
+				}
+			}
+		}
+	}
+	return 0;
 }
 
 void OSMPBridge::saveToAddressMap(std::string name, int value) {
+	//check for norma fmi variables count and valid
+	if (name == "count") {
+		this->count = value;
+		return;
+	}
+	if (name == "valid") {
+		this->valid = value;
+		return;
+	}
+
 	if (0 == name.compare(name.length() - 8, 8, ".base.hi")) {
 		std::string prefix = name.substr(0, name.length() - 8);
 		if (addresses.find(prefix) == addresses.end()) {
@@ -145,4 +195,20 @@ void OSMPBridge::saveToAddressMap(std::string name, int value) {
 			addresses.at(prefix).size = value;
 		}
 	}
+}
+
+inline OSMPBridge::OSMPFMUSlaveStateWrapper::OSMPFMUSlaveStateWrapper(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {
+	slave->get_fmu_state(state);
+	coSimSlave = slave;
+}
+
+inline OSMPBridge::OSMPFMUSlaveStateWrapper::~OSMPFMUSlaveStateWrapper() {
+	coSimSlave->free_fmu_state(state);
+}
+
+std::optional<OSMPBridge::OSMPFMUSlaveStateWrapper> OSMPBridge::OSMPFMUSlaveStateWrapper::tryGetStateOf(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {
+	if (slave->get_model_description()->can_get_and_set_fmu_state) {
+		return OSMPBridge::OSMPFMUSlaveStateWrapper(slave);
+	}
+	return std::nullopt;
 }
