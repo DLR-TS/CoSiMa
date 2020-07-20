@@ -4,23 +4,44 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 
 	std::cout << "Read Configuration of OSI Mapper" << std::endl;
 
-	if (std::get_if<OSIInterfaceConfig>(&configVariants) == nullptr) {
+	if (std::get_if<OSIInterfaceConfig>(&configVariants) == nullptr && std::get_if<OSMPInterfaceConfig>(&configVariants) == nullptr) {
 		std::cout << "Called with wrong configuration variant!" << std::endl;
 		return 1;
 	}
 
-	OSIInterfaceConfig interfaceConfig = std::get<OSIInterfaceConfig>(configVariants);
-	//overwrite prefix default value if setin configuration
-	if (interfaceConfig.prefix.length() != 0) {
-		this->prefix = interfaceConfig.prefix;
+	if (owner.lock() != nullptr) {
+		owner.lock()->readConfiguration(configVariants);
 	}
-	for (auto input : interfaceConfig.inputs) {
-		config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
-		state->strings.push_back(std::string());
+
+	if (std::get_if<OSIInterfaceConfig>(&configVariants) != nullptr) {
+		OSIInterfaceConfig interfaceConfig = std::get<OSIInterfaceConfig>(configVariants);
+		//overwrite prefix default value if set in configuration
+		if (interfaceConfig.prefix.length() != 0) {
+			this->prefix = interfaceConfig.prefix;
+		}
+		for (auto input : interfaceConfig.inputs) {
+			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
+			state->strings.push_back(std::string());
+		}
+		for (auto output : interfaceConfig.outputs) {
+			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
+			state->strings.push_back(std::string());
+		}
 	}
-	for (auto output : interfaceConfig.outputs) {
-		config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
-		state->strings.push_back(std::string());
+	else if (std::get_if<OSMPInterfaceConfig>(&configVariants) != nullptr) {
+		OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
+		//overwrite prefix default value if set in configuration
+		if (interfaceConfig.prefix.length() != 0) {
+			this->prefix = interfaceConfig.prefix;
+		}
+		for (auto input : interfaceConfig.inputs) {
+			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
+			state->strings.push_back(std::string());
+		}
+		for (auto output : interfaceConfig.outputs) {
+			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
+			state->strings.push_back(std::string());
+		}
 	}
 	return 0;
 }

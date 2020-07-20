@@ -25,6 +25,8 @@ public:
 	int readFromInternalState(address& address, eOSIMessage messageType);
 	int doStep(double stepSize = 1) override;
 
+	int readConfiguration(configVariants_t configVariants) override;
+
 protected:
 	osi3::SensorView sensorView;
 	osi3::SensorViewConfiguration sensorViewConfiguration;

@@ -11,7 +11,27 @@ eOSIMessage OSMPBridge::getMessageType(std::string messageType) {
 	else if (messageType.find("InVehicleSensorData") != std::string::npos) { return SL45InVehicleSensorDataMessage; } //todo check if name is correct
 	else {
 		std::cout << "Error: Can not find message " << messageType << std::endl;
+		throw 5372;
 	}
+}
+
+int OSMPBridge::readConfiguration(configVariants_t configVariants) {
+	if (std::get_if<OSMPInterfaceConfig>(&configVariants) == nullptr) {
+		std::cout << "Called with wrong configuration variant!" << std::endl;
+		return 1;
+	}
+	OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
+
+	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.model));
+	if (!fmu->supports_cs()) {
+		// FMU contains no cs model
+		return 216373;
+	}
+
+	// load co-simulation description from FMU
+	coSimFMU = fmu->as_cs_fmu();
+	auto modelDescription = coSimFMU->get_model_description();
+	return 0;
 }
 
 

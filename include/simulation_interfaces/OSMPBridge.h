@@ -39,6 +39,13 @@ public:
 	*/
 	std::map<std::string, address> addresses;
 
+	/**
+	Read configuration and fill simulation configuration.
+	\param config the decoding struct
+	\return success status
+	*/
+	int readConfiguration(configVariants_t configVariants) override;
+
 private:
 	//fmi4cpp::fmi4cppFMUstate state;
 	std::unique_ptr<fmi4cpp::fmi2::cs_fmu> coSimFMU;

@@ -46,6 +46,8 @@ int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, Sing
 					return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 				case OSI:
 					return simulator->getMapper()->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
+				case OSMP:
+					return simulator->getMapper()->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
 				}
 			}
 			else {
@@ -71,6 +73,9 @@ const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	}
 	else if (simulatorName == "osi") {
 		return OSI;
+	}
+	else if (simulatorName == "osmp") {
+		return OSMP;
 	}
 	else if (simulatorName == "ue" || simulatorName == "unrealengine" || simulatorName == "unreal") {
 		return UNREAL;

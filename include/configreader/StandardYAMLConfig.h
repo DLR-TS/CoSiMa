@@ -85,6 +85,8 @@ public:
 };
 
 /**
+* \var std::string prefix
+* prefix used for interel saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs
@@ -92,6 +94,24 @@ public:
 */
 struct OSIInterfaceConfig {
 public:
+	std::string prefix;
+	std::vector<OSIMessageConfig> inputs;
+	std::vector<OSIMessageConfig> outputs;
+};
+
+/**
+* \var std::string model
+* path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
+* \var std::string prefix
+* prefix used for interel saving and interpretation of base interface side
+* \var std::vector<OSIMessageConfig> inputs
+* holds the input osi messages
+* \var std::vector<OSIMessageConfig> outputs
+* holds the output osi messages
+*/
+struct OSMPInterfaceConfig {
+public:
+	std::string model;
 	std::string prefix;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
@@ -203,6 +223,22 @@ namespace YAML {
 		}
 	};
 
+	template<>
+	struct convert<OSMPInterfaceConfig> {
+		static Node encode(const OSMPInterfaceConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, OSMPInterfaceConfig& osiinterface)
+		{
+			osiinterface.prefix = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
+			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			return true;
+		}
+	};
 }
 
 #endif //!STANDARDYAMLCONGIF_H

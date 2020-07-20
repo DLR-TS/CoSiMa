@@ -10,7 +10,7 @@ TEST_CASE("OSMP Test") {
 
 	const auto osiMapper = new OSIMapper();
 	auto mapper = std::shared_ptr<Mapper>((Mapper*)osiMapper);
-	OSMPBridge bridge(mapper);
+	const auto bridge = new OSMPBridge(mapper);
 
 	SECTION("OSMP methods")
 	{
@@ -31,35 +31,54 @@ TEST_CASE("OSMP Test") {
 
 		SECTION("Interpret the OSMPNames correct") {
 
-			REQUIRE(bridge.getMessageType(name1) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge.getMessageType(name2) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge.getMessageType(name3) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge.getMessageType(name4) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge.getMessageType(name5) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge.getMessageType(name6) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge.getMessageType(name7) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge.getMessageType(name8) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge.getMessageType(name9) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge.getMessageType(name10) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge.getMessageType(name11) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge.getMessageType(name12) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name1) == eOSIMessage::SensorViewMessage);
+			REQUIRE(bridge->getMessageType(name2) == eOSIMessage::SensorViewMessage);
+			REQUIRE(bridge->getMessageType(name3) == eOSIMessage::SensorViewMessage);
+			REQUIRE(bridge->getMessageType(name4) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name5) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name6) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name7) == eOSIMessage::SensorDataMessage);
+			REQUIRE(bridge->getMessageType(name8) == eOSIMessage::SensorDataMessage);
+			REQUIRE(bridge->getMessageType(name9) == eOSIMessage::SensorDataMessage);
+			REQUIRE(bridge->getMessageType(name10) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name11) == eOSIMessage::SensorViewConfigurationMessage);
+			REQUIRE(bridge->getMessageType(name12) == eOSIMessage::SensorViewConfigurationMessage);
 		}
 
 		SECTION("Fill addresses correct") {
-			bridge.saveToAddressMap(name1, 1234);
-			bridge.saveToAddressMap(name2, 5678);
-			bridge.saveToAddressMap(name3, 90);
+			bridge->saveToAddressMap(name1, 1234);
+			bridge->saveToAddressMap(name2, 5678);
+			bridge->saveToAddressMap(name3, 90);
 
-			REQUIRE(bridge.addresses.size() == 1);
-			REQUIRE(bridge.addresses.at("OSMPSensorViewIn").size == 90);
-			REQUIRE(bridge.addresses.at("OSMPSensorViewIn").addr.base.lo == 1234);
-			REQUIRE(bridge.addresses.at("OSMPSensorViewIn").addr.base.hi == 5678);
+			REQUIRE(bridge->addresses.size() == 1);
+			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").size == 90);
+			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").addr.base.lo == 1234);
+			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").addr.base.hi == 5678);
 
-			bridge.saveToAddressMap(name4, 91);
-			bridge.saveToAddressMap(name8, 92);
-			bridge.saveToAddressMap(name12, 93);
+			bridge->saveToAddressMap(name4, 91);
+			bridge->saveToAddressMap(name8, 92);
+			bridge->saveToAddressMap(name12, 93);
 
-			REQUIRE(bridge.addresses.size() == 4);
+			REQUIRE(bridge->addresses.size() == 4);
 		}
+	}
+
+	SECTION("Loading of OSMP FMU") {
+		//TODO
+		std::shared_ptr<iSimulationData> simulationInterface = std::shared_ptr<iSimulationData>((iSimulationData*)bridge);
+		mapper->setOwner(simulationInterface);
+
+		//insert section here
+		OSMPInterfaceConfig config;
+
+		//rodo
+		config.model = "D:/Git/SETLevel 4 to 5/cosima/test/resources/Feedthrough_cs.fmu";
+		//config.model = "../test/resources/osmpfmu.fmu";
+
+		REQUIRE(0 == mapper->readConfiguration(config));
+		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
+
+		//auto state = simulationInterface->getMapper()->getInternalState();
+
 	}
 }
