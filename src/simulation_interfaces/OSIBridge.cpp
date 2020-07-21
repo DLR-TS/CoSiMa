@@ -80,6 +80,7 @@ int OSIBridge::readFromInternalState(){
 }
 
 int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) {
+	free((void*)address.addr.address);
 	switch (messageType) {
 	case SensorViewMessage:
 		sensorView.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SensorViewMessage));

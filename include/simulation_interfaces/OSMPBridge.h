@@ -25,7 +25,7 @@ public:
 	/**
 	save the values together in an address map
 	*/
-	void saveToAddressMap(std::string name, int value);
+	void saveToAddressMap(std::map<std::string, address> &addressMap, std::string name, int value);
 
 	/**
 	Parse string value to OSI Message Enum.
@@ -37,7 +37,7 @@ public:
 	/**
 	Temporary storage for osmp messages (name, size, address)
 	*/
-	std::map<std::string, address> addresses;
+	std::map<std::string, address> inputAddresses, outputAddresses;
 
 	/**
 	Read configuration and fill simulation configuration.

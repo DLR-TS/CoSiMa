@@ -63,7 +63,7 @@ TEST_CASE("OSIBridge Test") {
 		int byteSize = sensorView.ByteSize();
 		
 		//Array and pointer
-		void* data[5];
+		void* data = malloc(byteSize);
 		address address;
 		address.addr.address = (unsigned long long)data;
 		address.size = byteSize;

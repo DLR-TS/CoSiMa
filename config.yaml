@@ -7,9 +7,9 @@
   output: [] #empty list
 - simulator: FMI
   models: PATH_TO_.ssp # path to model.xml files
-- simulator: OSI
+- simulator: OSMP
   prefix: /#
   input:
-      - {interface_name: SensorView, base_name: sensors}
+      - {interface_name: SensorView, base_name: SensorView}
   output:
-      - {interface_name: SensorViewConfiguration, base_name: sensorconf}
+      - {interface_name: SensorViewConfiguration, base_name: SensorViewConfiguration}

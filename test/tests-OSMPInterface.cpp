@@ -47,20 +47,20 @@ TEST_CASE("OSMP Test") {
 		}
 
 		SECTION("Fill addresses correct") {
-			bridge->saveToAddressMap(name1, 1234);
-			bridge->saveToAddressMap(name2, 5678);
-			bridge->saveToAddressMap(name3, 90);
+			bridge->saveToAddressMap(bridge->inputAddresses, name1, 1234);
+			bridge->saveToAddressMap(bridge->inputAddresses, name2, 5678);
+			bridge->saveToAddressMap(bridge->inputAddresses, name3, 90);
 
-			REQUIRE(bridge->addresses.size() == 1);
-			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").size == 90);
-			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").addr.base.lo == 1234);
-			REQUIRE(bridge->addresses.at("OSMPSensorViewIn").addr.base.hi == 5678);
+			REQUIRE(bridge->inputAddresses.size() == 1);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").size == 90);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").addr.base.lo == 1234);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").addr.base.hi == 5678);
 
-			bridge->saveToAddressMap(name4, 91);
-			bridge->saveToAddressMap(name8, 92);
-			bridge->saveToAddressMap(name12, 93);
+			bridge->saveToAddressMap(bridge->inputAddresses, name4, 91);
+			bridge->saveToAddressMap(bridge->inputAddresses, name8, 92);
+			bridge->saveToAddressMap(bridge->inputAddresses, name12, 93);
 
-			REQUIRE(bridge->addresses.size() == 4);
+			REQUIRE(bridge->inputAddresses.size() == 4);
 		}
 	}
 
@@ -68,7 +68,7 @@ TEST_CASE("OSMP Test") {
 		std::shared_ptr<iSimulationData> simulationInterface = std::shared_ptr<iSimulationData>((iSimulationData*)bridge);
 		mapper->setOwner(simulationInterface);
 
-		SECTION("Dummy Source") {
+		SECTION("Dummy Source writes osi messages") {
 			OSMPInterfaceConfig config;
 
 			config.model = "../test/resources/OSMPDummySource.fmu";
@@ -86,10 +86,18 @@ TEST_CASE("OSMP Test") {
 			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() == 0);
 			REQUIRE(0 == simulationInterface->writeToInternalState());
 			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() != 0);
+
+			//for later use
 			osimessage = simulationInterface->getMapper()->getInternalState()->strings.at(0);
+			
+			REQUIRE(0 == simulationInterface->doStep());
+			REQUIRE(0 == simulationInterface->writeToInternalState());
+			//string looks different each timestep
+			std::string newosimessage = simulationInterface->getMapper()->getInternalState()->strings.at(0);
+			REQUIRE(osimessage != newosimessage);
 		}
 
-		SECTION("Dummy Sensor") {
+		SECTION("Dummy Sensor reads osi messages") {
 			OSMPInterfaceConfig config;
 
 			config.model = "../test/resources/OSMPDummySensor.fmu";
@@ -118,6 +126,7 @@ TEST_CASE("OSMP Test") {
 			REQUIRE(osimessage.size() != 0);
 			simulationInterface->getMapper()->getInternalState()->strings.at(0) = osimessage;
 			REQUIRE(0 == simulationInterface->readFromInternalState());
+
 			//do step
 			REQUIRE(0 == simulationInterface->doStep());
 			REQUIRE(0 == simulationInterface->writeToInternalState());
