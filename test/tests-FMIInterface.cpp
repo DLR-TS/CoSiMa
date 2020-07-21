@@ -67,13 +67,24 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 				return std::any_of(baseInterface->requestedVariables.begin(), baseInterface->requestedVariables.end(),
 					[&n](std::string b) { return 0 == ("Feedthrough." + n).compare(b); });
 			}));
-			//Inputs are not written to internal state => no need to test them
-			//REQUIRE(1 == state->strings.size());
-			//REQUIRE(0 == stringvalue.compare(state->strings.front()));
-			//REQUIRE(std::all_of(state->bools.begin(), state->bools.end(), [boolvalue](const bool b) {return b == boolvalue; }));
-			//REQUIRE(std::all_of(state->doubles.begin(), state->doubles.end(), [doublevalue](const double d) {return d == doublevalue; }));
-			//REQUIRE(std::all_of(state->floats.begin(), state->floats.end(), [floatvalue](const float f) {return f == floatvalue; }));
-			//REQUIRE(std::all_of(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
+
+			// Check if inputs and parameters are propagated to internal state
+			// using >= instead of == in case of test variables defined as default values
+			// Feedthrough defines 1 string input or parameter, 0 string outputs or calculatedParamters
+			REQUIRE(1 == state->strings.size());
+			REQUIRE(0 == stringvalue.compare(state->strings.front()));
+			// Feedthrough defines 1 bool input or parameter, 1 bool output or calculatedParamter
+			REQUIRE(2 == state->bools.size());
+			REQUIRE(1 <= std::count_if(state->bools.begin(), state->bools.end(), [boolvalue](const bool b) {return b == boolvalue; }));
+			// Feedthrough defines 4 real inputs or parameters, 2 real outputs or calculatedParamters
+			REQUIRE(6 == state->doubles.size());
+			REQUIRE(4 <= std::count_if(state->doubles.begin(), state->doubles.end(), [doublevalue](const double d) {return d == doublevalue; }));
+			// no floats because real is defined as double
+			REQUIRE(0 == state->floats.size());
+			//REQUIRE(0==std::count_if(state->floats.begin(), state->floats.end(), [floatvalue](const float f) {return f == floatvalue; }));
+			// Feedthrough defines 1 int input or parameter, 1 int output or calculatedParamter
+			REQUIRE(2 == state->integers.size());
+			REQUIRE(1 <= std::count_if(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
 
 			REQUIRE(0 == simulationInterface->doStep(1e-5));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
@@ -84,19 +95,78 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			REQUIRE(floatvalue == baseInterface->floatvalue);
 			REQUIRE(intvalue == baseInterface->intvalue);
 			// Feedthrough quirk: bool_out only returns bool_in if string_param is set to "FMI is awesome!"
-			REQUIRE(false == baseInterface->boolvalue);
-			baseInterface->stringvalue = "FMI is awesome!";
+			if (0 == stringvalue.compare("FMI is awesome!"))
+				REQUIRE(boolvalue == baseInterface->boolvalue);
+			//cannot be changed after first step because string_param is of variability fixed
+			//baseInterface->stringvalue = "FMI is awesome!";
+			//baseInterface->boolvalue = boolvalue;
+			//REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			//REQUIRE(0 == simulationInterface->readFromInternalState());
+			//REQUIRE(0 == simulationInterface->writeToInternalState());
+			//REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			//REQUIRE(boolvalue == baseInterface->boolvalue);
+		}
+		SECTION("Use different values as fmu input: variant 'FMI is awesome!'") {
+			const bool boolvalue = true;
+			const double doublevalue = -1;
+			const float floatvalue = -3.21f;
+			const int intvalue = -2;
+			const std::string stringvalue = "FMI is awesome!";
 			baseInterface->boolvalue = boolvalue;
+			baseInterface->doublevalue = doublevalue;
+			baseInterface->floatvalue = floatvalue;
+			baseInterface->intvalue = intvalue;
+			baseInterface->stringvalue = stringvalue;
+
 			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
 			REQUIRE(0 == simulationInterface->readFromInternalState());
-			baseInterface->boolvalue = !boolvalue;
+
+			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
+				return std::any_of(baseInterface->requestedVariables.begin(), baseInterface->requestedVariables.end(),
+					[&n](std::string b) { return 0 == ("Feedthrough." + n).compare(b); });
+			}));
+
+			// Check if inputs and parameters are propagated to internal state
+			// using <= instead of == in case of test variables defined as default values
+			// Feedthrough defines 1 string input or parameter, 0 string outputs or calculatedParamters
+			REQUIRE(1 == state->strings.size());
+			REQUIRE(0 == stringvalue.compare(state->strings.front()));
+			// Feedthrough defines 1 bool input or parameter, 1 bool output or calculatedParamter
+			REQUIRE(2 == state->bools.size());
+			REQUIRE(1 <= std::count_if(state->bools.begin(), state->bools.end(), [boolvalue](const bool b) {return b == boolvalue; }));
+			// Feedthrough defines 4 real inputs or parameters, 2 real outputs or calculatedParamters
+			REQUIRE(6 == state->doubles.size());
+			REQUIRE(4 <= std::count_if(state->doubles.begin(), state->doubles.end(), [doublevalue](const double d) {return d == doublevalue; }));
+			// no floats because real is defined as double
+			REQUIRE(0 == state->floats.size());
+			//REQUIRE(0==std::count_if(state->floats.begin(), state->floats.end(), [floatvalue](const float f) {return f == floatvalue; }));
+			// Feedthrough defines 1 int input or parameter, 1 int output or calculatedParamter
+			REQUIRE(2 == state->integers.size());
+			REQUIRE(1 <= std::count_if(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
+
+			REQUIRE(0 == simulationInterface->doStep(1e-5));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
 			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
-			REQUIRE(boolvalue == baseInterface->boolvalue);
+
+			// Feedthrough shouldn't change the values, same for the FMU interface
+			REQUIRE(doublevalue == baseInterface->doublevalue);
+			REQUIRE(floatvalue == baseInterface->floatvalue);
+			REQUIRE(intvalue == baseInterface->intvalue);
+			// Feedthrough quirk: bool_out only returns bool_in if string_param is set to "FMI is awesome!"
+			if (0 == stringvalue.compare("FMI is awesome!"))
+				REQUIRE(boolvalue == baseInterface->boolvalue);
+			//cannot be changed after first step because string_param is of variability fixed
+			//baseInterface->stringvalue = "FMI is awesome!";
+			//baseInterface->boolvalue = boolvalue;
+			//REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			//REQUIRE(0 == simulationInterface->readFromInternalState());
+			//REQUIRE(0 == simulationInterface->writeToInternalState());
+			//REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			//REQUIRE(boolvalue == baseInterface->boolvalue);
 		}
 		SECTION("Use different values as fmu input: variant a") {
 			const bool boolvalue = false;
-			const double doublevalue = 1e23;
+			const double doublevalue = 2e10;
 			const float floatvalue = 3.14f;
 			const int intvalue = 1;
 			const std::string stringvalue = "another string";
@@ -113,13 +183,24 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 				return std::any_of(baseInterface->requestedVariables.begin(), baseInterface->requestedVariables.end(),
 					[&n](std::string b) { return 0 == ("Feedthrough." + n).compare(b); });
 			}));
-			//Inputs are not written to internal state => no need to test them
-			//REQUIRE(1 == state->strings.size());
-			//REQUIRE(0 == stringvalue.compare(state->strings.front()));
-			//REQUIRE(std::all_of(state->bools.begin(), state->bools.end(), [boolvalue](const bool b) {return b == boolvalue; }));
-			//REQUIRE(std::all_of(state->doubles.begin(), state->doubles.end(), [doublevalue](const double d) {return d == doublevalue; }));
-			//REQUIRE(std::all_of(state->floats.begin(), state->floats.end(), [floatvalue](const float f) {return f == floatvalue; }));
-			//REQUIRE(std::all_of(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
+
+			// Check if inputs and parameters are propagated to internal state
+			// using <= instead of == in case of test variables defined as default values
+			// Feedthrough defines 1 string input or parameter, 0 string outputs or calculatedParamters
+			REQUIRE(1 == state->strings.size());
+			REQUIRE(0 == stringvalue.compare(state->strings.front()));
+			// Feedthrough defines 1 bool input or parameter, 1 bool output or calculatedParamter
+			REQUIRE(2 == state->bools.size());
+			REQUIRE(1 <= std::count_if(state->bools.begin(), state->bools.end(), [boolvalue](const bool b) {return b == boolvalue; }));
+			// Feedthrough defines 4 real inputs or parameters, 2 real outputs or calculatedParamters
+			REQUIRE(6 == state->doubles.size());
+			REQUIRE(4 <= std::count_if(state->doubles.begin(), state->doubles.end(), [doublevalue](const double d) {return d == doublevalue; }));
+			// no floats because real is defined as double
+			REQUIRE(0 == state->floats.size());
+			//REQUIRE(0==std::count_if(state->floats.begin(), state->floats.end(), [floatvalue](const float f) {return f == floatvalue; }));
+			// Feedthrough defines 1 int input or parameter, 1 int output or calculatedParamter
+			REQUIRE(2 == state->integers.size());
+			REQUIRE(1 <= std::count_if(state->integers.begin(), state->integers.end(), [intvalue](const int i) {return i == intvalue; }));
 
 			REQUIRE(0 == simulationInterface->doStep(1e-3));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
@@ -130,14 +211,16 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			REQUIRE(floatvalue == baseInterface->floatvalue);
 			REQUIRE(intvalue == baseInterface->intvalue);
 			// Feedthrough quirk: bool_out only returns bool_in if string_param is set to "FMI is awesome!"
-			REQUIRE(false == baseInterface->boolvalue);
-			baseInterface->stringvalue = "FMI is awesome!";
-			baseInterface->boolvalue = boolvalue;
-			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
-			REQUIRE(0 == simulationInterface->readFromInternalState());
-			REQUIRE(0 == simulationInterface->writeToInternalState());
-			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
-			REQUIRE(boolvalue == baseInterface->boolvalue);
+			if (0 == stringvalue.compare("FMI is awesome!"))
+				REQUIRE(boolvalue == baseInterface->boolvalue);
+			//cannot be changed after first step because string_param is of variability fixed
+			//baseInterface->stringvalue = "FMI is awesome!";
+			//baseInterface->boolvalue = boolvalue;
+			//REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			//REQUIRE(0 == simulationInterface->readFromInternalState());
+			//REQUIRE(0 == simulationInterface->writeToInternalState());
+			//REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			//REQUIRE(boolvalue == baseInterface->boolvalue);
 		}
 	}
 	SECTION("ME-only FMUs are not supported and should fail to load") {

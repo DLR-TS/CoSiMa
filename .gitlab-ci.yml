@@ -11,6 +11,11 @@
 before_script:
   - echo $CI_BUILD_REF
   - echo $CI_PROJECT_DIR
+  - echo "Replacing submodules with '../CoSiMa_externals'"
+  - git submodule deinit --all -f
+  - git rm -r lib
+  - rmdir lib
+  - git submodule add --name "cosima_externals" --depth 1 -- ../cosima_externals lib
 
 stages:
   - prepare

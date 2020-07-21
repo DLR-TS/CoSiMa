@@ -4,7 +4,7 @@
 #include "iSimulationData.h"
 #include "../mapper/Mapper.h"
 
-class SUMOBridge : iSimulationData
+class SUMOBridge : public iSimulationData
 {
 public:
 	SUMOBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};

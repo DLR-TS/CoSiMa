@@ -4,7 +4,7 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "../mapper/Mapper.h"
 
-class ROSBridge : iSimulationData
+class ROSBridge : public iSimulationData
 {
 public:
 	ROSBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};

@@ -3,7 +3,7 @@
 
 #include "Mapper.h"
 
-class SUMOMapper : Mapper {
+class SUMOMapper : public Mapper {
 
 };
 
