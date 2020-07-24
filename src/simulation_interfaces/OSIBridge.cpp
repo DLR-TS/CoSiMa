@@ -57,11 +57,11 @@ int OSIBridge::writeToInternalState(address address, eOSIMessage messageType)
 		}
 		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(motionCommand.SerializeAsString(), SL45MotionCommandMessage);
 		break;
-	case SL45InVehicleSensorDataMessage:
-		//if(!inVehicleSensorData.ParseFromArray((const void*)address.addr.address, address.size)){
+	case SL45VehicleCommunicationDataMessage:
+		if(!vehicleCommunicationData.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
-		//}
-		//std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(inVehicleSensorData.SerializeAsString(), SL45InVehicleSensorDataMessage);
+		}
+		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(vehicleCommunicationData.SerializeAsString(), SL45VehicleCommunicationDataMessage);
 		break;
 	}
 	return 0;
@@ -112,11 +112,11 @@ int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) 
 		address.addr.address = (unsigned long long)malloc(address.size);
 		motionCommand.SerializeToArray((void*)address.addr.address, address.size);
 		break;
-	case SL45InVehicleSensorDataMessage:
-		//inVehicleSensorData.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SL45InVehicleSensorDataMessage));
-		//address.size = (int)inVehicleSensorData.ByteSizeLong();
-		//address.addr.address = (unsigned long long)malloc(address.size);
-		//inVehicleSensorData.SerializeToArray((void*)address.addr.address, address.size);
+	case SL45VehicleCommunicationDataMessage:
+		vehicleCommunicationData.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SL45VehicleCommunicationDataMessage));
+		address.size = (int)vehicleCommunicationData.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
+		vehicleCommunicationData.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	}
 

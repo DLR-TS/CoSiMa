@@ -35,6 +35,8 @@ protected:
 	osi3::SensorData sensorData;
 	osi3::GroundTruth groundTruth;
 	setlevel4to5::MotionCommand motionCommand;
+	setlevel4to5::VehicleCommunicationData vehicleCommunicationData;
+
 	/**
 	* OSI message type and its location
 	*/
