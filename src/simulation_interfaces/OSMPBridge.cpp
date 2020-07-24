@@ -7,7 +7,7 @@ eOSIMessage OSMPBridge::getMessageType(std::string messageType) {
 		&& messageType.find("Config") != std::string::npos) { return SensorViewConfigurationMessage; }
 	else if (messageType.find("SensorData") != std::string::npos) { return SensorDataMessage; }
 	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
-	else if (messageType.find("TrafficCommand") != std::string::npos) { return SL45TrafficCommandMessage; } //todo check if name is correct
+	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
 	else if (messageType.find("InVehicleSensorData") != std::string::npos) { return SL45InVehicleSensorDataMessage; } //todo check if name is correct
 	else {
 		std::cout << "Error: Can not find message " << messageType << std::endl;

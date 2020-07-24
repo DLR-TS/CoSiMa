@@ -62,11 +62,11 @@ void OSIMapper::mapOSIToInternalState(std::string message, eOSIMessage messageTy
 	case GroundTruthMessage:
 		mapToInternalState(message, "GroundTruth", STRINGCOSIMA);
 		break;
-	case SL45TrafficCommandMessage:
-		//mapToInternalState(message, "SensorViewConfiguration", STRINGCOSIMA);
+	case SL45MotionCommandMessage:
+		mapToInternalState(message, "SL45MotionCommand", STRINGCOSIMA);
 		break;
 	case SL45InVehicleSensorDataMessage:
-		//mapToInternalState(message, "SensorViewConfiguration", STRINGCOSIMA);
+		//mapToInternalState(message, "SL45InVehicleSensorData", STRINGCOSIMA);
 		break;
 	}
 }
@@ -107,12 +107,12 @@ std::string OSIMapper::mapOSIFromInternalState(eOSIMessage messageType) {
 		return groundTruth.SerializeAsString();
 	}
 	break;
-	case SL45TrafficCommandMessage:
+	case SL45MotionCommandMessage:
 	{
-		//values_t SL45TrafficCommandVariant = mapFromInternalState("SL45TrafficCommand", STRINGCOSIMA);
-		//osi3::??? SL45TrafficCommand;
-		//SL45TrafficCommand.ParseFromString(std::get<std::string>(SL45TrafficCommandVariant));
-		//return SL45TrafficCommand.SerializeAsString();
+		values_t SL45TrafficCommandVariant = mapFromInternalState("SL45MotionCommand", STRINGCOSIMA);
+		setlevel4to5::MotionCommand SL45MotionCommand;
+		SL45MotionCommand.ParseFromString(std::get<std::string>(SL45TrafficCommandVariant));
+		return SL45MotionCommand.SerializeAsString();
 	}
 	break;
 	case SL45InVehicleSensorDataMessage:

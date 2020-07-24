@@ -16,7 +16,7 @@ enum eOSIMessage {
 	SensorViewConfigurationMessage,
 	SensorDataMessage,
 	GroundTruthMessage,
-	SL45TrafficCommandMessage,
+	SL45MotionCommandMessage,
 	SL45InVehicleSensorDataMessage
 };
 

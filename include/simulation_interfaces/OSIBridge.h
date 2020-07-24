@@ -8,6 +8,8 @@
 #include "../mapper/OSIMapper.h"
 #include "OSIMessages.h"
 #include "osi_sensorview.pb.h"
+#include "sl45_motioncommand.pb.h"
+#include "sl45_vehiclecommunicationdata.pb.h"
 
 
 class OSIBridge : public iSimulationData
@@ -32,6 +34,7 @@ protected:
 	osi3::SensorViewConfiguration sensorViewConfiguration;
 	osi3::SensorData sensorData;
 	osi3::GroundTruth groundTruth;
+	setlevel4to5::MotionCommand motionCommand;
 	/**
 	* OSI message type and its location
 	*/
