@@ -101,7 +101,7 @@ target_link_libraries(CoSimulationManagerLib fmi4cpp)
 find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
 target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(test_CoSiMa CoSimulationManagerLib ${CONAN_LIBS} Catch2::Catch2)
+target_link_libraries(test_CoSiMa CoSimulationManagerLib Catch2::Catch2)
 
 #copy test resources to build folder
 add_custom_command(TARGET test_CoSiMa PRE_BUILD

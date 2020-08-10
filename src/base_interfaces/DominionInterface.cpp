@@ -1,4 +1,4 @@
-#include "base_interfaces\DominionInterface.h"
+#include "base_interfaces/DominionInterface.h"
 
 int DominionInterface::readConfiguration(baseConfigVariants_t variant) {
 	return 0;
@@ -6,6 +6,11 @@ int DominionInterface::readConfiguration(baseConfigVariants_t variant) {
 
 int DominionInterface::initialise() {
 	return 0;
+}
+
+double DominionInterface::doStep()
+{
+	return 0.0;
 }
 
 int DominionInterface::getIntValue(std::string base_name) {

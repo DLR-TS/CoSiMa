@@ -1,4 +1,4 @@
-#include "base_interfaces\CARLAInterface.h"
+#include "base_interfaces/CARLAInterface.h"
 
 int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 	CARLAInterfaceConfig* config = std::get_if<CARLAInterfaceConfig>(&variant);
@@ -14,6 +14,11 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 
 int CARLAInterface::initialise() {
 	return 0;
+}
+
+double CARLAInterface::doStep()
+{
+	return 0.0;
 }
 
 int CARLAInterface::getIntValue(std::string base_name) {
