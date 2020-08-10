@@ -3,9 +3,13 @@
 
 #include <string>
 #include "base_interfaces/BaseSystemInterface.h"
+#include "configreader/BaseConfigVariants.h"
 
 class DominionInterface : public BaseSystemInterface
 {
+	virtual int readConfiguration(baseConfigVariants_t config) override;
+	virtual int initialise() override;
+	virtual double doStep() override;
 
 	virtual int getIntValue(std::string base_name) override;
 	virtual bool getBoolValue(std::string base_name) override;

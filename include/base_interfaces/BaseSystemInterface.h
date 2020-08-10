@@ -2,9 +2,27 @@
 #define BASESYSTEMINTERFACE_H
 
 #include <string>
+#include "configreader/BaseConfigVariants.h"
 
 class BaseSystemInterface
 {
+	/**
+	Read configuration for this base simulator interface.
+	\param config the decoding struct
+	\return success status
+	*/
+	virtual int readConfiguration(baseConfigVariants_t config) = 0;
+	/**
+	Connect grpc with host/port information from corresponding fields
+	\return Success status.
+	*/
+	virtual int initialise() = 0;
+	/**
+	Perform a simulation step
+	\return Time in seconds advanced during step
+	*/
+	virtual double doStep() = 0;
+
 public:
 	virtual int getIntValue(std::string base_name) = 0;
 	virtual bool getBoolValue(std::string base_name) = 0;

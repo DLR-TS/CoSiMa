@@ -7,6 +7,15 @@
 
 class CARLAInterface : public BaseSystemInterface
 {
+	//TODO add grpc fields
+
+	std::unique_ptr<CARLAInterfaceConfig> config;
+
+public:
+	virtual int readConfiguration(baseConfigVariants_t config) override;
+	virtual int initialise() override;
+	virtual double doStep() override;
+
 	virtual int getIntValue(std::string base_name) override;
 	virtual bool getBoolValue(std::string base_name) override;
 	virtual float getFloatValue(std::string base_name) override;

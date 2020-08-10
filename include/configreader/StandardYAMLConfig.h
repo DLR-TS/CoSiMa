@@ -1,6 +1,7 @@
 #ifndef STANDARDYAMLCONGIF_H
 #define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"
+#include <iostream>
 
 /**
  * \var std::string simulator
@@ -10,6 +11,32 @@ struct SimulatorName {
 public:
 	std::string simulator;
 };
+
+/**
+* \var client_host
+* host name or ip of the CARLA to OSI client
+* \var client_port
+* port of the CARLA to OSI client
+* \var carla_host
+* host name or ip of the CARLA server to which the client should connect
+* \var carla_port
+* port of the CARLA server to which the client should connect
+* \var transactionTimeout
+* transaction timeout in seconds
+* \var deltaSeconds
+* simulation time delta per tick
+*/
+struct CARLAInterfaceConfig {
+public:
+	std::string client_host;
+	uint16_t client_port;
+	std::string carla_host;
+	uint16_t carla_port;
+	double transactionTimeout;
+	double deltaSeconds;
+};
+
+struct DominionInterfaceConfig{};
 
 /**
  *\paragraph Naming definitions

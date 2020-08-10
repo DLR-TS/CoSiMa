@@ -1,5 +1,21 @@
 #include "base_interfaces\CARLAInterface.h"
 
+int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
+	CARLAInterfaceConfig* config = std::get_if<CARLAInterfaceConfig>(&variant);
+	if (nullptr == config) {
+		std::cerr << "Called with wrong configuration variant!" << std::endl;
+		return 1;
+	}
+
+	this->config.reset(std::move(config));
+
+	return 0;
+}
+
+int CARLAInterface::initialise() {
+	return 0;
+}
+
 int CARLAInterface::getIntValue(std::string base_name) {
 	return 0;
 };
