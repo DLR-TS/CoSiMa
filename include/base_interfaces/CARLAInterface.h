@@ -1,12 +1,12 @@
-#ifndef DOMINIONINTERFACE_H
-#define DOMINIONINTERFACE_H
+#ifndef CARLAINTERFACE_H
+#define CARLAINTERFACE_H
 
 #include <string>
 #include "base_interfaces/BaseSystemInterface.h"
+#include "configreader/BaseConfigVariants.h"
 
-class DominionInterface : public BaseSystemInterface
+class CARLAInterface : public BaseSystemInterface
 {
-
 	virtual int getIntValue(std::string base_name) override;
 	virtual bool getBoolValue(std::string base_name) override;
 	virtual float getFloatValue(std::string base_name) override;
@@ -20,4 +20,4 @@ class DominionInterface : public BaseSystemInterface
 	virtual int setStringValue(std::string base_name, std::string value) override;
 };
 
-#endif // !DOMINIONINTERFACE_H
+#endif // !CARLAINTERFACE_H

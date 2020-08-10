@@ -3,7 +3,7 @@
 cmake_minimum_required (VERSION 3.8)
 message("Running with CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 
-project ("CoSimulationManager")
+project ("CoSimulationManager" CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,10 +24,10 @@ if(GIT_SUBMODULE)
 endif()
 
 # Download automatically, you can also just copy the conan.cmake file
-if(NOT EXISTS "conan/conan.cmake")
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.14/conan.cmake"
-                 "conan/conan.cmake")
+   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+                 "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 include(conan/conan.cmake)
@@ -78,13 +78,19 @@ conan_basic_setup()
 # add_subdirectory("lib/Catch2")
 # add_subdirectory("lib/FakeIt")
 
-#main project
+
+##main project
 # set up variables that are used below
 add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("test")
-#create library to
 
+option(WITH_CARLA "Build CoSimulationManagerLib with CARLA base simulaton interface" ON)
+if(WITH_CARLA)
+    message(STATUS "Will add CARLA base interface to build")
+endif(WITH_CARLA)
+
+#create library to
 add_library(CoSimulationManagerLib STATIC ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
@@ -115,6 +121,8 @@ include(CTest)
 include(Catch)
 catch_discover_tests(test_CoSiMa)
 
-
-add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h")
-target_link_libraries(CoSimulationManager CoSimulationManagerLib)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/CoSiMa.h)
+#configure_file(${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/src/CoSiMa.cpp)
+add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_BINARY_DIR}/include/CoSiMa.h")
+target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+target_include_directories(CoSimulationManager PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include/)

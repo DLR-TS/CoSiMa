@@ -1,7 +1,6 @@
 #ifndef BASESYSTEMINTERFACE_H
 #define BASESYSTEMINTERFACE_H
 
-#include "mapper/Mapper.h"
 #include <string>
 
 class BaseSystemInterface
