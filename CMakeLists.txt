@@ -54,6 +54,10 @@ include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 conan_basic_setup()
 
+# use our FetchGRPC.cmake module to add gRPC
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
+include(FetchGRPC)
+
 # #protobuf
 # add_subdirectory ("lib/protobuf/cmake")
 
@@ -91,12 +95,20 @@ if(WITH_CARLA)
 endif(WITH_CARLA)
 
 #create library to
-add_library(CoSimulationManagerLib STATIC ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
+add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
+# CoSimulationManagerLib exports no symbols, thereby preventing linking of its dll on windows. Force export of all global symbols
+set_property(TARGET CoSimulationManagerLib PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})#open_simulation_interface_static
+# link conan managed dependencies
+target_link_libraries(CoSimulationManagerLib ${CONAN_LIBS})
+# add grpc dependency
+target_link_libraries(CoSimulationManagerLib grpc++)
 # FMI4cpp is not managed by conan, thus it is added here
-target_include_directories(CoSimulationManagerLib PUBLIC fmi4cpp)
 target_link_libraries(CoSimulationManagerLib fmi4cpp)
+
+# generate grpc code
+protobuf_generate_grpc_cpp(rpc/base_interface/BaseInterface.proto)#TODO define and add rpc/simulation_interface/SimulationInterface.proto)
+target_include_directories(CoSimulationManagerLib PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/gens)
 
 find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
