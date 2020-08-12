@@ -2,9 +2,13 @@
 
 eOSIMessage OSMPBridge::getMessageType(std::string messageType) {
 	if (messageType.find("SensorView") != std::string::npos
-		&& messageType.find("Config") == std::string::npos) { return SensorViewMessage; }
-	else if (messageType.find("SensorView") != std::string::npos 
-		&& messageType.find("Config") != std::string::npos) { return SensorViewConfigurationMessage; }
+		&& messageType.find("Config") == std::string::npos) {
+		return SensorViewMessage;
+	}
+	else if (messageType.find("SensorView") != std::string::npos
+		&& messageType.find("Config") != std::string::npos) {
+		return SensorViewConfigurationMessage;
+	}
 	else if (messageType.find("SensorData") != std::string::npos) { return SensorDataMessage; }
 	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
 	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
@@ -22,7 +26,7 @@ int OSMPBridge::readConfiguration(configVariants_t configVariants) {
 	}
 	OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
 
-	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.model));
+	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu = std::make_unique<fmi4cpp::fmi2::fmu>(interfaceConfig.model);
 	if (!fmu->supports_cs()) {
 		// FMU contains no cs model
 		return 216373;
@@ -96,16 +100,18 @@ int OSMPBridge::readFromInternalState() {
 				if (inputVar.name.find(address.first) != std::string::npos) {
 					if (inputVar.name.find(".hi") != std::string::npos) {
 						coSimSlave->write_integer(inputVar.value_reference, address.second.addr.base.hi);
-					}else if (inputVar.name.find(".lo") != std::string::npos) {
+					}
+					else if (inputVar.name.find(".lo") != std::string::npos) {
 						coSimSlave->write_integer(inputVar.value_reference, address.second.addr.base.lo);
-					}else if (inputVar.name.find(".size") != std::string::npos) {
+					}
+					else if (inputVar.name.find(".size") != std::string::npos) {
 						coSimSlave->write_integer(inputVar.value_reference, address.second.size);
 					}
 				}
 			}
 		}
 	}
-	
+
 	return 0;
 }
 int OSMPBridge::doStep(double stepSize) {
@@ -165,7 +171,7 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 		if (addressMap.find(prefix) == addressMap.end()) {
 			address a;
 			a.addr.base.hi = value;
-			addressMap.insert({ prefix , a});
+			addressMap.insert({ prefix , a });
 		}
 		else {
 			addressMap.at(prefix).addr.base.hi = value;
