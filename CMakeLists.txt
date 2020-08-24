@@ -107,9 +107,14 @@ add_custom_command(TARGET test_CoSiMa PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
                          copy_if_different
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig1.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig2.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig3.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_cs.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_me.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Stair.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPCNetworkProxy.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPDummySensor.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPDummySource.fmu
 						 $<TARGET_FILE_DIR:test_CoSiMa>/../test/resources/)
 
 include(CTest)
