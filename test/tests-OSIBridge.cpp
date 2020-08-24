@@ -30,6 +30,7 @@ TEST_CASE("OSIBridge Test") {
 		address address;
 		address.addr.address = (unsigned long long)data;
 		address.size = byteSize;
+		address.index = 0;
 
 		//YAML Config
 		OSIInterfaceConfig config;

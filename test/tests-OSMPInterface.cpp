@@ -62,6 +62,22 @@ TEST_CASE("OSMP Test") {
 
 			REQUIRE(bridge->inputAddresses.size() == 4);
 		}
+
+		SECTION("split prefix index correct") {
+
+			auto returnValue = bridge->searchForIndex("OSMPSensorViewIn");
+			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
+			REQUIRE(0 == returnValue.index);
+			returnValue = bridge->searchForIndex("OSMPSensorViewIn[5]");
+			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
+			REQUIRE(5 == returnValue.index);
+			returnValue = bridge->searchForIndex("OSMPSensorViewIn[33]");
+			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
+			REQUIRE(33 == returnValue.index);
+			returnValue = bridge->searchForIndex("OSMPSensorViewIn[4]");
+			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
+			REQUIRE(4 == returnValue.index);
+		}
 	}
 
 	SECTION("Loading of OSMP FMU") {

@@ -161,10 +161,15 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	}
 
 	if (0 == name.compare(name.length() - 8, 8, ".base.hi")) {
-		std::string prefix = name.substr(0, name.length() - 8);
+		std::string prefixWithIndex = name.substr(0, name.length() - 8);
+
+		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		std::string prefix = prefixAndIndex.shortendPrefix;
+
 		if (addressMap.find(prefix) == addressMap.end()) {
 			address a;
 			a.addr.base.hi = value;
+			a.index = prefixAndIndex.index;
 			addressMap.insert({ prefix , a});
 		}
 		else {
@@ -172,10 +177,15 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 		}
 	}
 	else if (0 == name.compare(name.length() - 8, 8, ".base.lo")) {
-		std::string prefix = name.substr(0, name.length() - 8);
+		std::string prefixWithIndex = name.substr(0, name.length() - 8);
+
+		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		std::string prefix = prefixAndIndex.shortendPrefix;
+
 		if (addressMap.find(prefix) == addressMap.end()) {
 			address a;
 			a.addr.base.lo = value;
+			a.index = prefixAndIndex.index;
 			addressMap.insert({ prefix , a });
 		}
 		else {
@@ -183,16 +193,36 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 		}
 	}
 	else if (0 == name.compare(name.length() - 5, 5, ".size")) {
-		std::string prefix = name.substr(0, name.length() - 5);
+		std::string prefixWithIndex = name.substr(0, name.length() - 5);
+
+		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		std::string prefix = prefixAndIndex.shortendPrefix;
+
 		if (addressMap.find(prefix) == addressMap.end()) {
 			address a;
 			a.size = value;
+			a.index = prefixAndIndex.index;
 			addressMap.insert({ prefix , a });
 		}
 		else {
 			addressMap.at(prefix).size = value;
 		}
 	}
+}
+
+OSMPBridge::ShortendPrefixAndIndex OSMPBridge::searchForIndex(std::string prefix) {
+	ShortendPrefixAndIndex returnValue;
+	size_t found = prefix.rfind("[");
+	if (found != std::string::npos) {
+		size_t found2 = prefix.rfind("]");
+		returnValue.index = std::stoi(prefix.substr(found + 1, found2 - found - 1));
+		returnValue.shortendPrefix = prefix.substr(0, found);
+	}
+	else {
+		returnValue.shortendPrefix = prefix;
+		returnValue.index = 0;
+	}
+	return returnValue;
 }
 
 inline OSMPBridge::OSMPFMUSlaveStateWrapper::OSMPFMUSlaveStateWrapper(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {

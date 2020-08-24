@@ -46,6 +46,12 @@ public:
 	*/
 	int readConfiguration(configVariants_t configVariants) override;
 
+	/**
+	stores shortend prefix and index
+	*/
+	struct ShortendPrefixAndIndex { std::string shortendPrefix; int index; };
+
+	ShortendPrefixAndIndex searchForIndex(std::string prefix);
 protected:
 	class OSMPFMUSlaveStateWrapper {
 	private:

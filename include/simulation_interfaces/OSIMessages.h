@@ -32,6 +32,7 @@ struct address {
 		unsigned long long address;
 	} addr;
 	int size;
+	int index;
 };
 
 /**

@@ -47,32 +47,37 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 	return 0;
 }
 
-void OSIMapper::mapOSIToInternalState(std::string message, eOSIMessage messageType) {
+void OSIMapper::mapOSIToInternalState(std::string message, eOSIMessage messageType, int index) {
+	std::string indexString = "";
+	if (index != 0) {
+		indexString = "[" + std::to_string(index) + "]";
+	}
+
 	switch (messageType)
 	{
 	case SensorViewMessage:
-		mapToInternalState(message, "SensorView", STRINGCOSIMA);
+		mapToInternalState(message, "SensorView" + indexString, STRINGCOSIMA);
 		break;
 	case SensorViewConfigurationMessage:
-		mapToInternalState(message, "SensorViewConfiguration", STRINGCOSIMA);
+		mapToInternalState(message, "SensorViewConfiguration" + indexString, STRINGCOSIMA);
 		break;
 	case SensorDataMessage:
-		mapToInternalState(message, "SensorData", STRINGCOSIMA);
+		mapToInternalState(message, "SensorData" + indexString, STRINGCOSIMA);
 		break;
 	case GroundTruthMessage:
-		mapToInternalState(message, "GroundTruth", STRINGCOSIMA);
+		mapToInternalState(message, "GroundTruth" + indexString, STRINGCOSIMA);
 		break;
 	case SL45MotionCommandMessage:
-		mapToInternalState(message, "SL45MotionCommand", STRINGCOSIMA);
+		mapToInternalState(message, "SL45MotionCommand" + indexString, STRINGCOSIMA);
 		break;
 	case SL45VehicleCommunicationDataMessage:
-		mapToInternalState(message, "SL45VehicleCommunicationData", STRINGCOSIMA);
+		mapToInternalState(message, "SL45VehicleCommunicationData" + indexString, STRINGCOSIMA);
 		break;
 	}
 }
 
 //osiMessage_t
-std::string OSIMapper::mapOSIFromInternalState(eOSIMessage messageType) {
+std::string OSIMapper::mapOSIFromInternalState(eOSIMessage messageType, int index) {
 	switch (messageType)
 	{
 	case SensorViewMessage:
