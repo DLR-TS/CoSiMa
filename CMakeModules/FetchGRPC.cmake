@@ -4,9 +4,12 @@ include(FetchContent)
 FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
-  GIT_TAG        v1.31.0
+  GIT_TAG        v1.31.1
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
+  LOG_CONFIGURE TRUE
+  LOG_BUILD TRUE
+  LOG_INSTALL TRUE
 )
 set(FETCHCONTENT_QUIET OFF)
 # not available before CMake version 3.14 - Using FetchContent_Populate instead
