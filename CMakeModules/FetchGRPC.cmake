@@ -44,7 +44,7 @@ function(fetch_gRPC_and_non_conan_dependencies)
 		#else()
 		#	set(gRPC_RE2_PROVIDER "module" CACHE STRING "Provider of re2 library")
 		#endif()
-		set(RE2_ROOT_DIR ${CONAN_RE2_ROOT})
+		#set(RE2_ROOT_DIR ${CONAN_RE2_ROOT})
 		message("RE2_ROOT_DIR: ${CONAN_RE2_ROOT}")
 
 		# deactivate abseil-cpp option for building tests

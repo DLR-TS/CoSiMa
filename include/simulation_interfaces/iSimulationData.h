@@ -7,12 +7,14 @@
 #include "base_interfaces/BaseSystemInterface.h"
 #include "mapper/Mapper.h"
 #include "internalState.h"
+#include "configreader/StandardYAMLConfig.h"
 
 //forward declarations
 /**
 * Basic value types
 */
 typedef std::variant<int, float, double, bool, std::string> values_t;
+typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig, OSIInterfaceConfig, OSMPInterfaceConfig> configVariants_t;
 enum eDataType;
 class BaseSystemInterface;
 class Mapper;
@@ -27,6 +29,7 @@ enum eSimulatorName
 	ROS,
 	UNREAL,
 	OSI,
+	OSMP,
 	SUMO,
 
 	SIMULATORNAME_ERROR //needs to be last
@@ -109,5 +112,11 @@ public:
 	*/
 	virtual int readFromInternalState() = 0;
 
+	/**
+	Read configuration and fill simulation configuration.
+	\param config the decoding struct
+	\return success status
+	*/
+	virtual int readConfiguration(configVariants_t configVariants);
 };
 #endif // !ISIMULATIONDATA_H

@@ -98,6 +98,52 @@ public:
 	std::string models;
 };
 
+
+/**
+* \var std::string interface_name
+* holds name of the variable in the interface system
+* \var std::string base_name
+* holds name of the variable in the base system
+*/
+struct OSIMessageConfig {
+public:
+	std::string interface_name;
+	std::string base_name;
+};
+
+/**
+* \var std::string prefix
+* prefix used for interel saving and interpretation of base interface side
+* \var std::vector<OSIMessageConfig> inputs
+* holds the input osi messages
+* \var std::vector<OSIMessageConfig> outputs
+* holds the output osi messages
+*/
+struct OSIInterfaceConfig {
+public:
+	std::string prefix;
+	std::vector<OSIMessageConfig> inputs;
+	std::vector<OSIMessageConfig> outputs;
+};
+
+/**
+* \var std::string model
+* path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
+* \var std::string prefix
+* prefix used for interel saving and interpretation of base interface side
+* \var std::vector<OSIMessageConfig> inputs
+* holds the input osi messages
+* \var std::vector<OSIMessageConfig> outputs
+* holds the output osi messages
+*/
+struct OSMPInterfaceConfig {
+public:
+	std::string model;
+	std::string prefix;
+	std::vector<OSIMessageConfig> inputs;
+	std::vector<OSIMessageConfig> outputs;
+};
+
 /**
  * YAML-cpp converter for the above defined structs. Designed according to yaml-cpp tutorial: https://github.com/jbeder/yaml-cpp/wiki/Tutorial 
 
@@ -129,10 +175,15 @@ namespace YAML {
 		static bool decode(const Node& node, InterfaceYAMLConfig& config)
 		{
 			config.simulator = node["simulator"].as<std::string>();
-			config.ip = node["ip"].as<std::string>();
-			config.port = node["port"].as<int>();
-			config.inputs = node["input"].as<std::vector<VariableDefinition>>();
-			config.outputs = node["output"].as<std::vector<VariableDefinition>>();
+			config.ip = node["ip"].IsDefined() ? node["ip"].as<std::string>() : std::string();
+			if (node["port"].IsDefined()) {
+				config.port = node["port"].as<int>();
+			} else {
+				std::cout << "No port for " << config.simulator << " is set. Default value 0 is used. May not be a problem since not every interface needs a defined port.";
+				config.port = 0;
+			}
+			config.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
+			config.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
 			return true;
 		}
 	};
@@ -168,6 +219,53 @@ namespace YAML {
 		}
 	};
 
+	template<>
+	struct convert<OSIMessageConfig> {
+		static Node encode(const OSIMessageConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, OSIMessageConfig& osiMessage)
+		{
+			osiMessage.interface_name = node["interface_name"].as<std::string>();
+			osiMessage.base_name = node["base_name"].as<std::string>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<OSIInterfaceConfig> {
+		static Node encode(const OSIInterfaceConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, OSIInterfaceConfig& osiinterface)
+		{
+			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
+			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<OSMPInterfaceConfig> {
+		static Node encode(const OSMPInterfaceConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, OSMPInterfaceConfig& osiinterface)
+		{
+			osiinterface.prefix = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
+			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			return true;
+		}
+	};
 }
 
 #endif //!STANDARDYAMLCONGIF_H
