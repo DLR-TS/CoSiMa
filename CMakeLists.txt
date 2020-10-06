@@ -95,9 +95,45 @@ else()
 endif(BUILD_SHARED_LIBS)
 
 
-# generate grpc code
-protobuf_generate_grpc_cpp(rpc/base_interface/BaseInterface.proto)#TODO define and add rpc/simulation_interface/SimulationInterface.proto)
-target_include_directories(CoSimulationManagerLib PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/gens)
+## generate grpc code
+# gRPC can handle relative files
+set(COSIMA_GRPC_PROTO_FILES
+	grpc_proto_files/base_interface/BaseInterface.proto
+	#TODO define and add grpc_proto_files/simulation_interface/SimulationInterface.proto
+)
+#string(REPLACE ".proto" ".grpc.pb.cc" COSIMA_GRPC_SRCS ${COSIMA_GRPC_PROTO_FILES})
+#string(REPLACE ".proto" ".grpc.pb.h" COSIMA_GRPC_HDRS ${COSIMA_GRPC_PROTO_FILES})
+#string(REPLACE ".proto" "_mock.grpc.pb.h" COSIMA_GRPC_MOCK_HDRS ${COSIMA_GRPC_PROTO_FILES})
+#string(REPLACE ".proto" ".pb.cc" COSIMA_PROTO_SRCS ${COSIMA_GRPC_PROTO_FILES})
+#string(REPLACE ".proto" ".pb.h" COSIMA_PROTO_HDRS ${COSIMA_GRPC_PROTO_FILES})
+# using a loop to convert to absolute paths
+foreach(PROTO_FILE ${COSIMA_GRPC_PROTO_FILES})
+	#get_filename_component(PROTO_FILE ${PROTO_FILE} NAME)
+	string(REPLACE ".proto" ".grpc.pb.cc" OUT ${PROTO_FILE})
+	set(COSIMA_GRPC_SRCS
+		${COSIMA_GRPC_SRCS} ${CMAKE_BINARY_DIR}/gens/${OUT})
+	string(REPLACE ".proto" ".grpc.pb.h" OUT ${PROTO_FILE})
+	set(COSIMA_GRPC_HDRS
+		${COSIMA_GRPC_HDRS} ${CMAKE_BINARY_DIR}/gens/${OUT})
+	string(REPLACE ".proto" "_mock.grpc.pb.h" OUT ${PROTO_FILE})
+	set(COSIMA_GRPC_MOCK_HDRS
+		${COSIMA_GRPC_MOCK_HDRS} ${CMAKE_BINARY_DIR}/gens/${OUT})
+	string(REPLACE ".proto" ".pb.cc" OUT ${PROTO_FILE})
+	set(COSIMA_PROTO_SRCS
+		${COSIMA_PROTO_SRCS} ${CMAKE_BINARY_DIR}/gens/${OUT})
+	string(REPLACE ".proto" ".pb.h" OUT ${PROTO_FILE})
+	set(COSIMA_PROTO_HDRS
+		${COSIMA_PROTO_HDRS} ${CMAKE_BINARY_DIR}/gens/${OUT})
+endforeach()
+
+message("COSIMA_GRPC_PROTO_FILES ${COSIMA_GRPC_PROTO_FILES}")
+message("_gRPC_PROTO_GENS_DIR ${_gRPC_PROTO_GENS_DIR}")
+set(_gRPC_PROTO_GENS_DIR ${CMAKE_BINARY_DIR}/gens)
+protobuf_generate_grpc_cpp(${COSIMA_GRPC_PROTO_FILES})
+add_library(CoSimulationManagerGRPCLib ${COSIMA_PROTO_SRCS} ${COSIMA_GRPC_SRCS})
+
+target_include_directories(CoSimulationManagerGRPCLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/gens)
+target_link_libraries(CoSimulationManagerLib PRIVATE CoSimulationManagerGRPCLib)
 
 find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})

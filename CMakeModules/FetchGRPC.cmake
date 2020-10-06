@@ -4,15 +4,38 @@ include(FetchContent)
 FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
-  GIT_TAG        v1.31.1
+  GIT_TAG        v1.32.0
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
-  # all submodules except third_party/re2, because it fails to clone
-  GIT_SUBMODULES third_party/zlib third_party/protobuf third_party/gflags third_party/googletest third_party/benchmark third_party/boringssl-with-bazel third_party/cares/cares third_party/bloaty third_party/abseil-cpp third_party/envoy-api third_party/googleapis third_party/protoc-gen-validate third_party/udpa third_party/libuv
+  # all submodules 
+  GIT_SUBMODULES 
+	third_party/zlib
+	third_party/protobuf
+	third_party/gflags 
+	third_party/googletest 
+	third_party/benchmark 
+	third_party/boringssl-with-bazel 
+	third_party/cares/cares 
+	third_party/bloaty 
+	third_party/abseil-cpp 
+	third_party/envoy-api 
+	third_party/googleapis 
+	third_party/protoc-gen-validate 
+	third_party/udpa 
+	third_party/libuv
+	third_party/re2
   LOG_CONFIGURE TRUE
   LOG_BUILD TRUE
   LOG_INSTALL TRUE
 )
+
+set(gRPC_BUILD_GRPC_CPP_PLUGIN ON CACHE BOOL "Build grpc_cpp_plugin")
+set(gRPC_BUILD_GRPC_CSHARP_PLUGIN OFF CACHE BOOL "Build grpc_csharp_plugin")
+set(gRPC_BUILD_GRPC_NODE_PLUGIN OFF CACHE BOOL "Build grpc_node_plugin")
+set(gRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN OFF CACHE BOOL "Build grpc_objective_c_plugin")
+set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF CACHE BOOL "Build grpc_php_plugin")
+set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF CACHE BOOL "Build grpc_python_plugin")
+set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "Build grpc_ruby_plugin")
 
 function(fetch_gRPC_and_non_conan_dependencies)
 	set(FETCHCONTENT_QUIET OFF)
@@ -45,7 +68,7 @@ function(fetch_gRPC_and_non_conan_dependencies)
 		#	set(gRPC_RE2_PROVIDER "module" CACHE STRING "Provider of re2 library")
 		#endif()
 		#set(RE2_ROOT_DIR ${CONAN_RE2_ROOT})
-		message("RE2_ROOT_DIR: ${CONAN_RE2_ROOT}")
+		#message("RE2_ROOT_DIR: ${CONAN_RE2_ROOT}")
 
 		# deactivate abseil-cpp option for building tests
 		set(BUILD_TESTING FALSE)
