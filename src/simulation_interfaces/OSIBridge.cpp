@@ -49,7 +49,19 @@ int OSIBridge::writeToInternalState(address address, eOSIMessage messageType)
 		if(!groundTruth.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
 		}
-		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(groundTruth.SerializeAsString(), SensorViewConfigurationMessage, address.index);
+		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(groundTruth.SerializeAsString(), GroundTruthMessage, address.index);
+		break;
+	case TrafficCommandMessage:
+		if(!trafficCommand.ParseFromArray((const void*)address.addr.address, address.size)){
+			return 1;
+		}
+		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(trafficCommand.SerializeAsString(), TrafficCommandMessage, address.index);
+		break;
+	case TrafficUpdateMessage:
+		if(!trafficUpdate.ParseFromArray((const void*)address.addr.address, address.size)){
+			return 1;
+		}
+		std::static_pointer_cast<OSIMapper>(mapper)->mapOSIToInternalState(trafficUpdate.SerializeAsString(), TrafficUpdateMessage, address.index);
 		break;
 	case SL45MotionCommandMessage:
 		if(!motionCommand.ParseFromArray((const void*)address.addr.address, address.size)){
@@ -108,6 +120,18 @@ int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) 
 		address.size = (int)groundTruth.ByteSizeLong();
 		address.addr.address = (unsigned long long)malloc(address.size);
 		groundTruth.SerializeToArray((void*)address.addr.address, address.size);
+		break;	
+	case TrafficCommandMessage:
+		trafficCommand.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(TrafficCommandMessage, address.index));
+		address.size = (int)trafficCommand.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
+		trafficCommand.SerializeToArray((void*)address.addr.address, address.size);
+		break;	
+	case TrafficUpdateMessage:
+		trafficUpdate.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(GroundTruthMessage, address.index));
+		address.size = (int)trafficUpdate.ByteSizeLong();
+		address.addr.address = (unsigned long long)malloc(address.size);
+		trafficUpdate.SerializeToArray((void*)address.addr.address, address.size);
 		break;
 	case SL45MotionCommandMessage:
 		motionCommand.ParseFromString(std::static_pointer_cast<OSIMapper>(mapper)->mapOSIFromInternalState(SL45MotionCommandMessage, address.index));

@@ -8,6 +8,8 @@
 #include "../mapper/OSIMapper.h"
 #include "OSIMessages.h"
 #include "osi_sensorview.pb.h"
+#include "osi_trafficcommand.pb.h"
+#include "osi_trafficupdate.pb.h"
 #include "sl45_motioncommand.pb.h"
 #include "sl45_vehiclecommunicationdata.pb.h"
 
@@ -34,6 +36,8 @@ protected:
 	osi3::SensorViewConfiguration sensorViewConfiguration;
 	osi3::SensorData sensorData;
 	osi3::GroundTruth groundTruth;
+	osi3::TrafficCommand trafficCommand;
+	osi3::TrafficUpdate trafficUpdate;
 	setlevel4to5::MotionCommand motionCommand;
 	setlevel4to5::VehicleCommunicationData vehicleCommunicationData;
 
