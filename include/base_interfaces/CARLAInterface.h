@@ -4,7 +4,7 @@
 #include <string>
 #include "base_interfaces/BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
-//#include "gens/BaseInterface.grpc.h"
+#include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
 
 class CARLAInterface : public BaseSystemInterface
 {

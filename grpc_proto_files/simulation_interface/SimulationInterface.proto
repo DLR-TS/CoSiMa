@@ -1,5 +1,5 @@
 syntax = "proto3";
-package CoSiMa-rpc;
+package CoSiMa_rpc;
 
 #TODO
 service SimulationInterface {

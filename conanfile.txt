@@ -1,6 +1,5 @@
 [requires]
-protoc_installer/3.9.1@bincrafters/stable
-protobuf/3.9.1@bincrafters/stable
+protobuf/3.11.4
 # not yet published... Installing from the projects github using CMake FetchContent Module instead
 #grpc/1.29.1@zcube/stable
 # requirement of grpc on windows (see https://github.com/grpc/grpc/blob/v1.31.0/BUILDING.md#windows)

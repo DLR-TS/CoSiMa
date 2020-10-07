@@ -4,26 +4,9 @@ include(FetchContent)
 FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
-  GIT_TAG        v1.32.0
+  GIT_TAG        v1.29.x
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
-  # all submodules 
-  GIT_SUBMODULES 
-	third_party/zlib
-	third_party/protobuf
-	third_party/gflags 
-	third_party/googletest 
-	third_party/benchmark 
-	third_party/boringssl-with-bazel 
-	third_party/cares/cares 
-	third_party/bloaty 
-	third_party/abseil-cpp 
-	third_party/envoy-api 
-	third_party/googleapis 
-	third_party/protoc-gen-validate 
-	third_party/udpa 
-	third_party/libuv
-	third_party/re2
   LOG_CONFIGURE TRUE
   LOG_BUILD TRUE
   LOG_INSTALL TRUE
@@ -37,45 +20,54 @@ set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF CACHE BOOL "Build grpc_php_plugin")
 set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF CACHE BOOL "Build grpc_python_plugin")
 set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "Build grpc_ruby_plugin")
 
-function(fetch_gRPC_and_non_conan_dependencies)
-	set(FETCHCONTENT_QUIET OFF)
-	# not available before CMake version 3.14 - Using FetchContent_Populate instead
-	#FetchContent_MakeAvailable(gRPC)
 
-	FetchContent_GetProperties(gRPC)
-	if(NOT grpc_POPULATED)
-		FetchContent_Populate(gRPC)
+set(FETCHCONTENT_QUIET OFF)
+# not available before CMake version 3.14 - Using FetchContent_Populate instead
+#FetchContent_MakeAvailable(gRPC)
 
-		if(TARGET zlib OR TARGET CONAN_PKG::zlib)
-			set(gRPC_ZLIB_PROVIDER "package" CACHE STRING "Provider of zlib library")
-			message(VERBOSE "Using existing zlib provider")
-		else()
-			set(gRPC_ZLIB_PROVIDER "module" CACHE STRING "Provider of zlib library")
-		endif()
+FetchContent_GetProperties(gRPC)
+if(NOT grpc_POPULATED)
+	FetchContent_Populate(gRPC)
 
-		if(TARGET protobuf OR TARGET CONAN_PKG::protobuf)
-			set(gRPC_PROTOBUF_PROVIDER "package" CACHE STRING "Provider of protobuf library")
-			message(VERBOSE "Using existing protobuf provider")
-		else()
-			set(gRPC_PROTOBUF_PROVIDER "module" CACHE STRING "Provider of protobuf library")
-		endif()
-
-		# submodule is broken/cannot be cloned using DLR VPN
-		#if(TARGET re2 OR TARGET CONAN_PKG::re2)
-		#	set(gRPC_RE2_PROVIDER "package" CACHE STRING "Provider of re2 library")
-		#	message(VERBOSE "Using existing re2 provider")
-		#else()
-		#	set(gRPC_RE2_PROVIDER "module" CACHE STRING "Provider of re2 library")
-		#endif()
-		#set(RE2_ROOT_DIR ${CONAN_RE2_ROOT})
-		#message("RE2_ROOT_DIR: ${CONAN_RE2_ROOT}")
-
-		# deactivate abseil-cpp option for building tests
-		set(BUILD_TESTING FALSE)
-
-		message(STATUS "Fetched gRPC to ${grpc_SOURCE_DIR}. Will put build results into ${grpc_BINARY_DIR}.")
-		add_subdirectory(${grpc_SOURCE_DIR} ${grpc_BINARY_DIR} EXCLUDE_FROM_ALL)
+	if(TARGET zlib OR TARGET CONAN_PKG::zlib)
+		message(VERBOSE "Using existing zlib provider")
+		set(gRPC_ZLIB_PROVIDER "package" CACHE STRING "Provider of zlib library")
+	else()
+		set(gRPC_ZLIB_PROVIDER "module" CACHE STRING "Provider of zlib library")
 	endif()
-endfunction()
 
-fetch_gRPC_and_non_conan_dependencies()
+	if(TARGET protobuf::protoc OR TARGET CONAN_PKG::protobuf)
+		message(VERBOSE "Using existing protobuf provider")
+		set(gRPC_PROTOBUF_PROVIDER "package" CACHE STRING "Provider of protobuf library")
+
+		# gRPC uses a different variable to access protoc with it's own find_programm call and therefore suffers from the same search path problem as the default FindProtobuf script, which has difficulties finding protoc inside the conan package
+		find_program(Protobuf_PROTOC_EXECUTABLE
+			NAMES protoc
+			DOC "The Google Protocol Buffers Compiler"
+			HINTS
+			${CONAN_BIN_DIRS}
+		)
+		if(Protobuf_PROTOC_EXECUTABLE)
+			set(_gRPC_PROTOBUF_PROTOC_EXECUTABLE ${Protobuf_PROTOC_EXECUTABLE})
+		endif()
+	else()
+		set(gRPC_PROTOBUF_PROVIDER "module" CACHE STRING "Provider of protobuf library")
+	endif()
+
+	# deactivate abseil-cpp option for building tests
+	set(BUILD_TESTING FALSE)
+
+	message(STATUS "Fetched gRPC to ${grpc_SOURCE_DIR}. Will put build results into ${grpc_BINARY_DIR}.")
+	add_subdirectory(${grpc_SOURCE_DIR} ${grpc_BINARY_DIR} EXCLUDE_FROM_ALL)
+
+	message(STATUS "Added gRPC subdirectory (${grpc_SOURCE_DIR}).")
+
+	if(TARGET CONAN_PKG::protobuf)
+		# correct the include directory
+		set(_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR ${CONAN_INCLUDE_DIRS_PROTOBUF})
+	endif()
+	if(MSVC OR MINGW)
+		# required compiler definition that is missing in older gRPC versions
+		add_definitions(-D_WIN32_WINNT=0x600)
+	endif()
+endif()
