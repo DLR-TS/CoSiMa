@@ -81,6 +81,7 @@ int OSMPBridge::writeToInternalState() {
 	}
 	return 0;
 }
+
 int OSMPBridge::readFromInternalState() {
 	auto const model_description = coSimFMU->get_model_description();
 	//iterate over unknowns declared as output and create AddressMap
@@ -171,7 +172,7 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	if (0 == name.compare(name.length() - 8, 8, ".base.hi")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		auto prefixAndIndex = extractIndex(prefixWithIndex);
 		std::string prefix = prefixAndIndex.shortendPrefix;
 
 		if (addressMap.find(prefix) == addressMap.end()) {
@@ -187,7 +188,7 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	else if (0 == name.compare(name.length() - 8, 8, ".base.lo")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		auto prefixAndIndex = extractIndex(prefixWithIndex);
 		std::string prefix = prefixAndIndex.shortendPrefix;
 
 		if (addressMap.find(prefix) == addressMap.end()) {
@@ -203,7 +204,7 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	else if (0 == name.compare(name.length() - 5, 5, ".size")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 5);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
+		auto prefixAndIndex = extractIndex(prefixWithIndex);
 		std::string prefix = prefixAndIndex.shortendPrefix;
 
 		if (addressMap.find(prefix) == addressMap.end()) {
@@ -218,16 +219,16 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	}
 }
 
-OSMPBridge::ShortendPrefixAndIndex OSMPBridge::searchForIndex(std::string prefix) {
+OSMPBridge::ShortendPrefixAndIndex OSMPBridge::extractIndex(std::string name) {
 	ShortendPrefixAndIndex returnValue;
-	size_t found = prefix.rfind("[");
+	size_t found = name.rfind("[");
 	if (found != std::string::npos) {
-		size_t found2 = prefix.rfind("]");
-		returnValue.index = std::stoi(prefix.substr(found + 1, found2 - found - 1));
-		returnValue.shortendPrefix = prefix.substr(0, found);
+		size_t found2 = name.rfind("]");
+		returnValue.index = std::stoi(name.substr(found + 1, found2 - found - 1));
+		returnValue.shortendPrefix = name.substr(0, found);
 	}
 	else {
-		returnValue.shortendPrefix = prefix;
+		returnValue.shortendPrefix = name;
 		returnValue.index = 0;
 	}
 	return returnValue;

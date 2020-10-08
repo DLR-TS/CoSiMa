@@ -65,16 +65,16 @@ TEST_CASE("OSMP Test") {
 
 		SECTION("split prefix index correct") {
 
-			auto returnValue = bridge->searchForIndex("OSMPSensorViewIn");
+			auto returnValue = bridge->extractIndex("OSMPSensorViewIn");
 			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
 			REQUIRE(0 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[5]");
+			returnValue = bridge->extractIndex("OSMPSensorViewIn[5]");
 			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
 			REQUIRE(5 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[33]");
+			returnValue = bridge->extractIndex("OSMPSensorViewIn[33]");
 			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
 			REQUIRE(33 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[4]");
+			returnValue = bridge->extractIndex("OSMPSensorViewIn[4]");
 			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
 			REQUIRE(4 == returnValue.index);
 		}
