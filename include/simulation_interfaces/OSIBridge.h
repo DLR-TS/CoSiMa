@@ -24,12 +24,29 @@ public:
 	int disconnect() override;
 
 	int writeToInternalState() override;
-	int writeToInternalState(address address, eOSIMessage messageType);
+	/**
+	Write osi message from FMU as string representation to internalstate
+	\param address address Information about the osi message location, type and name
+	\return success indicator
+	*/
+	int writeToInternalState(address address);
 	int readFromInternalState() override;
-	int readFromInternalState(address& address, eOSIMessage messageType);
+	/**
+	Write osi message from internalstate to the given message location for the FMU
+	\param address address Information about the osi message location, type and name
+	\return success indicator
+	*/
+	int readFromInternalState(address& address);
 	int doStep(double stepSize = 1) override;
 
 	int readConfiguration(configVariants_t configVariants) override;
+
+	/**
+	Parse string value to OSI Message Enum.
+	\param std::string messageType string to parse into its enum value representation
+	\return messagetype enum value of given string
+	*/
+	eOSIMessage getMessageType(std::string messageType);
 
 protected:
 	osi3::SensorView sensorView;

@@ -37,22 +37,6 @@ TEST_CASE("OSMP Test") {
 		std::string name2b = "OSMPSensorViewIn[1].base.hi";
 		std::string name3b = "OSMPSensorViewIn[1].size";
 
-		SECTION("Interpret the OSMPNames correct") {
-
-			REQUIRE(bridge->getMessageType(name1) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name2) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name3) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name4) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name5) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name6) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name7) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name8) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name9) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name10) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name11) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name12) == eOSIMessage::SensorViewConfigurationMessage);
-		}
-
 		SECTION("Fill addresses correct") {
 			bridge->saveToAddressMap(bridge->inputAddresses, name1, 1234);
 			bridge->saveToAddressMap(bridge->inputAddresses, name2, 5678);

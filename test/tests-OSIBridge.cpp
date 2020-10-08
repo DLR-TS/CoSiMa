@@ -30,19 +30,19 @@ TEST_CASE("OSIBridge Test") {
 		address address;
 		address.addr.address = (unsigned long long)data;
 		address.size = byteSize;
-		address.name = "OSINewMessageName";
+		address.name = "SensorView";
 
 		//YAML Config
 		OSIInterfaceConfig config;
 		config.prefix = "#";
 		OSIMessageConfig varDef;
 		varDef.base_name = "SensorViewBaseName";
-		varDef.interface_name = "OSINewMessageName";
+		varDef.interface_name = "SensorView";
 		config.outputs.push_back(varDef);
 
 		bridge.getMapper()->readConfiguration(config);
 
-		int returnValue = bridge.writeToInternalState(address, SensorViewMessage);
+		int returnValue = bridge.writeToInternalState(address);
 		
 		REQUIRE(returnValue == 0);
 		REQUIRE(bridge.getMapper()->getInternalState()->strings.at(0).size() == 5);
@@ -81,10 +81,39 @@ TEST_CASE("OSIBridge Test") {
 		//write to internalState
 		bridge.getMapper()->getInternalState()->strings.at(0) = sensorView.SerializeAsString();
 		
-		REQUIRE(bridge.readFromInternalState(address, SensorViewMessage) == 0);
+		REQUIRE(bridge.readFromInternalState(address) == 0);
 
 		osi3::SensorView sensorView2;
 		sensorView2.ParseFromArray((const void*)address.addr.address, 5);
 		REQUIRE(sensorView2.mutable_host_vehicle_id()->value() == hostId);
+	}
+
+	SECTION("Interpret the OSMPNames correct") {
+
+		std::string name1 = "OSMPSensorViewIn.base.lo";
+		std::string name2 = "OSMPSensorViewIn.base.hi";
+		std::string name3 = "OSMPSensorViewIn.size";
+		std::string name4 = "OSMPSensorViewInConfigRequest.base.hi";
+		std::string name5 = "OSMPSensorViewInConfigRequest.base.lo";
+		std::string name6 = "OSMPSensorViewInConfigRequest.size";
+		std::string name7 = "OSMPSensorDataOut.base.lo";
+		std::string name8 = "OSMPSensorDataOut.base.hi";
+		std::string name9 = "OSMPSensorDataOut.size";
+		std::string name10 = "OSMPSensorViewInConfig.base.lo";
+		std::string name11 = "OSMPSensorViewInConfig.base.hi";
+		std::string name12 = "OSMPSensorViewInConfig.size";
+
+		REQUIRE(bridge.getMessageType(name1) == eOSIMessage::SensorViewMessage);
+		REQUIRE(bridge.getMessageType(name2) == eOSIMessage::SensorViewMessage);
+		REQUIRE(bridge.getMessageType(name3) == eOSIMessage::SensorViewMessage);
+		REQUIRE(bridge.getMessageType(name4) == eOSIMessage::SensorViewConfigurationMessage);
+		REQUIRE(bridge.getMessageType(name5) == eOSIMessage::SensorViewConfigurationMessage);
+		REQUIRE(bridge.getMessageType(name6) == eOSIMessage::SensorViewConfigurationMessage);
+		REQUIRE(bridge.getMessageType(name7) == eOSIMessage::SensorDataMessage);
+		REQUIRE(bridge.getMessageType(name8) == eOSIMessage::SensorDataMessage);
+		REQUIRE(bridge.getMessageType(name9) == eOSIMessage::SensorDataMessage);
+		REQUIRE(bridge.getMessageType(name10) == eOSIMessage::SensorViewConfigurationMessage);
+		REQUIRE(bridge.getMessageType(name11) == eOSIMessage::SensorViewConfigurationMessage);
+		REQUIRE(bridge.getMessageType(name12) == eOSIMessage::SensorViewConfigurationMessage);
 	}
 }

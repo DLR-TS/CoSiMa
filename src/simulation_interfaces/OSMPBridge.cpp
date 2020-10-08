@@ -1,26 +1,5 @@
 #include "simulation_interfaces/OSMPBridge.h"
 
-eOSIMessage OSMPBridge::getMessageType(std::string messageType) {
-	if (messageType.find("SensorView") != std::string::npos
-		&& messageType.find("Config") == std::string::npos) {
-		return SensorViewMessage;
-	}
-	else if (messageType.find("SensorView") != std::string::npos
-		&& messageType.find("Config") != std::string::npos) {
-		return SensorViewConfigurationMessage;
-	}
-	else if (messageType.find("SensorData") != std::string::npos) { return SensorDataMessage; }
-	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
-	else if (messageType.find("TrafficCommand") != std::string::npos) { return TrafficCommandMessage; }
-	else if (messageType.find("TrafficUpdate") != std::string::npos) { return TrafficUpdateMessage; }
-	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
-	else if (messageType.find("VehicleCommunicationData") != std::string::npos) { return SL45VehicleCommunicationDataMessage; }
-	else {
-		std::cout << "Error: Can not find message " << messageType << std::endl;
-		throw 5372;
-	}
-}
-
 int OSMPBridge::readConfiguration(configVariants_t configVariants) {
 	if (std::get_if<OSMPInterfaceConfig>(&configVariants) == nullptr) {
 		std::cout << "Called with wrong configuration variant!" << std::endl;
@@ -77,7 +56,7 @@ int OSMPBridge::writeToInternalState() {
 	}
 	//write all messages to internal state
 	for (auto address : inputAddresses) {
-		OSIBridge::writeToInternalState(address.second, getMessageType(address.first));
+		OSIBridge::writeToInternalState(address.second);
 	}
 	return 0;
 }
@@ -94,7 +73,7 @@ int OSMPBridge::readFromInternalState() {
 	}
 	//write message
 	for (auto address : outputAddresses) {
-		OSIBridge::readFromInternalState(address.second, getMessageType(address.first));
+		OSIBridge::readFromInternalState(address.second);
 	}
 	//set pointers of messages in fmi
 	for (auto const& inputVar : *(model_description->model_variables)) {

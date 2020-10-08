@@ -19,14 +19,14 @@ int OSIBridge::disconnect() {
 
 int OSIBridge::writeToInternalState() {
 	for (auto address : writeAddressInformation) {
-		writeToInternalState(address.second, address.first);
+		writeToInternalState(address.second);
 	}
 	return 0;
 }
 
-int OSIBridge::writeToInternalState(address address, eOSIMessage messageType)
+int OSIBridge::writeToInternalState(address address)
 {
-	switch (messageType) {
+	switch (getMessageType(address.name)) {
 	case SensorViewMessage:
 		if(!sensorView.ParseFromArray((const void*)address.addr.address, address.size)){
 			return 1;
@@ -86,18 +86,18 @@ int OSIBridge::doStep(double stepSize) {
 
 int OSIBridge::readFromInternalState(){
 	for (auto address : readAddressInformation) {
-		readFromInternalState(address.second, address.first);
+		readFromInternalState(address.second);
 	}
 	return 0;
 }
 
-int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) {
+int OSIBridge::readFromInternalState(address& address) {
 	if ((void*)address.addr.address != nullptr) {
 		//free the allocated storage of previous osimessage
 		free((void*)address.addr.address);
 	}
 	std::string message = std::get<std::string>(mapper->mapFromInternalState(address.name, STRINGCOSIMA));
-	switch (messageType) {
+	switch (getMessageType(address.name)) {
 	case SensorViewMessage:
 		sensorView.ParseFromString(message);
 		address.size = (int)sensorView.ByteSizeLong();
@@ -149,4 +149,25 @@ int OSIBridge::readFromInternalState(address& address, eOSIMessage messageType) 
 	}
 
 	return 0;
+}
+
+eOSIMessage OSIBridge::getMessageType(std::string messageType) {
+	if (messageType.find("SensorView") != std::string::npos
+		&& messageType.find("Config") == std::string::npos) {
+		return SensorViewMessage;
+	}
+	else if (messageType.find("SensorView") != std::string::npos
+		&& messageType.find("Config") != std::string::npos) {
+		return SensorViewConfigurationMessage;
+	}
+	else if (messageType.find("SensorData") != std::string::npos) { return SensorDataMessage; }
+	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
+	else if (messageType.find("TrafficCommand") != std::string::npos) { return TrafficCommandMessage; }
+	else if (messageType.find("TrafficUpdate") != std::string::npos) { return TrafficUpdateMessage; }
+	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
+	else if (messageType.find("VehicleCommunicationData") != std::string::npos) { return SL45VehicleCommunicationDataMessage; }
+	else {
+		std::cout << "Error: Can not find message " << messageType << std::endl;
+		throw 5372;
+	}
 }

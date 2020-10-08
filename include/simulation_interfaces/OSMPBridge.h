@@ -31,13 +31,6 @@ public:
 	void saveToAddressMap(std::map<std::string, address> &addressMap, std::string name, int value);
 
 	/**
-	Parse string value to OSI Message Enum.
-	\param std::string messageType string to parse into its enum value representation
-	\return messagetype enum value of given string
-	*/
-	eOSIMessage getMessageType(std::string messageType);
-
-	/**
 	Temporary storage for osmp messages (name, size, address)
 	*/
 	std::map<std::string, address> inputAddresses, outputAddresses;
