@@ -49,12 +49,6 @@ public:
 	*/
 	int readConfiguration(configVariants_t configVariants) override;
 
-	/**
-	extracts the index of the prefix
-	\param std::string string with potential \[<index>\] at the end
-	\return Index of data entry (positive value). No index: -1
-	*/
-	int extractIndex(std::string name);
 protected:
 	class OSMPFMUSlaveStateWrapper {
 	private:

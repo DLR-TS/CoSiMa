@@ -60,7 +60,6 @@ TEST_CASE("OSMP Test") {
 
 			REQUIRE(bridge->inputAddresses.size() == 1);
 			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").size == 90);
-			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").index == -1);
 			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").addr.base.lo == 1234);
 			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn").addr.base.hi == 5678);
 
@@ -69,18 +68,6 @@ TEST_CASE("OSMP Test") {
 			bridge->saveToAddressMap(bridge->inputAddresses, name12, 93);
 
 			REQUIRE(bridge->inputAddresses.size() == 4);
-		}
-
-		SECTION("extract prefix index correct") {
-
-			auto returnValue = bridge->extractIndex("OSMPSensorViewIn");
-			REQUIRE(0 == returnValue);
-			returnValue = bridge->extractIndex("OSMPSensorViewIn[5]");
-			REQUIRE(5 == returnValue);
-			returnValue = bridge->extractIndex("OSMPSensorViewIn[33]");
-			REQUIRE(33 == returnValue);
-			returnValue = bridge->extractIndex("OSMPSensorViewIn[4]");
-			REQUIRE(4 == returnValue);
 		}
 
 		SECTION("Write several times the same output message with index") {
@@ -92,8 +79,9 @@ TEST_CASE("OSMP Test") {
 			bridge->saveToAddressMap(bridge->inputAddresses, name3b, 90);
 
 			REQUIRE(bridge->inputAddresses.size() == 2);
-			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").index == 0);
-			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[1]").index == 1);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").addr.base.hi != bridge->inputAddresses.at("OSMPSensorViewIn[1]").addr.base.hi);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").addr.base.lo != bridge->inputAddresses.at("OSMPSensorViewIn[1]").addr.base.lo);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").size != bridge->inputAddresses.at("OSMPSensorViewIn[1]").size);
 		}
 	}
 
@@ -107,7 +95,7 @@ TEST_CASE("OSMP Test") {
 			config.model = "../test/resources/OSMPDummySource.fmu";
 			OSIMessageConfig message1;
 			message1.base_name = "SensorView";
-			message1.interface_name = "SensorView";
+			message1.interface_name = "OSMPSensorViewOut";
 
 			config.outputs.push_back(message1);
 
@@ -136,12 +124,12 @@ TEST_CASE("OSMP Test") {
 			config.model = "../test/resources/OSMPDummySensor.fmu";
 			OSIMessageConfig message1;
 			message1.base_name = "SensorView";
-			message1.interface_name = "SensorView";
+			message1.interface_name = "OSMPSensorViewIn";
 			config.inputs.push_back(message1);
 
 			OSIMessageConfig message2;
 			message2.base_name = "SensorData";
-			message2.interface_name = "SensorData";
+			message2.interface_name = "OSMPSensorDataOut";
 			config.outputs.push_back(message2);
 
 			REQUIRE(0 == mapper->readConfiguration(config));

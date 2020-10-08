@@ -30,14 +30,14 @@ TEST_CASE("OSIBridge Test") {
 		address address;
 		address.addr.address = (unsigned long long)data;
 		address.size = byteSize;
-		address.index = 0;
+		address.name = "OSINewMessageName";
 
 		//YAML Config
 		OSIInterfaceConfig config;
 		config.prefix = "#";
 		OSIMessageConfig varDef;
 		varDef.base_name = "SensorViewBaseName";
-		varDef.interface_name = "SensorView";
+		varDef.interface_name = "OSINewMessageName";
 		config.outputs.push_back(varDef);
 
 		bridge.getMapper()->readConfiguration(config);
@@ -68,6 +68,7 @@ TEST_CASE("OSIBridge Test") {
 		address address;
 		address.addr.address = (unsigned long long)data;
 		address.size = byteSize;
+		address.name = "SensorView";
 
 		//YAML Config
 		OSIInterfaceConfig config;
