@@ -173,65 +173,52 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
 		auto prefixAndIndex = extractIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
 
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.addr.base.hi = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a});
+			a.index = extractIndex(prefixWithIndex);
+			addressMap.insert({ prefixWithIndex , a});
 		}
 		else {
-			addressMap.at(prefix).addr.base.hi = value;
+			addressMap.at(prefixWithIndex).addr.base.hi = value;
 		}
 	}
 	else if (0 == name.compare(name.length() - 8, 8, ".base.lo")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
-		auto prefixAndIndex = extractIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
-
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.addr.base.lo = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a });
+			a.index = extractIndex(prefixWithIndex);
+			addressMap.insert({ prefixWithIndex , a });
 		}
 		else {
-			addressMap.at(prefix).addr.base.lo = value;
+			addressMap.at(prefixWithIndex).addr.base.lo = value;
 		}
 	}
 	else if (0 == name.compare(name.length() - 5, 5, ".size")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 5);
 
-		auto prefixAndIndex = extractIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
-
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.size = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a });
+			a.index = extractIndex(prefixWithIndex);;
+			addressMap.insert({ prefixWithIndex , a });
 		}
 		else {
-			addressMap.at(prefix).size = value;
+			addressMap.at(prefixWithIndex).size = value;
 		}
 	}
 }
 
-OSMPBridge::ShortendPrefixAndIndex OSMPBridge::extractIndex(std::string name) {
-	ShortendPrefixAndIndex returnValue;
+int OSMPBridge::extractIndex(std::string name) {
 	size_t found = name.rfind("[");
 	if (found != std::string::npos) {
 		size_t found2 = name.rfind("]");
-		returnValue.index = std::stoi(name.substr(found + 1, found2 - found - 1));
-		returnValue.shortendPrefix = name.substr(0, found);
+		return std::stoi(name.substr(found + 1, found2 - found - 1));
 	}
-	else {
-		returnValue.shortendPrefix = name;
-		returnValue.index = 0;
-	}
-	return returnValue;
+	return -1;
 }
 
 inline OSMPBridge::OSMPFMUSlaveStateWrapper::OSMPFMUSlaveStateWrapper(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {

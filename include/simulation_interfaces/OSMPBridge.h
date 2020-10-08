@@ -50,16 +50,11 @@ public:
 	int readConfiguration(configVariants_t configVariants) override;
 
 	/**
-	stores shortend prefix and index
+	extracts the index of the prefix
+	\param std::string string with potential \[<index>\] at the end
+	\return Index of data entry (positive value). No index: -1
 	*/
-	struct ShortendPrefixAndIndex { std::string shortendPrefix; int index; };
-
-	/**
-	extracts the index of the prefix and return the splitted data
-	\param std::string prefix string to be split in index and prefix
-	\return ShortendPrefixAndIndex Struct with splitted index and prefix
-	*/
-	ShortendPrefixAndIndex extractIndex(std::string name);
+	int extractIndex(std::string name);
 protected:
 	class OSMPFMUSlaveStateWrapper {
 	private:

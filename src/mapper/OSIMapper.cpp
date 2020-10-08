@@ -49,7 +49,7 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 
 void OSIMapper::mapOSIToInternalState(std::string message, eOSIMessage messageType, int index) {
 	std::string indexString = "";
-	if (index != 0) {
+	if (index != -1) {
 		indexString = "[" + std::to_string(index) + "]";
 	}
 
