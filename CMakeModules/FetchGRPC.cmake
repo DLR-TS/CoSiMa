@@ -68,6 +68,6 @@ if(NOT grpc_POPULATED)
 	endif()
 	if(MSVC OR MINGW)
 		# required compiler definition that is missing in older gRPC versions
-		add_definitions(-D_WIN32_WINNT=0x600)
+		add_compile_definitions(_WIN32_WINNT=0x0600)
 	endif()
 endif()

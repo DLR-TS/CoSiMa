@@ -5,6 +5,7 @@
 #include "base_interfaces/BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
 #include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
+#include "grpc_proto_files/base_interface/BaseInterface.pb.h"
 
 class CARLAInterface : public BaseSystemInterface
 {
