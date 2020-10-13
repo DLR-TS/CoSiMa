@@ -150,8 +150,8 @@ target_include_directories(CoSimulationManagerLib BEFORE PUBLIC ${CMAKE_BINARY_D
 
 find_package(Catch2 REQUIRED)
 add_executable(test_CoSiMa ${TESTFILES})
-target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(test_CoSiMa PRIVATE CoSimulationManagerLib Catch2::Catch2)
+target_include_directories(test_CoSiMa PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${CMAKE_BINARY_DIR}/gens)
+target_link_libraries(test_CoSiMa PRIVATE CoSimulationManagerLib Catch2::Catch2 CoSimulationManagerGRPCLib)
 
 #copy test resources to build folder
 add_custom_command(TARGET test_CoSiMa PRE_BUILD

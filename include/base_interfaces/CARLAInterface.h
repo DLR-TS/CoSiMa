@@ -2,16 +2,24 @@
 #define CARLAINTERFACE_H
 
 #include <string>
+
 #include "base_interfaces/BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
+
+#include <grpc/grpc.h>
+#include <grpcpp/channel.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/create_channel.h>
+#include <grpcpp/security/credentials.h>
 #include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
 #include "grpc_proto_files/base_interface/BaseInterface.pb.h"
 
 class CARLAInterface : public BaseSystemInterface
 {
-	//TODO add grpc fields
+	CARLAInterfaceConfig config;
 
-	std::unique_ptr<CARLAInterfaceConfig> config;
+	std::shared_ptr<grpc::Channel> channel;
+	std::unique_ptr<CoSiMa::rpc::BaseInterface::Stub> stub;
 
 public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;

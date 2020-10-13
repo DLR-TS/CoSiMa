@@ -15,5 +15,6 @@ ${CMAKE_CURRENT_LIST_DIR}/tests-OSIBridge.cpp
 ${CMAKE_CURRENT_LIST_DIR}/MockBaseSimulator.cpp
 ${CMAKE_CURRENT_LIST_DIR}/MockInterfaceSimulator.cpp
 ${CMAKE_CURRENT_LIST_DIR}/MockMapper.cpp
+$<$<BOOL:${WITH_CARLA}>:${CMAKE_CURRENT_LIST_DIR}/MockGRPCBaseSimulatorServer.cpp>
 
 PARENT_SCOPE)
