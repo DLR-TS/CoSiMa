@@ -25,6 +25,8 @@ public:
 * transaction timeout in seconds
 * \var deltaSeconds
 * simulation time delta per tick
+* \var doStepTransactionTimeout
+* maximum amount of time in seconds allowed for step calculation and gRPC transaction. Unlimited if set to zero
 */
 struct CARLAInterfaceConfig {
 public:
@@ -34,6 +36,7 @@ public:
 	uint16_t carla_port;
 	double transactionTimeout;
 	double deltaSeconds;
+	uint32_t doStepTransactionTimeout;
 };
 
 struct DominionInterfaceConfig{};

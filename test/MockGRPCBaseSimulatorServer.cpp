@@ -7,10 +7,10 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
-#include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
-#include "grpc_proto_files/base_interface/BaseInterface.pb.h"
+#include "grpc_proto_files/base_interface/CARLAInterface.grpc.pb.h"
+#include "grpc_proto_files/base_interface/CARLAInterface.pb.h"
 
-class MockGRPCBaseSimulatorServer : public CoSiMa::rpc::BaseInterface::Service {
+class MockGRPCBaseSimulatorServer : public CoSiMa::rpc::CARLAInterface::Service {
 public:
 
 	void RunServer(const std::string& server_address, std::promise<std::shared_ptr<grpc::Server>> promise) {
@@ -25,6 +25,20 @@ public:
 		//return server;
 	}
 
+	virtual grpc::Status SetConfig(grpc::ServerContext*, const CoSiMa::rpc::CarlaConfig* config, CoSiMa::rpc::Int32* response) override {
+		if (config->carla_host().size() == 0)
+			response->set_value(-4);
+		else if (config->carla_port() == 0)
+			response->set_value(-3);
+		else if (config->transaction_timeout() == 0)
+			response->set_value(-2);
+		else if (config->delta_seconds() < 0)
+			// a value of zero indicates variable frame time and is an acceptable value
+			response->set_value(-1);
+
+		return grpc::Status::OK;
+	}
+
 	virtual grpc::Status DoStep(grpc::ServerContext*, const CoSiMa::rpc::Empty* empty, CoSiMa::rpc::Double* value) override {
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Double();
@@ -34,7 +48,7 @@ public:
 
 	virtual grpc::Status GetBoolValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Bool* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
-		if (0 == base_name->value().size())	
+		if (0 == base_name->value().size())
 			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Bool();

@@ -16,9 +16,23 @@ int CARLAInterface::initialise() {
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	channel = grpc::CreateChannel(sstr.str(), grpc::InsecureChannelCredentials());
-	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
-	channel->WaitForConnected(std::chrono::system_clock::now() + std::chrono::seconds(5));
-	//std::cout << "channelState: " << channelState << std::endl;
+	stub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
+
+	grpc::ClientContext context;
+	std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.transactionTimeout*1e3));
+	context.set_deadline(deadline);
+
+	CoSiMa::rpc::CarlaConfig rpcConfig;
+	rpcConfig.set_carla_host(config.carla_host);
+	rpcConfig.set_carla_port(config.carla_port);
+	rpcConfig.set_transaction_timeout(config.transactionTimeout);
+	rpcConfig.set_delta_seconds(config.deltaSeconds);
+
+	CoSiMa::rpc::Int32 response;
+
+	auto status = stub->SetConfig(&context, rpcConfig, &response);
+
+
 	auto channelState = channel->GetState(true);
 	switch (channelState)
 	{
@@ -39,13 +53,22 @@ int CARLAInterface::initialise() {
 		return -500;
 	}
 
-	return 0;
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		throw new std::exception(msg.c_str());
+	}
+
+	return response.value();
 }
 
 double CARLAInterface::doStep()
 {
 	// context to handle the following rpc call - cannot be reused
 	grpc::ClientContext context;
+	if (0 < config.doStepTransactionTimeout) {
+		std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.doStepTransactionTimeout));
+		context.set_deadline(deadline);
+	}
 
 	//TODO fix import in proto file
 	//auto empty = google::protobuf::Empty();

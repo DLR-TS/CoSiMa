@@ -11,15 +11,16 @@
 #include <grpcpp/client_context.h>
 #include <grpcpp/create_channel.h>
 #include <grpcpp/security/credentials.h>
-#include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
-#include "grpc_proto_files/base_interface/BaseInterface.pb.h"
+#include "grpc_proto_files/base_interface/CARLAInterface.grpc.pb.h"
+#include "grpc_proto_files/base_interface/CARLAInterface.pb.h"
 
 class CARLAInterface : public BaseSystemInterface
 {
 	CARLAInterfaceConfig config;
 
+	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;
-	std::unique_ptr<CoSiMa::rpc::BaseInterface::Stub> stub;
+	std::unique_ptr<CoSiMa::rpc::CARLAInterface::Stub> stub;
 
 public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;

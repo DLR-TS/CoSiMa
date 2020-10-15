@@ -49,6 +49,8 @@ TEST_CASE("CARLAInterface", "[CARLAInterface]") {
 	CHECK(1.0 == carla->setDoubleValue("some_name", 0.0));
 	CHECK_THROWS(carla->setDoubleValue("", 1.0));
 
+	CHECK(0.123456 == carla->doStep());
+
 	server->Shutdown();
 	t.join();
 }
