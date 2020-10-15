@@ -64,8 +64,7 @@ int YAMLConfigReader::setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> b
 		SimulatorName name = simulators[i].as<SimulatorName>();
 		if (nameToEnum(name.simulator) == simulatorname.simulator) {
 			if (simulatorname.simulator == CARLA) {
-				baseSystem->readConfiguration(simulators[i].as<CARLAInterfaceConfig>());
-				return 0;
+				return baseSystem->readConfiguration(simulators[i].as<CARLAInterfaceConfig>());
 			}
 		}
 	}
