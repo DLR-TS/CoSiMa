@@ -1,12 +1,13 @@
 #include "catch2/catch.hpp"
 
 #include "configreader/YAMLConfigReader.h"
+#include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSIBridge.h"
 #include "mapper/VTDMapper.h"
 #include "mapper/OSIMapper.h"
 
-TEST_CASE("Config 1") {
+TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 	YAMLConfigReader reader("../test/resources/testconfig1.yaml");
 	SECTION("Read simulator names from config") {
 		std::vector<SingleYAMLConfig> names = reader.getSimulatorNames();
@@ -19,7 +20,7 @@ TEST_CASE("Config 1") {
 		REQUIRE(names.at(2).index == 1);
 	}
 
-	SECTION("set configuration of simulator") {
+	SECTION("set configuration of simulator", "[YAML Reader]") {
 		SingleYAMLConfig conf;
 		conf.index = 1;
 		conf.simulator = eSimulatorName::VTD;
@@ -30,7 +31,7 @@ TEST_CASE("Config 1") {
 		REQUIRE(reader.setConfig(vtdSimulator, conf) == 0);
 	}
 
-	SECTION("set invalid configuration of simulator") {
+	SECTION("set invalid configuration of simulator", "[YAML Reader]") {
 		SingleYAMLConfig conf;
 		conf.index = 1;
 		conf.simulator = eSimulatorName::SIMULATORNAME_ERROR;
@@ -41,7 +42,7 @@ TEST_CASE("Config 1") {
 	}
 }
 
-TEST_CASE("Default prefix value for OSIMapper") {
+TEST_CASE("Default prefix value for OSIMapper", "[YAML Reader]") {
 
 	std::shared_ptr<iSimulationData> osibridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSIBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper())));
 	osibridge->getMapper()->setOwner(osibridge);
@@ -60,4 +61,15 @@ TEST_CASE("Default prefix value for OSIMapper") {
 		reader.setConfig(osibridge, conf);
 		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#");
 	}
+}
+
+TEST_CASE("ReadCarla config from file", "[YAML Reader]") {
+	YAMLConfigReader reader("../test/resources/carlaConfig.yaml");
+	std::vector<SingleYAMLConfig> names = reader.getSimulatorNames();
+
+	REQUIRE(names[0].simulator == CARLA);
+
+	std::shared_ptr<BaseSystemInterface> baseSystem = std::make_shared<CARLAInterface>();
+	int success = reader.setBaseSystemConfig(baseSystem, names[0]);
+	REQUIRE(success == 0);
 }

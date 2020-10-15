@@ -76,7 +76,10 @@ int YAMLConfigReader::setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> b
 const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
-	if (simulatorName == "vtd") {
+	if (simulatorName == "carla" || simulatorName == "CARLA" || simulatorName == "Carla") {
+		return CARLA;
+	}
+	else if (simulatorName == "vtd") {
 		return VTD;
 	}
 	else if (simulatorName == "fmi") {
