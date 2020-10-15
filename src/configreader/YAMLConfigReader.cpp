@@ -59,6 +59,20 @@ int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, Sing
 	return 1;
 }
 
+int YAMLConfigReader::setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> baseSystem, SingleYAMLConfig simulatorname) {
+	for (std::size_t i = 0; i < simulators.size(); i++) {
+		SimulatorName name = simulators[i].as<SimulatorName>();
+		if (nameToEnum(name.simulator) == simulatorname.simulator) {
+			if (simulatorname.simulator == CARLA) {
+				baseSystem->readConfiguration(simulators[i].as<CARLAInterfaceConfig>());
+				return 0;
+			}
+		}
+	}
+	std::cout << "Error no node found with name: " << simulatorname.simulator << std::endl;
+	return 1;
+}
+
 const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
