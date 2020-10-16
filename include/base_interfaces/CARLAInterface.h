@@ -5,6 +5,7 @@
 
 #include "base_interfaces/BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
+#include "CoSiMaUtility.h"
 
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
