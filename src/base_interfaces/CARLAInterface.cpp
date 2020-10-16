@@ -19,9 +19,7 @@ int CARLAInterface::initialise() {
 	stub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
-	grpc::ClientContext context;
-	std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.transactionTimeout*1e3));
-	context.set_deadline(deadline);
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	CoSiMa::rpc::CarlaConfig rpcConfig;
 	rpcConfig.set_carla_host(config.carla_host);
@@ -31,7 +29,8 @@ int CARLAInterface::initialise() {
 
 	CoSiMa::rpc::Int32 response;
 
-	auto status = stub->SetConfig(&context, rpcConfig, &response);
+	//TODO does this call take ownership of the context, thus freeing it twice? (would need context.release() instead of context.get() to prevent double free)
+	auto status = stub->SetConfig(context.get(), rpcConfig, &response);
 
 
 	auto channelState = channel->GetState(true);
@@ -95,7 +94,7 @@ int CARLAInterface::getIntValue(std::string base_name) {
 
 	CoSiMa::rpc::Int32 rpcValue;
 
-	auto status = stub->GetIntValue(context.release(), string, &rpcValue);
+	auto status = stub->GetIntValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -114,7 +113,7 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 
 	CoSiMa::rpc::Bool rpcValue;
 
-	auto status = stub->GetBoolValue(context.release(), string, &rpcValue);
+	auto status = stub->GetBoolValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -133,7 +132,7 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 
 	CoSiMa::rpc::Float rpcValue;
 
-	auto status = stub->GetFloatValue(context.release(), string, &rpcValue);
+	auto status = stub->GetFloatValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -152,7 +151,7 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 
 	CoSiMa::rpc::Double rpcValue;
 
-	auto status = stub->GetDoubleValue(context.release(), string, &rpcValue);
+	auto status = stub->GetDoubleValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -172,7 +171,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 
 	CoSiMa::rpc::String rpcValue;
 
-	auto status = stub->GetStringValue(context.release(), string, &rpcValue);
+	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -192,7 +191,7 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 
 	CoSiMa::rpc::Int32 rpcRetVal;
 
-	auto status = stub->SetIntValue(context.release(), namedValue, &rpcRetVal);
+	auto status = stub->SetIntValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -212,7 +211,7 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 
 	CoSiMa::rpc::Int32 rpcRetVal;
 
-	auto status = stub->SetBoolValue(context.release(), namedValue, &rpcRetVal);
+	auto status = stub->SetBoolValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -232,7 +231,7 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 
 	CoSiMa::rpc::Int32 rpcRetVal;
 
-	auto status = stub->SetFloatValue(context.release(), namedValue, &rpcRetVal);
+	auto status = stub->SetFloatValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -252,7 +251,7 @@ int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 
 	CoSiMa::rpc::Int32 rpcRetVal;
 
-	auto status = stub->SetDoubleValue(context.release(), namedValue, &rpcRetVal);
+	auto status = stub->SetDoubleValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -272,7 +271,7 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 
 	CoSiMa::rpc::Int32 rpcRetVal;
 
-	auto status = stub->SetStringValue(context.release(), namedValue, &rpcRetVal);
+	auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
