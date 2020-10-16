@@ -23,16 +23,12 @@ public:
 	int doStep(double stepSize = 1) override;
 
 	/**
-	save the values together in an address map
+	Save the annotated value in the address map. Supported names are count, valid, <>.base.hi , <>.base.lo, <>.size.
+	\param std::map<std::string, address> &addressMap The map, the value is mapped in.
+	\param std::string name name of the variable. Supported names are count, valid, <>.base.hi , <>.base.lo, <>.size.
+	\param int value The value to be stored.
 	*/
 	void saveToAddressMap(std::map<std::string, address> &addressMap, std::string name, int value);
-
-	/**
-	Parse string value to OSI Message Enum.
-	\param std::string messageType string to parse into its enum value representation
-	\return messagetype enum value of given string
-	*/
-	eOSIMessage getMessageType(std::string messageType);
 
 	/**
 	Temporary storage for osmp messages (name, size, address)
@@ -46,12 +42,6 @@ public:
 	*/
 	int readConfiguration(configVariants_t configVariants) override;
 
-	/**
-	stores shortend prefix and index
-	*/
-	struct ShortendPrefixAndIndex { std::string shortendPrefix; int index; };
-
-	ShortendPrefixAndIndex searchForIndex(std::string prefix);
 protected:
 	class OSMPFMUSlaveStateWrapper {
 	private:

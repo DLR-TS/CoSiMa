@@ -1,24 +1,5 @@
 #include "simulation_interfaces/OSMPBridge.h"
 
-eOSIMessage OSMPBridge::getMessageType(std::string messageType) {
-	if (messageType.find("SensorView") != std::string::npos
-		&& messageType.find("Config") == std::string::npos) {
-		return SensorViewMessage;
-	}
-	else if (messageType.find("SensorView") != std::string::npos
-		&& messageType.find("Config") != std::string::npos) {
-		return SensorViewConfigurationMessage;
-	}
-	else if (messageType.find("SensorData") != std::string::npos) { return SensorDataMessage; }
-	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
-	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
-	else if (messageType.find("VehicleCommunicationData") != std::string::npos) { return SL45VehicleCommunicationDataMessage; }
-	else {
-		std::cout << "Error: Can not find message " << messageType << std::endl;
-		throw 5372;
-	}
-}
-
 int OSMPBridge::readConfiguration(configVariants_t configVariants) {
 	if (std::get_if<OSMPInterfaceConfig>(&configVariants) == nullptr) {
 		std::cout << "Called with wrong configuration variant!" << std::endl;
@@ -75,10 +56,11 @@ int OSMPBridge::writeToInternalState() {
 	}
 	//write all messages to internal state
 	for (auto address : inputAddresses) {
-		OSIBridge::writeToInternalState(address.second, getMessageType(address.first));
+		OSIBridge::writeToInternalState(address.second);
 	}
 	return 0;
 }
+
 int OSMPBridge::readFromInternalState() {
 	auto const model_description = coSimFMU->get_model_description();
 	//iterate over unknowns declared as output and create AddressMap
@@ -91,7 +73,7 @@ int OSMPBridge::readFromInternalState() {
 	}
 	//write message
 	for (auto address : outputAddresses) {
-		OSIBridge::readFromInternalState(address.second, getMessageType(address.first));
+		OSIBridge::readFromInternalState(address.second);
 	}
 	//set pointers of messages in fmi
 	for (auto const& inputVar : *(model_description->model_variables)) {
@@ -169,66 +151,42 @@ void OSMPBridge::saveToAddressMap(std::map<std::string, address> &addressMap, st
 	if (0 == name.compare(name.length() - 8, 8, ".base.hi")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
-
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.addr.base.hi = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a});
+			a.name = prefixWithIndex;
+			addressMap.insert({ prefixWithIndex , a});
 		}
 		else {
-			addressMap.at(prefix).addr.base.hi = value;
+			addressMap.at(prefixWithIndex).addr.base.hi = value;
 		}
 	}
 	else if (0 == name.compare(name.length() - 8, 8, ".base.lo")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 8);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
-
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.addr.base.lo = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a });
+			a.name = prefixWithIndex;
+			addressMap.insert({ prefixWithIndex , a });
 		}
 		else {
-			addressMap.at(prefix).addr.base.lo = value;
+			addressMap.at(prefixWithIndex).addr.base.lo = value;
 		}
 	}
 	else if (0 == name.compare(name.length() - 5, 5, ".size")) {
 		std::string prefixWithIndex = name.substr(0, name.length() - 5);
 
-		auto prefixAndIndex = searchForIndex(prefixWithIndex);
-		std::string prefix = prefixAndIndex.shortendPrefix;
-
-		if (addressMap.find(prefix) == addressMap.end()) {
+		if (addressMap.find(prefixWithIndex) == addressMap.end()) {
 			address a;
 			a.size = value;
-			a.index = prefixAndIndex.index;
-			addressMap.insert({ prefix , a });
+			a.name = prefixWithIndex;
+			addressMap.insert({ prefixWithIndex , a });
 		}
 		else {
-			addressMap.at(prefix).size = value;
+			addressMap.at(prefixWithIndex).size = value;
 		}
 	}
-}
-
-OSMPBridge::ShortendPrefixAndIndex OSMPBridge::searchForIndex(std::string prefix) {
-	ShortendPrefixAndIndex returnValue;
-	size_t found = prefix.rfind("[");
-	if (found != std::string::npos) {
-		size_t found2 = prefix.rfind("]");
-		returnValue.index = std::stoi(prefix.substr(found + 1, found2 - found - 1));
-		returnValue.shortendPrefix = prefix.substr(0, found);
-	}
-	else {
-		returnValue.shortendPrefix = prefix;
-		returnValue.index = 0;
-	}
-	return returnValue;
 }
 
 inline OSMPBridge::OSMPFMUSlaveStateWrapper::OSMPFMUSlaveStateWrapper(std::shared_ptr<fmi4cpp::fmi2::cs_slave> slave) {

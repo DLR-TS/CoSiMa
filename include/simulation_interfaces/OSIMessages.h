@@ -12,10 +12,12 @@
 */
 enum eOSIMessage {
 
-	SensorViewMessage,	
+	SensorViewMessage,
 	SensorViewConfigurationMessage,
 	SensorDataMessage,
 	GroundTruthMessage,
+	TrafficCommandMessage,
+	TrafficUpdateMessage,
 	SL45MotionCommandMessage,
 	SL45VehicleCommunicationDataMessage
 };
@@ -32,7 +34,7 @@ struct address {
 		unsigned long long address;
 	} addr;
 	int size;
-	int index;
+	std::string name;
 };
 
 /**

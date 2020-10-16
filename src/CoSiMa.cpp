@@ -8,7 +8,8 @@ int main(int argc, char *argv[])
 	std::cout << std::filesystem::current_path() << std::endl << std::endl;
 
 	//start parameter
-	std::string path("../config.yaml");
+	std::string path(std::filesystem::current_path().string());
+	path.append("\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		path = currentArg;//add more complex evaluation if necessary
