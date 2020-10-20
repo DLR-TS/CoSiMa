@@ -25,8 +25,7 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//std::string
 	for (const NamesAndIndex &input : config.stringInputList) {
 		std::string value = baseInterface->getStringValue(input.baseName);
-		//state->strings.at(input.index) = value;
-		state->strings[input.index] = value;
+		state->strings.at(input.index) = value;
 	}
 	return 0;
 }
@@ -168,15 +167,13 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 		for (NamesAndIndex const &entry : config.stringOutputList)
 		{
 			if (entry.interfaceName == interfaceName) {
-				std::string a = std::get<std::string>(value);
-				std::cout << a << std::endl;
 				state->strings.at(entry.index) = std::get<std::string>(value);
 				return;
 			}
 		}
 		break;
 	}
-	std::cout << "Mapper.cpp(Mapper::mapToInternalState): Could not map variable " << interfaceName << " of type " << std::boolalpha
+	std::cout << "Mapper.cpp(Mapper::mapToInternalState): Could not map variable " << interfaceName << " of type " 
 		<< type << " to internal state because there is no variable of such name and type to map to." << std::endl;
 	//Not found
 	//TODO really use throw?

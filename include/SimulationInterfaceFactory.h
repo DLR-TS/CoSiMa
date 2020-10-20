@@ -6,10 +6,12 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/DCPBridge.h"
 #include "simulation_interfaces/FMIBridge.h"
+#include "simulation_interfaces/OSIBridge.h"
 #include "simulation_interfaces/ROSBridge.h"
 #include "simulation_interfaces/SUMOBridge.h"
 #include "simulation_interfaces/UnrealBridge.h"
 #include "simulation_interfaces/VTDBridge.h"
+#include "simulation_interfaces/OSMPBridge.h"
 //Mapper
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"

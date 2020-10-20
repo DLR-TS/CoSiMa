@@ -8,7 +8,8 @@ int main(int argc, char *argv[])
 	std::cout << std::filesystem::current_path() << std::endl << std::endl;
 
 	//start parameter
-	std::string path("../config.yaml");
+	std::string path(std::filesystem::current_path().string());
+	path.append("\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		path = currentArg;//add more complex evaluation if necessary
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
 		//set parameters of config
 		if (reader.setConfig(newInterface, simulatorname)) {
 			std::cout << "Problem occured during interpretation of configuration file." << std::endl;
-			return 1;
+			exit(2);
 		}
 		simulationInterfaces.push_back(newInterface);
 	}
@@ -44,10 +45,28 @@ int main(int argc, char *argv[])
 
 	//init interfaces
 	for (auto simInterface : simulationInterfaces) {
-		simInterface->init("Scenario", 0.0, 0); //TODO set as parameters?
+		if (simInterface->init("Scenario", 0.0, 0) != 0) { //TODO set as parameters?
+			std::cout << "Error in initialization of simulation interfaces." << std::endl;
+			exit(3);
+		}
+	}
+
+	//connect interfaces
+	for (auto simInterface : simulationInterfaces) {
+		if (simInterface->connect("")) { //TODO set as parameters?
+			std::cout << "Error in connect of simulation interfaces." << std::endl;
+			exit(4);
+		}
 	}
 
 	simulationLoop(simulationInterfaces, baseSystem);
+
+	//disconnect interfaces
+	for (auto simInterface : simulationInterfaces) {
+		if (simInterface->disconnect()) {
+			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
+		}
+	}
 	return 0;
 }
 
