@@ -260,12 +260,31 @@ namespace YAML {
 			return node;
 		}
 
-		static bool decode(const Node& node, OSMPInterfaceConfig& osiinterface)
+		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
-			osiinterface.prefix = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
-			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
-			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
-			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.prefix = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			osiInterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
+			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<CARLAInterfaceConfig> {
+		static Node encode(const CARLAInterfaceConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, CARLAInterfaceConfig& carlaInterface)
+		{
+			carlaInterface.carla_host = node["carla_host"].IsDefined() ? node["carla_host"].as<std::string>() : "";
+			carlaInterface.carla_port = node["carla_port"].IsDefined() ? node["carla_port"].as<int>() : 0;
+			carlaInterface.client_host = node["client_host"].IsDefined() ? node["client_host"].as<std::string>() : "";
+			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 0;
+			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
+			carlaInterface.transactionTimeout = node["timeout"].IsDefined() ? node["timeout"].as<double>() : 0;
 			return true;
 		}
 	};

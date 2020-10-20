@@ -6,6 +6,7 @@
 
 class BaseSystemInterface
 {
+public:
 	/**
 	Read configuration for this base simulator interface.
 	\param config the decoding struct
@@ -23,7 +24,6 @@ class BaseSystemInterface
 	*/
 	virtual double doStep() = 0;
 
-public:
 	virtual int getIntValue(std::string base_name) = 0;
 	virtual bool getBoolValue(std::string base_name) = 0;
 	virtual float getFloatValue(std::string base_name) = 0;

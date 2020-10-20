@@ -18,12 +18,24 @@ int main(int argc, char *argv[])
 	YAMLConfigReader reader = YAMLConfigReader(path);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
 	
+	bool carlaUsedAsBaseInterface = false;
+	std::shared_ptr<BaseSystemInterface> baseSystem;
 	/**
 	* Vector that holds every simulation interface.
 	*/
 	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
+		if (simulatorname.simulator == CARLA) {
+			carlaUsedAsBaseInterface = true;
+			baseSystem = std::make_shared<CARLAInterface>();
+			if (reader.setBaseSystemConfig(baseSystem, simulatorname)) {
+				std::cout << "Problem occured during interpretation of configuration file. (Base System)" << std::endl;
+				exit(5);
+			}
+			continue;
+		}
+
 		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator);
 		if (newInterface == nullptr){
 			std::cout << "Failed to create a simulator." << std::endl;
@@ -31,21 +43,15 @@ int main(int argc, char *argv[])
 		}
 		//set parameters of config
 		if (reader.setConfig(newInterface, simulatorname)) {
-			std::cout << "Problem occured during interpretation of configuration file." << std::endl;
+			std::cout << "Problem occured during interpretation of configuration file. (Interfaces)" << std::endl;
 			exit(2);
 		}
 		simulationInterfaces.push_back(newInterface);
 	}
 
-	//choose protocol
-	//TODO
-	//std::shared_ptr<BaseSystemInterface> baseSystem = std::make_shared<DominionInterface>();
-#ifdef WITH_CARLA
-	std::shared_ptr<BaseSystemInterface> baseSystem = std::make_shared<CARLAInterface>();
-#else
-	std::shared_ptr<BaseSystemInterface> baseSystem = std::make_shared<DominionInterface>();
-#endif
-
+	if (!carlaUsedAsBaseInterface) {
+		baseSystem = std::make_shared<DominionInterface>();
+	}
 
 	//init interfaces
 	for (auto simInterface : simulationInterfaces) {
