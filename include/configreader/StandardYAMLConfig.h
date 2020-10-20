@@ -133,7 +133,7 @@ public:
 * \var std::string model
 * path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
 * \var std::string prefix
-* prefix used for interel saving and interpretation of base interface side
+* prefix used for internal saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs

@@ -30,21 +30,12 @@ TEST_CASE("OSMP Test") {
 		std::string name11 = "OSMPSensorViewInConfig.base.hi";
 		std::string name12 = "OSMPSensorViewInConfig.size";
 
-		SECTION("Interpret the OSMPNames correct") {
-
-			REQUIRE(bridge->getMessageType(name1) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name2) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name3) == eOSIMessage::SensorViewMessage);
-			REQUIRE(bridge->getMessageType(name4) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name5) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name6) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name7) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name8) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name9) == eOSIMessage::SensorDataMessage);
-			REQUIRE(bridge->getMessageType(name10) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name11) == eOSIMessage::SensorViewConfigurationMessage);
-			REQUIRE(bridge->getMessageType(name12) == eOSIMessage::SensorViewConfigurationMessage);
-		}
+		std::string name1a = "OSMPSensorViewIn[0].base.lo";
+		std::string name2a = "OSMPSensorViewIn[0].base.hi";
+		std::string name3a = "OSMPSensorViewIn[0].size";
+		std::string name1b = "OSMPSensorViewIn[1].base.lo";
+		std::string name2b = "OSMPSensorViewIn[1].base.hi";
+		std::string name3b = "OSMPSensorViewIn[1].size";
 
 		SECTION("Fill addresses correct") {
 			bridge->saveToAddressMap(bridge->inputAddresses, name1, 1234);
@@ -63,20 +54,18 @@ TEST_CASE("OSMP Test") {
 			REQUIRE(bridge->inputAddresses.size() == 4);
 		}
 
-		SECTION("split prefix index correct") {
+		SECTION("Write several times the same output message with index") {
+			bridge->saveToAddressMap(bridge->inputAddresses, name1a, 4321);
+			bridge->saveToAddressMap(bridge->inputAddresses, name2a, 8765);
+			bridge->saveToAddressMap(bridge->inputAddresses, name3a, 9090);
+			bridge->saveToAddressMap(bridge->inputAddresses, name1b, 1234);
+			bridge->saveToAddressMap(bridge->inputAddresses, name2b, 5678);
+			bridge->saveToAddressMap(bridge->inputAddresses, name3b, 90);
 
-			auto returnValue = bridge->searchForIndex("OSMPSensorViewIn");
-			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
-			REQUIRE(0 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[5]");
-			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
-			REQUIRE(5 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[33]");
-			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
-			REQUIRE(33 == returnValue.index);
-			returnValue = bridge->searchForIndex("OSMPSensorViewIn[4]");
-			REQUIRE("OSMPSensorViewIn" == returnValue.shortendPrefix);
-			REQUIRE(4 == returnValue.index);
+			REQUIRE(bridge->inputAddresses.size() == 2);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").addr.base.hi != bridge->inputAddresses.at("OSMPSensorViewIn[1]").addr.base.hi);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").addr.base.lo != bridge->inputAddresses.at("OSMPSensorViewIn[1]").addr.base.lo);
+			REQUIRE(bridge->inputAddresses.at("OSMPSensorViewIn[0]").size != bridge->inputAddresses.at("OSMPSensorViewIn[1]").size);
 		}
 	}
 
@@ -90,7 +79,7 @@ TEST_CASE("OSMP Test") {
 			config.model = "../test/resources/OSMPDummySource.fmu";
 			OSIMessageConfig message1;
 			message1.base_name = "SensorView";
-			message1.interface_name = "SensorView";
+			message1.interface_name = "OSMPSensorViewOut";
 
 			config.outputs.push_back(message1);
 
@@ -119,12 +108,12 @@ TEST_CASE("OSMP Test") {
 			config.model = "../test/resources/OSMPDummySensor.fmu";
 			OSIMessageConfig message1;
 			message1.base_name = "SensorView";
-			message1.interface_name = "SensorView";
+			message1.interface_name = "OSMPSensorViewIn";
 			config.inputs.push_back(message1);
 
 			OSIMessageConfig message2;
 			message2.base_name = "SensorData";
-			message2.interface_name = "SensorData";
+			message2.interface_name = "OSMPSensorDataOut";
 			config.outputs.push_back(message2);
 
 			REQUIRE(0 == mapper->readConfiguration(config));

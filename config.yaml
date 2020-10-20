@@ -15,8 +15,10 @@
 - simulator: FMI
   models: PATH_TO_.ssp # path to model.xml files
 - simulator: OSMP
+  model: pathToModel
   prefix: /#
   input:
-      - {interface_name: SensorView, base_name: SensorView}
+      - {interface_name: SensorView, base_name: SensorView1234}
   output:
-      - {interface_name: SensorViewConfiguration, base_name: SensorViewConfiguration}
+      - {interface_name: "SensorData[0]", base_name: SensorData1234} #type for OSMP is always string
+      - {interface_name: "SensorData[1]", base_name: SensorData5678}

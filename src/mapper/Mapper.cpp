@@ -172,7 +172,7 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 		}
 		break;
 	}
-	std::cout << "Mapper.cpp(Mapper::mapToInternalState): Could not map variable " << interfaceName << " of type " << std::boolalpha
+	std::cout << "Mapper.cpp(Mapper::mapToInternalState): Could not map variable " << interfaceName << " of type " 
 		<< type << " to internal state because there is no variable of such name and type to map to." << std::endl;
 	//Not found
 	//TODO really use throw?
