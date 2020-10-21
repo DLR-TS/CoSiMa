@@ -1,27 +1,40 @@
 #ifndef OSMPINTERFACE_H
 #define OSMPINTERFACE_H
 
+#include "OSIBridge.h"
 #include "simulation_interfaces/iSimulationData.h"
+
+#include "CoSiMaUtility.h"
+
 #include <grpcpp/channel.h>
 #include <grpcpp/create_channel.h>
 #include "grpc_proto_files/simulation_interface/SimulationInterface.grpc.pb.h"
 #include "grpc_proto_files/simulation_interface/SimulationInterface.pb.h"
 
-class OSMPInterface/* : public iSimulationData */{
-/*
-	int readConfiguration(configVariants_t config);
-	int initialise();
-
-	int setStringValue(std::string base_name, std::string value);
-	std::string getStringValue(std::string base_name);
+class OSMPInterface : public OSIBridge {
+	OSMPInterface(std::shared_ptr<Mapper> mapper) : OSIBridge(mapper) {};
 	
+	/*
+	int init(std::string scenario, float starttime, int mode) override;
+	*/
+	int connect(std::string) override;
+	int disconnect() override;
+	/*
+	int writeToInternalState() override;
+	int readFromInternalState() override;
+	int doStep(double stepSize = 1) override;
+	*/
+	int readConfiguration(configVariants_t configVariants) override;
+	/*
+	int initialise();
+	*/
 private:
 
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;
-	std::unique_ptr<CoSiMa::rpc::SimulationInterface::Stub> stub;
+	std::unique_ptr<CoSiMa_rpc::SimulationInterface::Stub> stub;
 	OSMPInterfaceConfig config;
-	*/
+
 };
 
 #endif //!OSMPINTERFACE_H

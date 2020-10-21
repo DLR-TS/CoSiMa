@@ -143,6 +143,8 @@ struct OSMPInterfaceConfig {
 public:
 	std::string model;
 	std::string prefix;
+	std::string client_host;
+	int client_port;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
 };

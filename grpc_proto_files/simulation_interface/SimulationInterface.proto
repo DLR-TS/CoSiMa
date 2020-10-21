@@ -6,6 +6,7 @@ service SimulationInterface {
 	rpc SetStringValue(SimNamedString) returns (SimInt32) {}
 	
 	rpc DoStep(SimEmpty) returns (SimDouble) {}
+	rpc SetConfig(SimConfig) returns (SimInt32) {}
 }
 
 message SimEmpty {
@@ -27,4 +28,8 @@ message SimInt32 {
 
 message SimDouble {
 	double value = 1;
+}
+
+message SimConfig {
+	string FMU = 1;
 }
