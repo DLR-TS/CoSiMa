@@ -12,6 +12,7 @@
 #include "simulation_interfaces/UnrealBridge.h"
 #include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
+#include "simulation_interfaces/OSMPInterface.h"
 //Mapper
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"

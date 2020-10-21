@@ -20,8 +20,11 @@ TEST_CASE("SimulationInterfaceFactory") {
 	std::shared_ptr<iSimulationData> vtdInterface = factory.makeInterface(eSimulatorName::VTD);
 	REQUIRE(vtdInterface != nullptr);
 
-	//std::shared_ptr<iSimulationData> osiInterface = factory.makeInterface(eSimulatorName::OSI);
-	//REQUIRE(osiInterface != nullptr);
+	std::shared_ptr<iSimulationData> osiInterface = factory.makeInterface(eSimulatorName::OSI);
+	REQUIRE(osiInterface != nullptr);
+
+	std::shared_ptr<iSimulationData> osmpInterface = factory.makeInterface(eSimulatorName::OSMP);
+	REQUIRE(osiInterface != nullptr);
 
 	std::shared_ptr<iSimulationData> errorInterface = factory.makeInterface(eSimulatorName::SIMULATORNAME_ERROR);
 	REQUIRE(errorInterface == nullptr);

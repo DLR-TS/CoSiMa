@@ -10,6 +10,10 @@
 - simulator: OSMP
   model: pathToModel
   prefix: /#
+  host: 12.34.56.78
+  port: 4711
+  transaction_timeout: 0.1
+  do_step_timeout: 0.5
   input:
       - {interface_name: SensorView, base_name: SensorView1234}
   output:

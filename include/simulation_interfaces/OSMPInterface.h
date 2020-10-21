@@ -11,6 +11,7 @@
 #include "grpc_proto_files/simulation_interface/SimulationInterface.pb.h"
 
 class OSMPInterface : public iSimulationData {
+public:
 	OSMPInterface(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 	
 	int init(std::string scenario, float starttime, int mode) override;

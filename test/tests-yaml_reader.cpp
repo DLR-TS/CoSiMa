@@ -3,6 +3,7 @@
 #include "configreader/YAMLConfigReader.h"
 #include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSIBridge.h"
+#include "simulation_interfaces/OSMPBridge.h"
 #include "mapper/VTDMapper.h"
 #include "mapper/OSIMapper.h"
 
@@ -59,5 +60,18 @@ TEST_CASE("Default prefix value for OSIMapper") {
 		YAMLConfigReader reader("../test/resources/testconfig3.yaml");
 		reader.setConfig(osibridge, conf);
 		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#");
+	}
+}
+
+TEST_CASE("Read OSMP config") {
+	std::shared_ptr<iSimulationData> osmpbridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSMPBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper())));
+	osmpbridge->getMapper()->setOwner(osmpbridge);
+	SingleYAMLConfig conf;
+	conf.index = 0;
+	conf.simulator = eSimulatorName::OSMP;
+
+	SECTION("Just read complete configuration") {
+		YAMLConfigReader reader("../test/resources/testconfig4.yaml");
+		REQUIRE(reader.setConfig(osmpbridge, conf) == 0);
 	}
 }

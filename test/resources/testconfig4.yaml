@@ -1,0 +1,12 @@
+- simulator: OSMP
+  model: "../test/resources/Stair.fmu"
+  prefix: /#
+  host: "12.34.56.78"
+  port: 4711
+  transaction_timeout: 0.190
+  do_step_timeout: 0.123
+  input:
+      - {interface_name: SensorView, base_name: SensorView1234}
+  output:
+      - {interface_name: "SensorData[0]", base_name: SensorData1234}
+      - {interface_name: "SensorData[1]", base_name: SensorData5678}
