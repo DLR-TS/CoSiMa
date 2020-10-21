@@ -14,14 +14,14 @@ class OSMPInterface/* : public iSimulationData */{
 
 	int setStringValue(std::string base_name, std::string value);
 	std::string getStringValue(std::string base_name);
-
+	
 private:
 
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;
 	std::unique_ptr<CoSiMa::rpc::SimulationInterface::Stub> stub;
 	OSMPInterfaceConfig config;
-*/
+	*/
 };
 
 #endif //!OSMPINTERFACE_H
