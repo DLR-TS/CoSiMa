@@ -1,7 +1,6 @@
 #ifndef OSMPINTERFACE_H
 #define OSMPINTERFACE_H
 
-#include "OSIBridge.h"
 #include "simulation_interfaces/iSimulationData.h"
 
 #include "CoSiMaUtility.h"
@@ -11,23 +10,19 @@
 #include "grpc_proto_files/simulation_interface/SimulationInterface.grpc.pb.h"
 #include "grpc_proto_files/simulation_interface/SimulationInterface.pb.h"
 
-class OSMPInterface : public OSIBridge {
-	OSMPInterface(std::shared_ptr<Mapper> mapper) : OSIBridge(mapper) {};
+class OSMPInterface : public iSimulationData {
+	OSMPInterface(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper) {};
 	
-	/*
 	int init(std::string scenario, float starttime, int mode) override;
-	*/
 	int connect(std::string) override;
 	int disconnect() override;
-	/*
+	
 	int writeToInternalState() override;
 	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
-	*/
+	
 	int readConfiguration(configVariants_t configVariants) override;
-	/*
-	int initialise();
-	*/
+
 private:
 
 	// grpc fields

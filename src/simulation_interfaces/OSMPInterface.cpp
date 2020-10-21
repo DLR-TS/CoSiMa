@@ -12,24 +12,20 @@ int OSMPInterface::readConfiguration(configVariants_t variant) {
 	return 0;
 }
 
-int OSMPInterface::connect(std::string) {
+int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	channel = grpc::CreateChannel(sstr.str(), grpc::InsecureChannelCredentials());
 	stub = CoSiMa_rpc::SimulationInterface::NewStub(channel);
 
 	grpc::ClientContext context;
-	/*
 	std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.transactionTimeout*1e3));
 	context.set_deadline(deadline);
-	/*
-	CoSiMa_rpc::Config rpcConfig;
-	rpcConfig.set_carla_host(config.carla_host);
-	rpcConfig.set_carla_port(config.carla_port);
-	rpcConfig.set_transaction_timeout(config.transactionTimeout);
-	rpcConfig.set_delta_seconds(config.deltaSeconds);
+	
+	CoSiMa_rpc::SimConfig rpcConfig;
+	rpcConfig.set_fmu(config.model);
 
-	CoSiMa::rpc::Int32 response;
+	CoSiMa_rpc::SimInt32 response;
 
 	auto status = stub->SetConfig(&context, rpcConfig, &response);
 	
@@ -59,18 +55,80 @@ int OSMPInterface::connect(std::string) {
 		throw new std::exception(msg.c_str());
 	}
 
-	return response.value();*/
-	return -1;
-}
-/*
-std::string OSMPInterface::getStringValue(std::string base_name) {
-	return "";
+	return response.value();
 }
 
-int OSMPInterface::setStringValue(std::string base_name, std::string value) {
+int OSMPInterface::connect(std::string) {
 	return 0;
-}*/
+}
+
+int OSMPInterface::doStep(double stepsize)
+{
+	// context to handle the following rpc call - cannot be reused
+	grpc::ClientContext context;
+	if (0 < config.doStepTransactionTimeout) {
+		std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.doStepTransactionTimeout));
+		context.set_deadline(deadline);
+	}
+
+	//TODO fix import in proto file
+	//auto empty = google::protobuf::Empty();
+	auto empty = CoSiMa_rpc::SimEmpty();
+	CoSiMa_rpc::SimDouble rpcValue;
+
+	auto status = stub->DoStep(&context, empty, &rpcValue);
+
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		throw new std::exception(msg.c_str());
+	}
+
+	return rpcValue.value();
+}
+int OSMPInterface::writeToInternalState() {
+	// context to handle the following rpc call
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+
+	auto string = CoSiMa_rpc::SimString();
+	for (auto output : config.outputs) {
+		string.set_value(output.interface_name);
+
+		CoSiMa_rpc::SimString rpcValue;
+
+		auto status = stub->GetStringValue(context.get(), string, &rpcValue);
+
+		if (!status.ok()) {
+			auto msg = status.error_message();
+			throw new std::exception(msg.c_str());
+		}
+		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
+	}
+	return 0;
+}
+
+int OSMPInterface::readFromInternalState() {
+
+	// context to handle the following rpc call
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+
+	for (auto input : config.inputs) {
+		auto namedValue = CoSiMa_rpc::SimNamedString();
+		namedValue.set_name(input.interface_name);
+		values_t value = mapper->mapFromInternalState(input.interface_name, STRINGCOSIMA);
+		namedValue.set_value(std::get<std::string>(value));
+
+		CoSiMa_rpc::SimInt32 rpcRetVal;
+
+		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
+
+		if (!status.ok()) {
+			auto msg = status.error_message();
+			throw new std::exception(msg.c_str());
+		}
+	}
+	return 0;
+}
 
 int OSMPInterface::disconnect() {
-	return OSIBridge::disconnect();
+	return 0;
 }

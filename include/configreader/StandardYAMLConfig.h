@@ -144,7 +144,9 @@ public:
 	std::string model;
 	std::string prefix;
 	std::string client_host;
-	int client_port;
+	uint16_t client_port;
+	double transactionTimeout;
+	uint32_t doStepTransactionTimeout;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
 };
