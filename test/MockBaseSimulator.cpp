@@ -62,4 +62,17 @@ public:
 		stringvalue = value;
 		return 0;
 	};
+
+	virtual int readConfiguration(baseConfigVariants_t config) override {
+		return 0;
+	};
+
+	virtual int initialise() override {
+		return 0;
+	};
+
+	virtual double doStep() override {
+		return 0;
+	}
+
 };

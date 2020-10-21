@@ -21,7 +21,7 @@ TEST_CASE("OSIBridge Test") {
 		osi3::Identifier* hostid = new osi3::Identifier();
 		hostid->set_value(hostId);
 		sensorView.set_allocated_host_vehicle_id(hostid);
-		int byteSize = sensorView.ByteSize();
+		long byteSize = sensorView.ByteSizeLong();
 		
 		//Array and pointer
 		void* data[5];

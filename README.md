@@ -16,7 +16,16 @@ conan install ..
 
 use cmake for project generation
 
+# CMake FetchContent Overrides
+Some dependencies are retrieved using CMake's FetchContent Module. To override their source in your local repository, create a file named 'CMake_FetchContent_Overrides.cmake' and use the FetchContent_declare() to declare your desired replacement. The will be included by the root CmakeLists.txt file. CMake_FetchContent_Overrides.cmake is ignored and thus will not be added to the global repository. 
+
+LibCarla_client, its dependencies and gRPC currently are included using FetchContent.
 
 ## Used Libraries
 
 cmake-conan 0.15
+LibCarla_client + dependencies (Carla 0.9.9.4)
+gRPC
+protobuf
+yaml-cpp
+open-simulation-interface

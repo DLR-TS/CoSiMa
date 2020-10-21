@@ -1,12 +1,29 @@
-#ifndef DOMINIONINTERFACE_H
-#define DOMINIONINTERFACE_H
+#ifndef CARLAINTERFACE_H
+#define CARLAINTERFACE_H
 
 #include <string>
+
 #include "base_interfaces/BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
+#include "CoSiMaUtility.h"
 
-class DominionInterface : public BaseSystemInterface
+#include <grpc/grpc.h>
+#include <grpcpp/channel.h>
+#include <grpcpp/client_context.h>
+#include <grpcpp/create_channel.h>
+#include <grpcpp/security/credentials.h>
+#include "grpc_proto_files/base_interface/CARLAInterface.grpc.pb.h"
+#include "grpc_proto_files/base_interface/CARLAInterface.pb.h"
+
+class CARLAInterface : public BaseSystemInterface
 {
+	CARLAInterfaceConfig config;
+
+	// grpc fields
+	std::shared_ptr<grpc::Channel> channel;
+	std::unique_ptr<CoSiMa::rpc::CARLAInterface::Stub> stub;
+
+public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;
 	virtual int initialise() override;
 	virtual double doStep() override;
@@ -24,4 +41,4 @@ class DominionInterface : public BaseSystemInterface
 	virtual int setStringValue(std::string base_name, std::string value) override;
 };
 
-#endif // !DOMINIONINTERFACE_H
+#endif // !CARLAINTERFACE_H
