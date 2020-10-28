@@ -172,6 +172,7 @@ add_custom_command(TARGET test_CoSiMa PRE_BUILD
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPCNetworkProxy.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPDummySensor.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/OSMPDummySource.fmu
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/osmp-grpc-config.fmu
 						 $<TARGET_FILE_DIR:test_CoSiMa>/../test/resources/)
 
 include(CTest)
