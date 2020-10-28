@@ -1,0 +1,11 @@
+- simulator: OSMP
+  model: OSMPDummySensor.fmu
+  prefix: /#
+  host: 127.0.0.1
+  port: 51425
+  transaction_timeout: 10
+  do_step_timeout: 10
+  input:
+      - {interface_name: OSMPSensorViewIn, base_name: SensorView1234}
+  output:
+      - {interface_name: OSMPSensorDataOut, base_name: SensorData1234}

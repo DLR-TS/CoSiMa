@@ -2,8 +2,12 @@
 
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
+#include "configreader/YAMLConfigReader.h"
+#include "SimulationInterfaceFactory.h"
 #include "simulation_interfaces/FMIBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
+#include "simulation_interfaces/OSMPInterface.h"
+#include "MockBaseSimulator.cpp"
 
 std::string osimessage = "";
 
@@ -139,4 +143,29 @@ TEST_CASE("OSMP Test") {
 			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0) != osimessage);
 		}
 	}
+}
+
+TEST_CASE("OSMP gRPC Test") {
+	//Test together with OSMP-Client
+	/*
+	SimulationInterfaceFactory factory;
+	auto osmpinterface = factory.makeInterface(OSMP);
+	auto base = std::make_shared<MockBaseSimulator>();
+
+	YAMLConfigReader reader("../test/resources/osmp-grpc-config.yaml");
+	auto names = reader.getSimulatorNames();
+	reader.setConfig(osmpinterface, names.at(0));
+
+	//all inital steps
+	REQUIRE(0 == osmpinterface->init("Scenario", 0.0, 0));
+	REQUIRE(0 == osmpinterface->connect(""));
+
+	//repetitive steps
+	for (int i = 0; i < 5; i++) {
+		REQUIRE(0 == osmpinterface->mapToInterfaceSystem(base));
+		REQUIRE(0 == osmpinterface->readFromInternalState());
+		REQUIRE(0 == osmpinterface->doStep());
+		REQUIRE(0 == osmpinterface->writeToInternalState());
+		REQUIRE(0 == osmpinterface->mapFromInterfaceSystem(base));
+	}*/
 }
