@@ -266,14 +266,14 @@ namespace YAML {
 
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
-			osiinterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
-			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
-			osiinterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
-			osiinterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
-			osiinterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
-			osiinterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
-			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
-			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			osiInterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
+			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
+			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
+			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
+			osiInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
+			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			return true;
 		}
 	};
