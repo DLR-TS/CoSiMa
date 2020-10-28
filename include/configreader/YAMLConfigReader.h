@@ -39,6 +39,13 @@ public:
 	*/
 	int setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname);
 
+	/**
+	* Set config of simulator to given mapper.
+	* \param baseSystem BaseSystem to be configured.
+	* \param simulatorname Read simulator configuration of this name.
+	*/
+	int setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> baseSystem, SingleYAMLConfig simulatorname);
+
 private:
 	/**
 	* Representation of the YAML configuration file.
