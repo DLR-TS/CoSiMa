@@ -111,9 +111,10 @@ endif(BUILD_SHARED_LIBS)
 ## generate grpc code
 # gRPC can handle relative files
 set(COSIMA_GRPC_PROTO_FILES
+	grpc_proto_files/CoSiMaMessages.proto
 	grpc_proto_files/base_interface/BaseInterface.proto
 	grpc_proto_files/base_interface/CARLAInterface.proto
-	#TODO define and add grpc_proto_files/simulation_interface/SimulationInterface.proto
+	grpc_proto_files/simulation_interface/SimulationInterface.proto
 )
 #string(REPLACE ".proto" ".grpc.pb.cc" COSIMA_GRPC_SRCS ${COSIMA_GRPC_PROTO_FILES})
 #string(REPLACE ".proto" ".grpc.pb.h" COSIMA_GRPC_HDRS ${COSIMA_GRPC_PROTO_FILES})

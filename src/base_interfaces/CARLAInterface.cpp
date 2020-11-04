@@ -15,8 +15,12 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 int CARLAInterface::initialise() {
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
-	channel = grpc::CreateChannel(sstr.str(), grpc::InsecureChannelCredentials());
-	stub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
+	grpc::ChannelArguments channelArgs;
+	channelArgs.SetMaxSendMessageSize(-1);
+	channelArgs.SetMaxReceiveMessageSize(-1);
+	channel = grpc::CreateCustomChannel(sstr.str(), grpc::InsecureChannelCredentials(),channelArgs);
+	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
+	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
@@ -30,7 +34,7 @@ int CARLAInterface::initialise() {
 	CoSiMa::rpc::Int32 response;
 
 	//TODO does this call take ownership of the context, thus freeing it twice? (would need context.release() instead of context.get() to prevent double free)
-	auto status = stub->SetConfig(context.get(), rpcConfig, &response);
+	auto status = configStub->SetConfig(context.get(), rpcConfig, &response);
 
 
 	auto channelState = channel->GetState(true);
@@ -169,7 +173,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	auto string = CoSiMa::rpc::String();
 	string.set_value(base_name);
 
-	CoSiMa::rpc::String rpcValue;
+	CoSiMa::rpc::Bytes rpcValue;
 
 	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
@@ -265,7 +269,7 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
-	auto namedValue = CoSiMa::rpc::NamedString();
+	auto namedValue = CoSiMa::rpc::NamedBytes();
 	namedValue.set_name(base_name);
 	namedValue.set_value(value);
 
