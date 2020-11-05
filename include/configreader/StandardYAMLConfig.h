@@ -262,7 +262,7 @@ namespace YAML {
 
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
-			osiInterface.prefix = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
 			osiInterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
 			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
