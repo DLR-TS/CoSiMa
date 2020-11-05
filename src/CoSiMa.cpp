@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	//read config
 	YAMLConfigReader reader = YAMLConfigReader(path);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
-	
+
 	bool carlaUsedAsBaseInterface = false;
 	std::shared_ptr<BaseSystemInterface> baseSystem;
 	/**
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 		}
 
 		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator);
-		if (newInterface == nullptr){
+		if (newInterface == nullptr) {
 			std::cout << "Failed to create a simulator." << std::endl;
 			exit(1);
 		}
@@ -54,7 +54,12 @@ int main(int argc, char *argv[])
 		baseSystem = std::make_shared<DominionInterface>();
 	}
 
+
 	//init interfaces
+	if (0 != baseSystem->initialise()) {
+		std::cerr << "Error in initialization of base simulation interface." << std::endl;
+		exit(6);
+	}
 	for (auto simInterface : simulationInterfaces) {
 		if (simInterface->init("Scenario", 0.0, 0) != 0) { //TODO set as parameters?
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
@@ -105,6 +110,8 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 			//do simulaton step
 			simInterface->doStep();
 		}
+		// base simulation interface also performs a step, at least to update its clock
+		baseSystem->doStep();
 
 		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
