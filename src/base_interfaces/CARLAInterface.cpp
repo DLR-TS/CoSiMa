@@ -23,7 +23,7 @@ int CARLAInterface::initialise() {
 	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initialisationTransactionTimeout);
 
 	CoSiMa::rpc::CarlaConfig rpcConfig;
 	rpcConfig.set_carla_host(config.carla_host);

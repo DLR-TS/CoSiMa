@@ -36,6 +36,7 @@ public:
 	uint16_t carla_port;
 	double transactionTimeout;
 	double deltaSeconds;
+	uint32_t initialisationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
 };
 
@@ -285,6 +286,8 @@ namespace YAML {
 			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 0;
 			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			carlaInterface.transactionTimeout = node["timeout"].IsDefined() ? node["timeout"].as<double>() : 0;
+			carlaInterface.doStepTransactionTimeout = node["step_timeout"].IsDefined() ? node["step_timeout"].as<uint32_t>() : 0;
+			carlaInterface.initialisationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() : 0;
 			return true;
 		}
 	};
