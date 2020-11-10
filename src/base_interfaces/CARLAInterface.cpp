@@ -18,18 +18,14 @@ int CARLAInterface::initialise() {
 	grpc::ChannelArguments channelArgs;
 	channelArgs.SetMaxSendMessageSize(-1);
 	channelArgs.SetMaxReceiveMessageSize(-1);
-	channel = grpc::CreateCustomChannel(sstr.str(), grpc::InsecureChannelCredentials(),channelArgs);
+	channel = grpc::CreateCustomChannel(sstr.str(), grpc::InsecureChannelCredentials(), channelArgs);
 	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
 	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initialisationTransactionTimeout);
 
-	CoSiMa::rpc::CarlaConfig rpcConfig;
-	rpcConfig.set_carla_host(config.carla_host);
-	rpcConfig.set_carla_port(config.carla_port);
-	rpcConfig.set_transaction_timeout(config.transactionTimeout);
-	rpcConfig.set_delta_seconds(config.deltaSeconds);
+	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
 
 	CoSiMa::rpc::Int32 response;
 
@@ -283,4 +279,50 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	}
 
 	return rpcRetVal.value();
-};
+}
+
+CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
+{
+	CoSiMa::rpc::CarlaConfig rpcConfig;
+	rpcConfig.set_carla_host(config.carla_host);
+	rpcConfig.set_carla_port(config.carla_port);
+	rpcConfig.set_transaction_timeout(config.transactionTimeout);
+	rpcConfig.set_delta_seconds(config.deltaSeconds);
+
+	for (auto& sensorViewExtra : config.osiSensorViewConfig) {
+		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
+		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
+
+		copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+	}
+
+	return rpcConfig;
+}
+
+void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition * rpcMountingPosition)
+{
+	for (auto mountingPosition : mountingPositions) {
+		auto position = rpcMountingPosition->mutable_position();
+		position->set_x(mountingPosition.x);
+		position->set_y(mountingPosition.y);
+		position->set_z(mountingPosition.z);
+		auto orientation = rpcMountingPosition->mutable_orientation();
+		orientation->set_pitch(mountingPosition.pitch);
+		orientation->set_yaw(mountingPosition.yaw);
+		orientation->set_roll(mountingPosition.roll);
+	}
+}
+
