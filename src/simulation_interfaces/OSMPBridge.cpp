@@ -55,7 +55,7 @@ int OSMPBridge::writeToInternalState() {
 		return 1;
 	}
 	//write all messages to internal state
-	for (auto address : inputAddresses) {
+	for (auto& address : inputAddresses) {
 		OSIBridge::writeToInternalState(address.second);
 	}
 	return 0;
