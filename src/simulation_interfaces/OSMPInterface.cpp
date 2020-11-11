@@ -25,14 +25,14 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	grpc::ClientContext context;
 	std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.transactionTimeout*1e3));
 	context.set_deadline(deadline);
-	
+
 	CoSiMa::rpc::OSMPConfig rpcConfig;
 	rpcConfig.set_fmu_path(config.model);
 
 	CoSiMa::rpc::Int32 response;
 
 	auto status = osmpStub->SetConfig(&context, rpcConfig, &response);
-	
+
 
 	auto channelState = channel->GetState(true);
 	switch (channelState)
@@ -75,19 +75,18 @@ int OSMPInterface::doStep(double stepsize)
 		context.set_deadline(deadline);
 	}
 
-	//TODO fix import in proto file
-	//auto empty = google::protobuf::Empty();
-	auto empty = CoSiMa::rpc::Empty();
-	CoSiMa::rpc::Double rpcValue;
+	CoSiMa::rpc::Double rpcStepSize;
+	CoSiMa::rpc::Int32 rpcResponse;
+	rpcStepSize.set_value(stepsize);
 
-	auto status = stub->DoStep(&context, empty, &rpcValue);
+	auto status = stub->DoStep(&context, rpcStepSize, &rpcResponse);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		throw new std::exception(msg.c_str());
 	}
 
-	return rpcValue.value();
+	return rpcResponse.value();
 }
 int OSMPInterface::writeToInternalState() {
 	// context to handle the following rpc call
