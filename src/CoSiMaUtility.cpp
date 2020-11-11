@@ -6,7 +6,7 @@ std::unique_ptr<grpc::ClientContext> CoSiMa::Utility::CreateDeadlinedClientConte
 	return CoSiMa::Utility::CreateDeadlinedClientContext(timeout);
 }
 
-std::unique_ptr<grpc::ClientContext> CoSiMa::Utility::CreateDeadlinedClientContext(long long transactionTimeout) {
+std::unique_ptr<grpc::ClientContext> CoSiMa::Utility::CreateDeadlinedClientContext(uint32_t transactionTimeout) {
 	//convert to systemclock time unit
 	std::chrono::system_clock::duration timeout = std::chrono::milliseconds(transactionTimeout);
 	// set deadline to transactionTimeout seconds from now

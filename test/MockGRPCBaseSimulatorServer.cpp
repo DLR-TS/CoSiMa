@@ -7,16 +7,19 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
+#include "grpc_proto_files/base_interface/BaseInterface.grpc.pb.h"
+#include "grpc_proto_files/base_interface/BaseInterface.pb.h"
 #include "grpc_proto_files/base_interface/CARLAInterface.grpc.pb.h"
 #include "grpc_proto_files/base_interface/CARLAInterface.pb.h"
 
-class MockGRPCBaseSimulatorServer : public CoSiMa::rpc::CARLAInterface::Service {
+class MockGRPCBaseSimulatorServer : public CoSiMa::rpc::BaseInterface::Service, public CoSiMa::rpc::CARLAInterface::Service {
 public:
 
 	void RunServer(const std::string& server_address, std::promise<std::shared_ptr<grpc::Server>> promise) {
 		grpc::ServerBuilder builder;
 		builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-		builder.RegisterService(this);
+		builder.RegisterService(static_cast<CoSiMa::rpc::BaseInterface::Service*>(this));
+		builder.RegisterService(static_cast<CoSiMa::rpc::CARLAInterface::Service*>(this));
 		std::shared_ptr<grpc::Server> server(builder.BuildAndStart());
 		promise.set_value(server);
 		std::cout << "Server listening on " << server_address << std::endl;
@@ -86,12 +89,12 @@ public:
 		return grpc::Status::OK;
 	}
 
-	virtual grpc::Status GetStringValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::String* value) override {
+	virtual grpc::Status GetStringValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Bytes* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
 			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
-			value = new CoSiMa::rpc::String();
+			value = new CoSiMa::rpc::Bytes();
 		value->set_value("string");
 		return grpc::Status::OK;
 	}
@@ -133,7 +136,7 @@ public:
 		return grpc::Status::OK;
 	}
 
-	virtual grpc::Status SetStringValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedString* namedValue, CoSiMa::rpc::Int32* response) override {
+	virtual grpc::Status SetStringValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedBytes* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size())
 			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		if (nullptr == response)
@@ -141,21 +144,6 @@ public:
 		response->set_value(namedValue->value().size());
 		return grpc::Status::OK;
 	}
-
-	/*
-	virtual double doStep() override;
-
-	virtual int getIntValue(std::string base_name) override;
-	virtual bool getBoolValue(std::string base_name) override;
-	virtual float getFloatValue(std::string base_name) override;
-	virtual double getDoubleValue(std::string base_name) override;
-	virtual std::string getStringValue(std::string base_name) override;
-
-	virtual int setIntValue(std::string base_name, int value) override;
-	virtual int setBoolValue(std::string base_name, bool value) override;
-	virtual int setFloatValue(std::string base_name, float value) override;
-	virtual int setDoubleValue(std::string base_name, double value) override;
-	virtual int setStringValue(std::string base_name, std::string value) override;*/
 
 };
 

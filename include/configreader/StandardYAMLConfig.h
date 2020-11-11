@@ -12,6 +12,26 @@ public:
 	std::string simulator;
 };
 
+struct OSIMountingPosition {
+public:
+	double x;
+	double y;
+	double z;
+	double pitch;
+	double yaw;
+	double roll;
+};
+
+struct SensorViewConfig {
+public:
+	std::string prefixedFmuVariableName;
+	std::vector<OSIMountingPosition> genericSensorMountingPosition;
+	std::vector<OSIMountingPosition> radarSensorMountingPosition;
+	std::vector<OSIMountingPosition> lidarSensorMountingPosition;
+	std::vector<OSIMountingPosition> cameraSensorMountingPosition;
+	std::vector<OSIMountingPosition> ultrasonicSensorMountingPosition;
+};
+
 /**
 * \var client_host
 * host name or ip of the CARLA to OSI client
@@ -36,10 +56,12 @@ public:
 	uint16_t carla_port;
 	double transactionTimeout;
 	double deltaSeconds;
+	uint32_t initialisationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
+	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
 
-struct DominionInterfaceConfig{};
+struct DominionInterfaceConfig {};
 
 /**
  *\paragraph Naming definitions
@@ -47,14 +69,14 @@ struct DominionInterfaceConfig{};
 
   @startuml
   node base_system
- 
+
   node interface_system_1
   node interface_system_2
 
   base_system <-- interface_system_1
   base_system <-- interface_system_2
   @enduml
-  
+
  *
  * \var std::string interface_name
  * holds name of the variable in the interface system
@@ -152,12 +174,21 @@ public:
 };
 
 /**
- * YAML-cpp converter for the above defined structs. Designed according to yaml-cpp tutorial: https://github.com/jbeder/yaml-cpp/wiki/Tutorial 
+ * YAML-cpp converter for the above defined structs. Designed according to yaml-cpp tutorial: https://github.com/jbeder/yaml-cpp/wiki/Tutorial
 
- * 
+ *
  */
 
 namespace YAML {
+	template<typename T>
+	static T nodeOrDefault(const Node& node, T defaultValue) {
+		return node.IsDefined() ? node.as<T>() : defaultValue;
+	};
+	template<typename T>
+	static T nodeOrDefault(const Node& node) {
+		return node.IsDefined() ? node.as<T>() : T();
+	};
+
 	template<>
 	struct convert<SimulatorName> {
 		static Node encode(const SimulatorName& config) {
@@ -185,7 +216,8 @@ namespace YAML {
 			config.ip = node["ip"].IsDefined() ? node["ip"].as<std::string>() : std::string();
 			if (node["port"].IsDefined()) {
 				config.port = node["port"].as<int>();
-			} else {
+			}
+			else {
 				std::cout << "No port for " << config.simulator << " is set. Default value 0 is used. May not be a problem since not every interface needs a defined port.";
 				config.port = 0;
 			}
@@ -279,6 +311,42 @@ namespace YAML {
 	};
 
 	template<>
+	struct convert<OSIMountingPosition> {
+		static Node encode(const OSIMountingPosition config) {
+			return Node();
+		}
+
+		static bool decode(const Node& node, OSIMountingPosition& config) {
+			config.x = nodeOrDefault<double>(node["x"]);
+			config.y = nodeOrDefault<double>(node["y"]);
+			config.z = nodeOrDefault<double>(node["z"]);
+			config.pitch = nodeOrDefault<double>(node["pitch"]);
+			config.yaw = nodeOrDefault<double>(node["yaw"]);
+			config.roll = nodeOrDefault<double>(node["roll"]);
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<SensorViewConfig> {
+		static Node encode(const SensorViewConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, SensorViewConfig& config)
+		{
+			config.prefixedFmuVariableName = nodeOrDefault<std::string>(node["prefixed_fmu_variable_name"]);
+			config.cameraSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["camera_sensor_mounting_position"]);
+			config.radarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["radar_sensor_mounting_position"]);
+			config.lidarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["lidar_sensor_mounting_position"]);
+			config.genericSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["generic_sensor_mounting_position"]);
+			config.ultrasonicSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["ultrasonic_sensor_mounting_position"]);
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<CARLAInterfaceConfig> {
 		static Node encode(const CARLAInterfaceConfig& config) {
 			Node node;
@@ -293,6 +361,9 @@ namespace YAML {
 			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 0;
 			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			carlaInterface.transactionTimeout = node["timeout"].IsDefined() ? node["timeout"].as<double>() : 0;
+			carlaInterface.doStepTransactionTimeout = node["step_timeout"].IsDefined() ? node["step_timeout"].as<uint32_t>() : 0;
+			carlaInterface.initialisationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() : 0;
+			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			return true;
 		}
 	};

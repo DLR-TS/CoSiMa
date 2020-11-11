@@ -15,22 +15,22 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 int CARLAInterface::initialise() {
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
-	channel = grpc::CreateChannel(sstr.str(), grpc::InsecureChannelCredentials());
-	stub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
+	grpc::ChannelArguments channelArgs;
+	channelArgs.SetMaxSendMessageSize(-1);
+	channelArgs.SetMaxReceiveMessageSize(-1);
+	channel = grpc::CreateCustomChannel(sstr.str(), grpc::InsecureChannelCredentials(), channelArgs);
+	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
+	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initialisationTransactionTimeout);
 
-	CoSiMa::rpc::CarlaConfig rpcConfig;
-	rpcConfig.set_carla_host(config.carla_host);
-	rpcConfig.set_carla_port(config.carla_port);
-	rpcConfig.set_transaction_timeout(config.transactionTimeout);
-	rpcConfig.set_delta_seconds(config.deltaSeconds);
+	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
 
 	CoSiMa::rpc::Int32 response;
 
 	//TODO does this call take ownership of the context, thus freeing it twice? (would need context.release() instead of context.get() to prevent double free)
-	auto status = stub->SetConfig(context.get(), rpcConfig, &response);
+	auto status = configStub->SetConfig(context.get(), rpcConfig, &response);
 
 
 	auto channelState = channel->GetState(true);
@@ -169,7 +169,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	auto string = CoSiMa::rpc::String();
 	string.set_value(base_name);
 
-	CoSiMa::rpc::String rpcValue;
+	CoSiMa::rpc::Bytes rpcValue;
 
 	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
@@ -265,7 +265,7 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
-	auto namedValue = CoSiMa::rpc::NamedString();
+	auto namedValue = CoSiMa::rpc::NamedBytes();
 	namedValue.set_name(base_name);
 	namedValue.set_value(value);
 
@@ -279,4 +279,50 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	}
 
 	return rpcRetVal.value();
-};
+}
+
+CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
+{
+	CoSiMa::rpc::CarlaConfig rpcConfig;
+	rpcConfig.set_carla_host(config.carla_host);
+	rpcConfig.set_carla_port(config.carla_port);
+	rpcConfig.set_transaction_timeout(config.transactionTimeout);
+	rpcConfig.set_delta_seconds(config.deltaSeconds);
+
+	for (auto& sensorViewExtra : config.osiSensorViewConfig) {
+		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
+		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
+
+		copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
+
+		copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
+			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+	}
+
+	return rpcConfig;
+}
+
+void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition * rpcMountingPosition)
+{
+	for (auto mountingPosition : mountingPositions) {
+		auto position = rpcMountingPosition->mutable_position();
+		position->set_x(mountingPosition.x);
+		position->set_y(mountingPosition.y);
+		position->set_z(mountingPosition.z);
+		auto orientation = rpcMountingPosition->mutable_orientation();
+		orientation->set_pitch(mountingPosition.pitch);
+		orientation->set_yaw(mountingPosition.yaw);
+		orientation->set_roll(mountingPosition.roll);
+	}
+}
+

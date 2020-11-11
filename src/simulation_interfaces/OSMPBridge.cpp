@@ -72,7 +72,7 @@ int OSMPBridge::readFromInternalState() {
 		}
 	}
 	//write message
-	for (auto address : outputAddresses) {
+	for (auto& address : outputAddresses) {
 		OSIBridge::readFromInternalState(address.second);
 	}
 	//set pointers of messages in fmi
