@@ -148,6 +148,7 @@ add_custom_command(TARGET test_CoSiMa PRE_BUILD
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig1.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig2.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig3.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig4.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/carlaConfig.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_cs.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_me.fmu
