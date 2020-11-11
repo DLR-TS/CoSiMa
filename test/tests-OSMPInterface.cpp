@@ -145,9 +145,9 @@ TEST_CASE("OSMP Test") {
 	}
 }
 
-TEST_CASE("OSMP gRPC Test") {
+TEST_CASE("OSMP gRPC Test","[.][Requires OSMP client]") {
 	//Test together with OSMP-Client
-	/*
+	
 	SimulationInterfaceFactory factory;
 	auto osmpinterface = factory.makeInterface(OSMP);
 	auto base = std::make_shared<MockBaseSimulator>();
@@ -167,5 +167,5 @@ TEST_CASE("OSMP gRPC Test") {
 		REQUIRE(0 == osmpinterface->doStep());
 		REQUIRE(0 == osmpinterface->writeToInternalState());
 		REQUIRE(0 == osmpinterface->mapFromInterfaceSystem(base));
-	}*/
+	}
 }
