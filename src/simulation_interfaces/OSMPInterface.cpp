@@ -88,6 +88,7 @@ int OSMPInterface::doStep(double stepsize)
 
 	return rpcResponse.value();
 }
+
 int OSMPInterface::writeToInternalState() {
 	// context to handle the following rpc call
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
