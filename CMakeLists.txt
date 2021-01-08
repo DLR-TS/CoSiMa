@@ -9,6 +9,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(MSVC)
+ option(DONT_FORCE_STATIC_LIBS "Building dynamic libraries fails for some targets because of incompatabilities in dependencies (potobuf, see FetchGRPC.cmake) and thus static lib's are enforced. Enable this option to abide CMAKE's BUILD_SHARED_LIBS variable" OFF)
+ if(NOT DONT_FORCE_STATIC_LIBS)
+ set(BUILD_SHARED_LIBS false)
+ endif(NOT DONT_FORCE_STATIC_LIBS)
+endif(MSVC)
+
 option(GIT_SUBMODULE "Check submodules during build" ON)
 if(GIT_SUBMODULE)
 	find_package(Git QUIET)
