@@ -3,19 +3,25 @@
 ## Installation Guide
 
 preparations:
-install (conan.io)[conan.io]
+install (conan.io)[conan.io] (version 1.29.x or newer )
 add conan.exe to PATH environment variable
 check out submodules (git submodule update --init --recursive) to get FMI4cpp or use GIT_SUBMODULE CMake option to do so automatically during build
 	- FMI4cpp is not available as conan package (might change in the future?)
 	- its dependencies are installed using conan, invoked from cmake when building CoSimulationManagerLib
 
+# manual build
 in root folder:
-mkdir build && cd build
-conan install ..
+```sh
+ mkdir build && cd build
+ cmake .. # or 'cmake -D BUILD_SHARED_LIBS=false ..' on windows, see below
+ cmake --build . --target CoSimulationManager 
+ cmake --install . # not yet defined
+```
 
-Conan needs to be 1.29 or higher
+ Because of broken dependencies using MSVC, build and use static libraries on windows by appending '-D BUILD_SHARED_LIBS=false' to all cmake generation calls
 
-or just open the folder in Visual Studio
+# building in Visual Studio 2017
+just open the folder in Visual Studio and use the cmake integration
 
 In Windows in den CMakeSettings.json "cmakeCommandArgs": "-D BUILD_SHARED_LIBS=false", einfügen.
 Do not build the libs shared.
