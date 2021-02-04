@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
- option(DONT_FORCE_STATIC_LIBS "Building dynamic libraries fails for some targets because of incompatabilities in dependencies (potobuf, see FetchGRPC.cmake) and thus static lib's are enforced. Enable this option to abide CMAKE's BUILD_SHARED_LIBS variable" OFF)
+ option(DONT_FORCE_STATIC_LIBS "Building dynamic libraries fails for some targets because of incompatabilities in dependencies (protobuf, see FetchGRPC.cmake) and thus static lib's are enforced. Enable this option to abide CMAKE's BUILD_SHARED_LIBS variable" OFF)
  if(NOT DONT_FORCE_STATIC_LIBS)
  set(BUILD_SHARED_LIBS false)
  endif(NOT DONT_FORCE_STATIC_LIBS)

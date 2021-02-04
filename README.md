@@ -13,6 +13,12 @@ in root folder:
 mkdir build && cd build
 conan install ..
 
+Conan needs to be 1.29 or higher
+
+or just open the folder in Visual Studio
+
+In Windows in den CMakeSettings.json "cmakeCommandArgs": "-D BUILD_SHARED_LIBS=false", einfügen.
+Do not build the libs shared.
 
 use cmake for project generation
 
