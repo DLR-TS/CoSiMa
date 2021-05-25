@@ -6,7 +6,7 @@
 #include "sl45_motioncommand.pb.h"
 #include "sl45_vehiclecommunicationdata.pb.h"
 
-class OSIMapper : Mapper {
+class OSIMapper : public Mapper {
 
 public:
 	OSIMapper() : Mapper() {};
