@@ -55,7 +55,12 @@ int CARLAInterface::initialise() {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return response.value();
@@ -79,7 +84,12 @@ double CARLAInterface::doStep()
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcValue.value();
@@ -98,7 +108,12 @@ int CARLAInterface::getIntValue(std::string base_name) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcValue.value();
@@ -117,7 +132,12 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcValue.value();
@@ -136,7 +156,12 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcValue.value();
@@ -155,7 +180,12 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 
@@ -175,7 +205,12 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcValue.value();
@@ -195,7 +230,12 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcRetVal.value();
@@ -215,7 +255,12 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcRetVal.value();
@@ -235,7 +280,12 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcRetVal.value();
@@ -255,7 +305,12 @@ int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcRetVal.value();
@@ -275,7 +330,12 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcRetVal.value();

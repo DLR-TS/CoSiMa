@@ -7,4 +7,4 @@
 
 typedef std::variant<CARLAInterfaceConfig, DominionInterfaceConfig> baseConfigVariants_t;
 
-#endif BASECONFIGVARIANTS_H
+#endif //!BASECONFIGVARIANTS_H

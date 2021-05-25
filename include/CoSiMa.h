@@ -8,9 +8,9 @@
 #include <string>
 #include "base_interfaces/BaseSystemInterface.h"
 #include "base_interfaces/DominionInterface.h"
-#ifdef WITH_CARLA
-#include "base_interfaces/CARLAInterface.h"
-#endif
+//#ifdef WITH_CARLA
+//#include "base_interfaces/CARLAInterface.h"
+//#endif
 #include "simulation_interfaces/iSimulationData.h"
 #include "configreader/YAMLConfigReader.h"
 #include "SimulationInterfaceFactory.h"

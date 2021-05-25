@@ -56,7 +56,12 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return response.value();
@@ -83,7 +88,12 @@ int OSMPInterface::doStep(double stepsize)
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
-		throw new std::exception(msg.c_str());
+		std::cerr << msg;
+#ifdef __linux__
+		throw std::exception();
+#else
+		throw std::exception(msg.c_str());
+#endif
 	}
 
 	return rpcResponse.value();
@@ -103,7 +113,12 @@ int OSMPInterface::writeToInternalState() {
 
 		if (!status.ok()) {
 			auto msg = status.error_message();
-			throw new std::exception(msg.c_str());
+			std::cerr << msg;
+#ifdef __linux__
+			throw std::exception();
+#else
+			throw std::exception(msg.c_str());
+#endif
 		}
 		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
 	}
@@ -127,7 +142,12 @@ int OSMPInterface::readFromInternalState() {
 
 		if (!status.ok()) {
 			auto msg = status.error_message();
-			throw new std::exception(msg.c_str());
+			std::cerr << msg;
+#ifdef __linux__
+			throw std::exception();
+#else
+			throw std::exception(msg.c_str());
+#endif
 		}
 	}
 	return 0;

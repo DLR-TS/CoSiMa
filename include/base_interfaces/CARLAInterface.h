@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "base_interfaces/BaseSystemInterface.h"
+#include "BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
 #include "CoSiMaUtility.h"
 

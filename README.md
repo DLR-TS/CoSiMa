@@ -2,18 +2,19 @@
 
 ## Installation Guide
 
-preparations:
-install (conan.io)[conan.io] (version 1.29.x or newer )
+preparations:\
+install cmake (version 3.12 or newer)\
+install (conan.io)[conan.io] (version 1.29.x or newer )\
 add conan.exe to PATH environment variable
-check out submodules (git submodule update --init --recursive) to get FMI4cpp or use GIT_SUBMODULE CMake option to do so automatically during build
+<!--check out submodules (git submodule update --init --recursive) to get FMI4cpp or use GIT_SUBMODULE CMake option to do so automatically during build
 	- FMI4cpp is not available as conan package (might change in the future?)
-	- its dependencies are installed using conan, invoked from cmake when building CoSimulationManagerLib
+	- its dependencies are installed using conan, invoked from cmake when building CoSimulationManagerLib-->
 
 # manual build
 in root folder:
 ```sh
  mkdir build && cd build
- cmake .. # or 'cmake -D BUILD_SHARED_LIBS=false ..' on windows, see below
+ cmake .. -DCMAKE_BUILD_TYPE=Release # or 'cmake -D BUILD_SHARED_LIBS=false ..' on windows, see below
  cmake --build . --target CoSimulationManager 
  cmake --install . # not yet defined
 ```
@@ -23,7 +24,7 @@ in root folder:
 # building in Visual Studio 2017
 just open the folder in Visual Studio and use the cmake integration
 
-In Windows in den CMakeSettings.json "cmakeCommandArgs": "-D BUILD_SHARED_LIBS=false", einfügen.
+In Windows in den CMakeSettings.json "cmakeCommandArgs": "-D BUILD_SHARED_LIBS=false", einfügen.\
 Do not build the libs shared.
 
 use cmake for project generation
@@ -33,11 +34,31 @@ Some dependencies are retrieved using CMake's FetchContent Module. To override t
 
 LibCarla_client, its dependencies and gRPC currently are included using FetchContent.
 
+# Configure CoSiMa
+To start CoSiMa a YAML File needs to be provided. Since out goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
+The configuration contains information about all connted simulators.
+Currently implemented are CARLA and OSMP.
+
+## CARLA
+Between CARLA and CoSiMa sits the CARLA-OSI-Client.\
+The carla_host and carla_port address information are seen from the CARLA-OSI-Client.\
+delta defines the step size in seconds.
+
+## OSMP
+The OSMP simulator configuration contains the path to the FMU.\
+A prefix is needed for internal use. Dont change it
+
+### Input and Output
+The interface_name defines the name of a OSI message, which the FMU expects.\
+The base_name defines the name used by the base simulator (CARLA).\
+This differentiation allows free adjustments between FMUs and the base simulator.\
+FMUs can send information by any not yet defined base_name between each other.
+
 ## Used Libraries
 
-cmake-conan 0.15
-LibCarla_client + dependencies (Carla 0.9.9.4)
-gRPC
-protobuf
-yaml-cpp
+cmake-conan 0.15\
+LibCarla_client + dependencies (Carla 0.9.9.4)\
+gRPC\
+protobuf\
+yaml-cpp\
 open-simulation-interface
