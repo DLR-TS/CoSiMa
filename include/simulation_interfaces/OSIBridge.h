@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include "iSimulationData.h"
-#include "../Mapper/Mapper.h"
+#include "../mapper/Mapper.h"
 #include "../mapper/OSIMapper.h"
 #include "OSIMessages.h"
 #include "osi_sensorview.pb.h"

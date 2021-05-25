@@ -1,4 +1,5 @@
 #include "mapper/Mapper.h"
+#include <algorithm>
 
 int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer

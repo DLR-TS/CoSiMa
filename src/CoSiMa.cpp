@@ -1,14 +1,18 @@
 ﻿#include "CoSiMa.h"
 #include <filesystem>
+#include "base_interfaces/CARLAInterface.h"
 
 int main(int argc, char *argv[])
 {
 	std::cout << "Welcome to CoSiMa." << std::endl << std::endl;
-
+	#if __cplusplus > 201703L
 	std::cout << std::filesystem::current_path() << std::endl << std::endl;
 
 	//start parameter
 	std::string path(std::filesystem::current_path().string());
+	#else
+	std::string path("");
+	#endif
 	path.append("\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];

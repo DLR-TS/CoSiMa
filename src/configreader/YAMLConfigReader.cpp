@@ -1,5 +1,6 @@
-#include <string>
 #include "configreader/YAMLConfigReader.h"
+#include <string>
+#include <algorithm>
 
 YAMLConfigReader::YAMLConfigReader(std::string path) {
 	std::cout << "Load YAML file: " << path << std::endl;

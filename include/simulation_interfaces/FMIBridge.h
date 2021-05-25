@@ -2,8 +2,8 @@
 #define FMIBRIDGE_H
 
 #include "iSimulationData.h"
-#include "../Mapper/Mapper.h"
-#include "../Mapper/FMIMapper.h"
+#include "../mapper/Mapper.h"
+#include "../mapper/FMIMapper.h"
 //windef.h compatibility
 #define NOMINMAX
 #include "fmi4cpp/fmi4cpp.hpp"

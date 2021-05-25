@@ -15,7 +15,6 @@
 */
 typedef std::variant<int, float, double, bool, std::string> values_t;
 typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig, OSIInterfaceConfig, OSMPInterfaceConfig> configVariants_t;
-enum eDataType;
 class BaseSystemInterface;
 class Mapper;
 

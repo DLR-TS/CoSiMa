@@ -3,7 +3,7 @@
 #define NOMINMAX
 #include "fmi4cpp/fmi4cpp.hpp"
 #include "iSimulationData.h"
-#include "../Mapper/Mapper.h"
+#include "../mapper/Mapper.h"
 #include "../mapper/OSIMapper.h"
 #include "OSIMessages.h"
 #include "OSIBridge.h"

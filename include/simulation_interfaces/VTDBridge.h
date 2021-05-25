@@ -2,7 +2,7 @@
 #define VTDBRIDGE_H
 
 #include "iSimulationData.h"
-#include "../Mapper/Mapper.h"
+#include "../mapper/Mapper.h"
 
 class VTDBridge : public iSimulationData
 {
