@@ -35,8 +35,8 @@ Some dependencies are retrieved using CMake's FetchContent Module. To override t
 LibCarla_client, its dependencies and gRPC currently are included using FetchContent.
 
 # Configure CoSiMa
-To start CoSiMa a YAML File needs to be provided. Since out goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
-The configuration contains information about all connted simulators.
+To start CoSiMa a YAML File needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
+The configuration contains information about all connected simulators.
 Currently implemented are CARLA and OSMP.
 
 ## CARLA
@@ -46,7 +46,7 @@ delta defines the step size in seconds.
 
 ## OSMP
 The OSMP simulator configuration contains the path to the FMU.\
-A prefix is needed for internal use. Dont change it
+A prefix is needed for internal use to mark OSI Messages. There should be no reason to change the value.
 
 ### Input and Output
 The interface_name defines the name of a OSI message, which the FMU expects.\

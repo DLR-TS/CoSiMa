@@ -6,7 +6,7 @@
   delta: 0.03
   timeout: 3
 - simulator: FMI
-  models: PATH_TO_.ssp # path to model.xml files
+  models: PATH_TO.fmu # path to model.xml files
 - simulator: OSMP
   model: pathToModel
   prefix: /#
