@@ -52,7 +52,7 @@ public:
 	virtual grpc::Status GetBoolValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Bool* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Bool();
 		value->set_value(true);
@@ -62,7 +62,7 @@ public:
 	virtual grpc::Status GetIntValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Int32* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Int32();
 		value->set_value(32);
@@ -72,7 +72,7 @@ public:
 	virtual grpc::Status GetFloatValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Float* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Float();
 		value->set_value(32.f);
@@ -82,7 +82,7 @@ public:
 	virtual grpc::Status GetDoubleValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Double* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Double();
 		value->set_value(64.0);
@@ -92,7 +92,7 @@ public:
 	virtual grpc::Status GetStringValue(grpc::ServerContext*, const CoSiMa::rpc::String* base_name, CoSiMa::rpc::Bytes* value) override {
 		std::cout << "called  " << __FUNCTION__ << std::endl;
 		if (0 == base_name->value().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "base_name is empty!");
 		if (nullptr == value)
 			value = new CoSiMa::rpc::Bytes();
 		value->set_value("string");
@@ -101,7 +101,7 @@ public:
 
 	virtual grpc::Status SetIntValue(grpc::ServerContext* context, const CoSiMa::rpc::NamedInt32* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		if (nullptr == response)
 			response = new CoSiMa::rpc::Int32();
 		response->set_value(namedValue->value() + 1);
@@ -110,7 +110,7 @@ public:
 
 	virtual grpc::Status SetBoolValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedBool* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		if (nullptr == response)
 			response = new CoSiMa::rpc::Int32();
 		response->set_value(namedValue->value() ? 0 : 42);
@@ -119,7 +119,7 @@ public:
 
 	virtual grpc::Status SetFloatValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedFloat* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size()) {
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		}
 		if (nullptr == response)
 			response = new CoSiMa::rpc::Int32();
@@ -129,7 +129,7 @@ public:
 
 	virtual grpc::Status SetDoubleValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedDouble* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		if (nullptr == response)
 			response = new CoSiMa::rpc::Int32();
 		response->set_value(namedValue->value() + 1);
@@ -138,7 +138,7 @@ public:
 
 	virtual grpc::Status SetStringValue(::grpc::ServerContext* context, const CoSiMa::rpc::NamedBytes* namedValue, CoSiMa::rpc::Int32* response) override {
 		if (0 == namedValue->name().size())
-			return grpc::Status::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
+			return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT, "Name is empty!");
 		if (nullptr == response)
 			response = new CoSiMa::rpc::Int32();
 		response->set_value(namedValue->value().size());

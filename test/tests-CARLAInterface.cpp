@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "base_interfaces/CARLAInterface.h"
-#include "configreader/StandardYamlConfig.h"
+#include "configreader/StandardYAMLConfig.h"
 
 #include "MockGRPCBaseSimulatorServer.cpp"
 
