@@ -54,11 +54,6 @@ int main(int argc, char *argv[])
 		simulationInterfaces.push_back(newInterface);
 	}
 
-	if (!carlaUsedAsBaseInterface) {
-		baseSystem = std::make_shared<DominionInterface>();
-	}
-
-
 	//init interfaces
 	if (0 != baseSystem->initialise()) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;

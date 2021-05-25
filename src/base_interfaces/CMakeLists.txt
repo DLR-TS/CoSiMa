@@ -1,7 +1,6 @@
 ﻿#source
 
 set(SIMULATION_INTERFACE_SOURCE
-${CMAKE_CURRENT_SOURCE_DIR}/DominionInterface.cpp
 
 $<$<BOOL:${WITH_CARLA}>:${CMAKE_CURRENT_SOURCE_DIR}/CARLAInterface.cpp>
 )

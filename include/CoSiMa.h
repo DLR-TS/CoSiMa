@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 #include "base_interfaces/BaseSystemInterface.h"
-#include "base_interfaces/DominionInterface.h"
 //#ifdef WITH_CARLA
 //#include "base_interfaces/CARLAInterface.h"
 //#endif

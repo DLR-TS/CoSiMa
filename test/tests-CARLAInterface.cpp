@@ -54,10 +54,3 @@ TEST_CASE("CARLAInterface", "[CARLAInterface]") {
 	server->Shutdown();
 	t.join();
 }
-
-TEST_CASE("CARLAInterface, wrong config", "[CARLAInterface]") {
-	baseConfigVariants_t config = DominionInterfaceConfig();
-
-	std::shared_ptr<CARLAInterface> carla = std::make_shared<CARLAInterface>();
-	REQUIRE(1 == carla->readConfiguration(config));
-}

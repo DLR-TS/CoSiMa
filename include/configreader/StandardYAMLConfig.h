@@ -61,8 +61,6 @@ public:
 	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
 
-struct DominionInterfaceConfig {};
-
 /**
  *\paragraph Naming definitions
  * Within the CoSiMa we are using the following definitions for our host and the system we are interfacing with:
