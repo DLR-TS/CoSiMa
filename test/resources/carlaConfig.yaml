@@ -7,10 +7,3 @@
   timeout: 3
 - simulator: FMI
   models: PATH_TO_.ssp
-- simulator: vtd
-  ip: 127.0.0.2
-  port: 1339
-  input: 
-      - {interface_name: w, base_name: er, type: bool}
-  output:
-       - {interface_name: g, base_name: l, type: bool}

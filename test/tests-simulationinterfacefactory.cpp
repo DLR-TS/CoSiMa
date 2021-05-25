@@ -8,17 +8,8 @@ TEST_CASE("SimulationInterfaceFactory") {
 	std::shared_ptr<iSimulationData> fmiInterface = factory.makeInterface(eSimulatorName::FMI);
 	REQUIRE(fmiInterface != nullptr);
 	
-	std::shared_ptr<iSimulationData> rosInterface = factory.makeInterface(eSimulatorName::ROS);
-	REQUIRE(rosInterface != nullptr);
-
 	std::shared_ptr<iSimulationData> defaultInterface = factory.makeInterface(eSimulatorName::DEFAULT);
 	REQUIRE(defaultInterface != nullptr);
-
-	std::shared_ptr<iSimulationData> ueInterface = factory.makeInterface(eSimulatorName::UNREAL);
-	REQUIRE(ueInterface != nullptr);
-
-	std::shared_ptr<iSimulationData> vtdInterface = factory.makeInterface(eSimulatorName::VTD);
-	REQUIRE(vtdInterface != nullptr);
 
 	std::shared_ptr<iSimulationData> osiInterface = factory.makeInterface(eSimulatorName::OSI);
 	REQUIRE(osiInterface != nullptr);

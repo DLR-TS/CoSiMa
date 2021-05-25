@@ -4,23 +4,16 @@
 #include <string>
 //simulation interfaces
 #include "simulation_interfaces/iSimulationData.h"
-#include "simulation_interfaces/DCPBridge.h"
 #include "simulation_interfaces/FMIBridge.h"
 #include "simulation_interfaces/OSIBridge.h"
-#include "simulation_interfaces/ROSBridge.h"
 #include "simulation_interfaces/DefaultBridge.h"
-#include "simulation_interfaces/UnrealBridge.h"
-#include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
 #include "simulation_interfaces/OSMPInterface.h"
 //Mapper
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
 #include "mapper/OSIMapper.h"
-#include "mapper/ROSMapper.h"
 #include "mapper/DefaultMapper.h"
-#include "mapper/UnrealMapper.h"
-#include "mapper/VTDMapper.h"
 
 /**
 * Factory of interface objects

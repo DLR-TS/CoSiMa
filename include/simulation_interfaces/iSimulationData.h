@@ -24,9 +24,6 @@ class Mapper;
 enum eSimulatorName
 {
 	FMI, //needs to be first
-	VTD,
-	ROS,
-	UNREAL,
 	OSI,
 	OSMP,
 	CARLA,

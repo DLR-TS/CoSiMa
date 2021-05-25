@@ -2,34 +2,28 @@
 
 #include "configreader/YAMLConfigReader.h"
 #include "base_interfaces/CARLAInterface.h"
-#include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSIBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
-#include "mapper/VTDMapper.h"
 #include "mapper/OSIMapper.h"
 
 TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 	YAMLConfigReader reader("../test/resources/testconfig1.yaml");
 	SECTION("Read simulator names from config") {
 		std::vector<SingleYAMLConfig> names = reader.getSimulatorNames();
-		REQUIRE(names.size() == 3);
-		REQUIRE(names.at(0).simulator == VTD);
+		REQUIRE(names.size() == 1);
+		REQUIRE(names.at(0).simulator == FMI);
 		REQUIRE(names.at(0).index == 0);
-		REQUIRE(names.at(1).simulator == FMI);
-		REQUIRE(names.at(1).index == 0);
-		REQUIRE(names.at(2).simulator == VTD);
-		REQUIRE(names.at(2).index == 1);
 	}
 
 	SECTION("set configuration of simulator", "[YAML Reader]") {
 		SingleYAMLConfig conf;
-		conf.index = 1;
-		conf.simulator = eSimulatorName::VTD;
+		conf.index = 0;
+		conf.simulator = eSimulatorName::FMI;
 
-		std::shared_ptr<iSimulationData> vtdSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper())));
-		vtdSimulator->getMapper()->setOwner(vtdSimulator);
+		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper())));
+		fmiSimulator->getMapper()->setOwner(fmiSimulator);
 
-		REQUIRE(reader.setConfig(vtdSimulator, conf) == 0);
+		REQUIRE(reader.setConfig(fmiSimulator, conf) == 0);
 	}
 
 	SECTION("set invalid configuration of simulator", "[YAML Reader]") {
@@ -37,9 +31,9 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 		conf.index = 1;
 		conf.simulator = eSimulatorName::SIMULATORNAME_ERROR;
 
-		std::shared_ptr<iSimulationData> vtdSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper())));
+		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper())));
 
-		REQUIRE(reader.setConfig(vtdSimulator, conf) == 1);
+		REQUIRE(reader.setConfig(fmiSimulator, conf) == 1);
 	}
 }
 
