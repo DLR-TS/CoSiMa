@@ -8,7 +8,7 @@
 #include "simulation_interfaces/FMIBridge.h"
 #include "simulation_interfaces/OSIBridge.h"
 #include "simulation_interfaces/ROSBridge.h"
-#include "simulation_interfaces/SUMOBridge.h"
+#include "simulation_interfaces/DefaultBridge.h"
 #include "simulation_interfaces/UnrealBridge.h"
 #include "simulation_interfaces/VTDBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
@@ -18,7 +18,7 @@
 #include "mapper/FMIMapper.h"
 #include "mapper/OSIMapper.h"
 #include "mapper/ROSMapper.h"
-#include "mapper/SUMOMapper.h"
+#include "mapper/DefaultMapper.h"
 #include "mapper/UnrealMapper.h"
 #include "mapper/VTDMapper.h"
 

@@ -29,8 +29,8 @@ enum eSimulatorName
 	UNREAL,
 	OSI,
 	OSMP,
-	SUMO,
 	CARLA,
+	DEFAULT,
 
 	SIMULATORNAME_ERROR //needs to be last
 };

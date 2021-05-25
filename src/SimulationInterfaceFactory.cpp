@@ -15,8 +15,8 @@ std::shared_ptr<iSimulationData> SimulationInterfaceFactory::createInterface(eSi
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new VTDBridge(std::shared_ptr<Mapper>((Mapper*)new VTDMapper()))));
 	case FMI:
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper()))));
-	case SUMO:
-		return std::shared_ptr<iSimulationData>((iSimulationData*)(new SUMOBridge(std::shared_ptr<Mapper>((Mapper*)new SUMOMapper()))));
+	case DEFAULT:
+		return std::shared_ptr<iSimulationData>((iSimulationData*)(new DefaultBridge(std::shared_ptr<Mapper>((Mapper*)new DefaultMapper()))));
 	case OSI:
 		return std::shared_ptr<iSimulationData>((iSimulationData*)(new OSIBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper()))));
 	case OSMP:

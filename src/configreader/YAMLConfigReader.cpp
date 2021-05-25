@@ -39,7 +39,8 @@ int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, Sing
 			if (index == simulatorname.index) {
 				switch (simulatorname.simulator) {
 				case VTD:
-				case SUMO:
+				case DEFAULT:
+					return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
 				case UNREAL:
 				case ROS:
 					return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
@@ -86,8 +87,8 @@ const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	else if (simulatorName == "fmi") {
 		return FMI;
 	}
-	else if (simulatorName == "sumo") {
-		return SUMO;
+	else if (simulatorName == "default") {
+		return DEFAULT;
 	}
 	else if (simulatorName == "osi") {
 		return OSI;
