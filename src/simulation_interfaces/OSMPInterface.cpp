@@ -18,6 +18,18 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	grpc::ChannelArguments channelArgs;
 	channelArgs.SetMaxSendMessageSize(-1);
 	channelArgs.SetMaxReceiveMessageSize(-1);
+	std::cout << channelArgs.c_channel_args().num_args << std::endl;
+	//channelArgs.SetInt("grpc.max_receive_message_length", -1);
+	//channelArgs.SetInt("grpc.max_send_message_length", -1);
+
+	//channelArgs.SetString("grpc.max_receive_message_length", "-1"); <- message: must be an integer
+	//channelArgs.SetString("grpc.max_send_message_length", "-1"); <- message: must be an integer
+	std::cout << channelArgs.c_channel_args().num_args << std::endl;
+	//std::cout << channelArgs.c_channel_args().num_args << std::endl;
+	//std::cout << channelArgs.c_channel_args().num_args << std::endl;
+
+	//https://grpc.github.io/grpc/core/group__grpc__arg__keys.html#ga813f94f9ac3174571dd712c96cdbbdc1
+	//https://grpc.github.io/grpc/cpp/classgrpc_1_1_channel_arguments.html#ac1fa513191e8104ec57dfd6598297ce5
 	channel = grpc::CreateCustomChannel(sstr.str(), grpc::InsecureChannelCredentials(), channelArgs);
 	stub = CoSiMa::rpc::SimulationInterface::NewStub(channel);
 	osmpStub = CoSiMa::rpc::OSMPSimulationInterface::NewStub(channel);
@@ -32,7 +44,6 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	CoSiMa::rpc::Int32 response;
 
 	auto status = osmpStub->SetConfig(&context, rpcConfig, &response);
-
 
 	auto channelState = channel->GetState(true);
 	switch (channelState)

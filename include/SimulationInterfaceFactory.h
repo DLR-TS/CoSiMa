@@ -1,4 +1,8 @@
-﻿#ifndef SIMULATIONINTERFACEFACTORY_H
+﻿/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
+#ifndef SIMULATIONINTERFACEFACTORY_H
 #define SIMULATIONINTERFACEFACTORY_H
 
 #include <string>

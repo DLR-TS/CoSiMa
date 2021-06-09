@@ -1,19 +1,20 @@
 - simulator: CARLA
   carla_host: localhost
-  carla_port: 1337
-  client_host: 127.56.0.14
-  client_port: 5678
+  carla_port: 2000
+  client_host: localhost
+  client_port: 51425
   delta: 0.03
-  timeout: 3
+  timeout: 30
+  step_timeout: 30000
+  initialisation_timeout: 60000
 - simulator: OSMP
-  model: Path_to_FMU
-  prefix: /#
-  host: 12.34.56.78
-  port: 4711
-  transaction_timeout: 1
-  do_step_timeout: 1
+  model: /Path/to/FMU.fmu
+  prefix: "#prefix#"
+  host: localhost
+  port: 51426
+  transaction_timeout: 5
+  do_step_timeout: 5
   input:
-      - {interface_name: SensorView, base_name: SensorView1234}
+      - {interface_name: OSMPSensorView, base_name: OSMPSensorViewGroundTruth}
   output:
-      - {interface_name: "SensorData[0]", base_name: SensorData1234}
-      - {interface_name: "SensorData[1]", base_name: SensorData5678}
+      - {interface_name: "OSMPSensorData", base_name: OSMPSensorData}

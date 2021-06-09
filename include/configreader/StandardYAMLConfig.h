@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef STANDARDYAMLCONGIF_H
 #define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"

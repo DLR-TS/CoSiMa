@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef NAMESANDINDEX_H
 #define NAMESANDINDEX_H
 

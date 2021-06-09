@@ -1,4 +1,8 @@
-﻿#ifndef COSIMA_H
+﻿/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
+#ifndef COSIMA_H
 #define COSIMA_H
 
 #cmakedefine WITH_CARLA

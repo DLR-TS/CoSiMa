@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef OSMPINTERFACE_H
 #define OSMPINTERFACE_H
 

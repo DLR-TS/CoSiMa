@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef FMIMAPPER_H
 #define FMIMAPPER_H
 
@@ -14,7 +18,7 @@ public:
 	FMIMapper() : Mapper() {};
 	int readConfiguration(configVariants_t config) override;
 
-	void setConfiguration(/*FMIConfig*/);
+	void setConfiguration();
 
 };
 

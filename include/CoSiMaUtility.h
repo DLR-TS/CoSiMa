@@ -1,7 +1,9 @@
-#pragma once
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef COSIMAUTILITY_H
 #define COSIMAUTILITY_H
-
 
 #include <chrono>
 

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	#else
 	std::string path("");
 	#endif
-	path.append("\\config.yaml");
+	path.append("C:\\Users\\bahn_bj\\CMakeBuilds\\f6acdf8a-24df-1732-aec3-2176fe4b1df7\\build\\x64-Debug\\bin\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		path = currentArg;//add more complex evaluation if necessary

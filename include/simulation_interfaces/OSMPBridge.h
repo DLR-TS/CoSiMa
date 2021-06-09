@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef OSMPBRIDGE_H
 #define OSMPBRIDGE_H
 #define NOMINMAX

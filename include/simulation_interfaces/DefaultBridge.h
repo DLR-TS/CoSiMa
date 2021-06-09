@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef DEFAULTBRIDGE_H
 #define DEFAULTBRIDGE_H
 

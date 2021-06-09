@@ -1,3 +1,7 @@
+/**
+@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+*/
+
 #ifndef CARLAINTERFACE_H
 #define CARLAINTERFACE_H
 
