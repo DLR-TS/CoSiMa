@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		if (simulatorname.simulator == CARLA) {
+			std::cout << "Add CARLA module" << std::endl;
 			carlaUsedAsBaseInterface = true;
 			baseSystem = std::make_shared<CARLAInterface>();
 			if (reader.setBaseSystemConfig(baseSystem, simulatorname)) {
