@@ -21,11 +21,11 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 		}
 		for (auto input : interfaceConfig.inputs) {
 			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string());
+			state->strings.push_back(std::string(input.default_value));
 		}
 		for (auto output : interfaceConfig.outputs) {
 			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string());
+			state->strings.push_back(std::string(output.default_value));
 		}
 	}
 	else if (std::get_if<OSMPInterfaceConfig>(&configVariants) != nullptr) {
@@ -36,12 +36,13 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 		}
 		for (auto input : interfaceConfig.inputs) {
 			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string());
+			state->strings.push_back(std::string(input.default_value));
 		}
+		//increase index - not clear
 		int inputsize = (int)state->strings.size();
 		for (auto output : interfaceConfig.outputs) {
 			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size() - inputsize));
-			state->strings.push_back(std::string());
+			state->strings.push_back(std::string(output.default_value));
 		}
 	}
 	return 0;
