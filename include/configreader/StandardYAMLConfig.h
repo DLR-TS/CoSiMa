@@ -12,12 +12,10 @@
  * helper object for deciding which mapping schema an interface needs. Is used for iterating over all existing simulators in the configuration file.
  */
 struct SimulatorName {
-public:
 	std::string simulator;
 };
 
 struct OSIMountingPosition {
-public:
 	double x;
 	double y;
 	double z;
@@ -27,7 +25,6 @@ public:
 };
 
 struct SensorViewConfig {
-public:
 	std::string prefixedFmuVariableName;
 	std::vector<OSIMountingPosition> genericSensorMountingPosition;
 	std::vector<OSIMountingPosition> radarSensorMountingPosition;
@@ -53,7 +50,6 @@ public:
 * maximum amount of time in seconds allowed for step calculation and gRPC transaction. Unlimited if set to zero
 */
 struct CARLAInterfaceConfig {
-public:
 	std::string client_host;
 	uint16_t client_port;
 	std::string carla_host;
@@ -88,7 +84,6 @@ public:
  * holds type name of the variable
  */
 struct VariableDefinition {
-public:
 	std::string interface_name;
 	std::string base_name;
 	std::string type;
@@ -104,7 +99,6 @@ public:
 */
 
 struct InterfaceYAMLConfig {
-public:
 	std::string simulator;
 	std::string ip;
 	int port;
@@ -120,7 +114,6 @@ public:
 
 */
 struct FMIInterfaceConfig {
-public:
 	std::string simulator;
 	std::string models;
 };
@@ -133,9 +126,9 @@ public:
 * holds name of the variable in the base system
 */
 struct OSIMessageConfig {
-public:
 	std::string interface_name;
 	std::string base_name;
+	std::string default_value;
 };
 
 /**
@@ -147,7 +140,6 @@ public:
 * holds the output osi messages
 */
 struct OSIInterfaceConfig {
-public:
 	std::string prefix;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
@@ -164,7 +156,6 @@ public:
 * holds the output osi messages
 */
 struct OSMPInterfaceConfig {
-public:
 	std::string model;
 	std::string prefix;
 	std::string client_host;
@@ -271,6 +262,7 @@ namespace YAML {
 		{
 			osiMessage.interface_name = node["interface_name"].as<std::string>();
 			osiMessage.base_name = node["base_name"].as<std::string>();
+			osiMessage.default_value = node["default_value"].IsDefined() ? node["default_value"].as<std::string>() : "";
 			return true;
 		}
 	};

@@ -17,7 +17,7 @@
   transaction_timeout: 5
   do_step_timeout: 5
   input:
-      - {interface_name: SensorView, base_name: SensorView1234}
+      - {interface_name: SensorView, base_name: SensorView1234, default_value: ""}
   output:
-      - {interface_name: "SensorData[0]", base_name: SensorData1234} #type for OSMP is always string
-      - {interface_name: "SensorData[1]", base_name: SensorData5678}
+      - {interface_name: "SensorData[0]", base_name: SensorData1234, default_value: ""} #type for OSMP is always string
+      - {interface_name: "SensorData[1]", base_name: SensorData5678, default_value: ""}
