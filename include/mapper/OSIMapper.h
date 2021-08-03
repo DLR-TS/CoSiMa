@@ -19,6 +19,8 @@ public:
 	/** Prefix string for cosima to evaluate content as an OSI Message
 	*/
 	std::string prefix = "#";
+
+	std::vector<FMIParameter> parameter{};
 }; 
 
 #endif // !OSIMAPPER_H

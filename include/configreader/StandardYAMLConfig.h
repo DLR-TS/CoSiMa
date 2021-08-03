@@ -90,23 +90,6 @@ struct VariableDefinition {
 };
 
 /**
-* \var std::string interface_name
-* holds name of the variable in the interface system
-* \var std::string base_name
-* holds name of the variable in the base system
-* \var std::string type
-* holds type name of the variable
-*/
-
-struct InterfaceYAMLConfig {
-	std::string simulator;
-	std::string ip;
-	int port;
-	std::vector<VariableDefinition> inputs;
-	std::vector<VariableDefinition> outputs;
-};
-
-/**
 * \var std::string simulator
 * name of simulator type
 * \var std::string model
@@ -129,6 +112,35 @@ struct OSIMessageConfig {
 	std::string interface_name;
 	std::string base_name;
 	std::string default_value;
+};
+
+/**
+* \var std::string name
+* holds name of the parameter
+* \var std::string value
+* holds value of the variable
+*/
+struct FMIParameter {
+	std::string name;
+	std::string value;
+};
+
+/**
+* \var std::string interface_name
+* holds name of the variable in the interface system
+* \var std::string base_name
+* holds name of the variable in the base system
+* \var std::string type
+* holds type name of the variable
+*/
+
+struct InterfaceYAMLConfig {
+	std::string simulator;
+	std::string ip;
+	int port;
+	std::vector<VariableDefinition> inputs;
+	std::vector<VariableDefinition> outputs;
+	std::vector<FMIParameter> parameter;
 };
 
 /**
@@ -164,6 +176,7 @@ struct OSMPInterfaceConfig {
 	double doStepTransactionTimeout;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
+	std::vector<FMIParameter> parameter;
 };
 
 /**
@@ -216,6 +229,22 @@ namespace YAML {
 			}
 			config.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
 			config.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
+			config.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<FMIParameter> {
+		static Node encode(const FMIParameter& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, FMIParameter& fmiParameter)
+		{
+			fmiParameter.name = node["name"].as<std::string>();
+			fmiParameter.value = node["value"].as<std::string>();
 			return true;
 		}
 	};
@@ -300,6 +329,7 @@ namespace YAML {
 			osiInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
 			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
 			return true;
 		}
 	};
