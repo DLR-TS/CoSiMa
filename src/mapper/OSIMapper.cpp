@@ -44,7 +44,6 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size() - inputsize));
 			state->strings.push_back(std::string(output.default_value));
 		}
-		parameter = std::move(interfaceConfig.parameter);
 	}
 	return 0;
 }
