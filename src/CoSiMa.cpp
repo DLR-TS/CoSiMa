@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (debug) {
-		std::cout << "End Initializiation << \nBegin Connect Phase\n " << std::endl;
+		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
 	//connect interfaces
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (debug) {
-		std::cout << "End Connect Phase << \nBegin Simulation Loops\n " << std::endl;
+		std::cout << "End Connect Phase \nBegin Simulation Loops\n " << std::endl;
 	}
 
 	simulationLoop(simulationInterfaces, baseSystem, debug);
