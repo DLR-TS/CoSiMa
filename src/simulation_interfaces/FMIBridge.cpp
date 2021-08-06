@@ -50,17 +50,26 @@ int FMIBridge::writeToInternalState() {
 		if (outputVar.is_boolean()) {
 			fmi2Boolean boolean;
 			coSimSlave->read_boolean(outputVar.value_reference, boolean);
+			if (debug) {
+				std::cout << "FMIBridge: read " << outputVar.name << " Value: " << boolean << "\n";
+			}
 			mapper->mapToInternalState((bool)boolean, outputVar.name, eDataType::BOOLCOSIMA);
 		}
 		else if (outputVar.is_enumeration() || outputVar.is_integer()) {
 			fmi2Integer integer;
 			coSimSlave->read_integer(outputVar.value_reference, integer);
+			if (debug) {
+				std::cout << "FMIBridge: read " << outputVar.name << " Value: " << integer << "\n";
+			}
 			mapper->mapToInternalState(integer, outputVar.name, eDataType::INTEGERCOSIMA);
 		}
 		else if (outputVar.is_real()) {
 			fmi2Real real;
 			coSimSlave->read_real(outputVar.value_reference, real);
 			const values_t value = real;
+			if (debug) {
+				std::cout << "FMIBridge: read " << outputVar.name << " Value: " << real << "\n";
+			}
 			//TODO skip this test and always use double? default fmi2TypesPlatform.h uses double
 			if (typeid(fmi2Real) == typeid(double)) {
 				mapper->mapToInternalState(real, outputVar.name, eDataType::DOUBLECOSIMA);
@@ -72,6 +81,9 @@ int FMIBridge::writeToInternalState() {
 		else {
 			fmi2String string;
 			coSimSlave->read_string(outputVar.value_reference, string);
+			if (debug) {
+				std::cout << "FMIBridge: read " << outputVar.name << " Value: " << string << "\n";
+			}
 			mapper->mapToInternalState(string, outputVar.name, eDataType::STRINGCOSIMA);
 		}
 		//}
@@ -82,6 +94,10 @@ int FMIBridge::writeToInternalState() {
 int FMIBridge::doStep(double stepSize) {
 	//TODO set independent tunable parameters
 	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
+
+	if (debug) {
+		std::cout << "FMIBridge: doStep\n";
+	}
 
 	if (!enteredInitializationMode) {
 		return -999;

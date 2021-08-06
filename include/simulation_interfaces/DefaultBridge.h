@@ -11,7 +11,7 @@
 class DefaultBridge : public iSimulationData
 {
 public:
-	DefaultBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper){};
+	DefaultBridge(std::shared_ptr<Mapper> mapper, bool debug) : iSimulationData(mapper, debug){};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

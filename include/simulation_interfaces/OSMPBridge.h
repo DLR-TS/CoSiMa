@@ -16,7 +16,7 @@
 class OSMPBridge : public OSIBridge
 {
 public:
-	OSMPBridge(std::shared_ptr<Mapper> mapper) : OSIBridge(mapper){};
+	OSMPBridge(std::shared_ptr<Mapper> mapper, bool debug) : OSIBridge(mapper, debug){};
 
 	int init(std::string scenario, float starttime, int mode) override;
 	int connect(std::string) override;

@@ -28,7 +28,7 @@ const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
 		names.push_back(SingleYAMLConfig(simName, countIter->second));
 		countIter->second++;
 	}
-  std::cout << "Connecting " << names.size() << " modules." << std::endl;
+	std::cout << "Connecting " << names.size() << " modules." << std::endl;
 	return names;
 }
 

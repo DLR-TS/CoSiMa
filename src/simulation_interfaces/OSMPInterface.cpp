@@ -100,7 +100,9 @@ int OSMPInterface::doStep(double stepsize)
 	CoSiMa::rpc::Double rpcStepSize;
 	CoSiMa::rpc::Int32 rpcResponse;
 	rpcStepSize.set_value(stepsize);
-
+	if (debug) {
+		std::cout << "OSMPInterface: doStep \n";
+	}
 	auto status = stub->DoStep(&context, rpcStepSize, &rpcResponse);
 
 	if (!status.ok()) {
@@ -125,6 +127,9 @@ int OSMPInterface::writeToInternalState() {
 	for (auto output : config.outputs) {
 		string.set_value(output.interface_name);
 
+		if (debug) {
+			std::cout << "OSMPInterface: read " << output.interface_name;
+		}
 		CoSiMa::rpc::Bytes rpcValue;
 
 		auto status = stub->GetStringValue(context.get(), string, &rpcValue);
@@ -137,6 +142,9 @@ int OSMPInterface::writeToInternalState() {
 #else
 			throw std::exception(msg.c_str());
 #endif
+		}
+		if (debug) {
+			std::cout << "Value: " << rpcValue.value() << "\n";
 		}
 		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
 	}

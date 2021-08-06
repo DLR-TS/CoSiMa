@@ -48,7 +48,7 @@ private:
 	};
 
 public:
-	FMIBridge(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper), enteredInitializationMode(false), leftInitializationMode(false){};
+	FMIBridge(std::shared_ptr<Mapper> mapper, bool debug) : iSimulationData(mapper, debug), enteredInitializationMode(false), leftInitializationMode(false){};
 
 	/**
 	Initialize the interface.
