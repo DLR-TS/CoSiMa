@@ -143,7 +143,7 @@ int OSMPInterface::writeToInternalState() {
 #endif
 		}
 		if (debug) {
-			std::cout << "Value: " << rpcValue.value() << "\n";
+			std::cout << ", Size: " << rpcValue.value().size() << "\n";
 		}
 		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
 	}
@@ -162,12 +162,7 @@ int OSMPInterface::readFromInternalState() {
 
 		CoSiMa::rpc::Int32 rpcRetVal;
 		if (debug) {
-			if (std::get<std::string>(value).size() < 100) {
-				std::cout << "OSMPInterface: write " << input.interface_name << " : " << std::get<std::string>(value) << std::endl;
-			}
-			else {
-				std::cout << "OSMPInterface: write " << input.interface_name << " : Large OSI Message Size : " << std::get<std::string>(value).size() << std::endl;
-			}
+			std::cout << "OSMPInterface: write " << input.interface_name << ", Size : " << std::get<std::string>(value).size() << std::endl;
 		}
 		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
 
