@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (debug) {
-		std::cout << "Begin Initializiation << \n" << std::endl;
+		std::cout << "Begin Initializiation \n" << std::endl;
 	}
 
 	//init interfaces

@@ -157,19 +157,16 @@ int OSMPInterface::readFromInternalState() {
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		auto namedValue = CoSiMa::rpc::NamedBytes();
 		namedValue.set_name(input.interface_name);
-		if (debug) {
-			std::cout << "OSMPInterface: write " << input.interface_name;
-		}
 		values_t value = mapper->mapFromInternalState(input.interface_name, STRINGCOSIMA);
 		namedValue.set_value(std::get<std::string>(value));
 
 		CoSiMa::rpc::Int32 rpcRetVal;
 		if (debug) {
 			if (std::get<std::string>(value).size() < 100) {
-				std::cout << input.interface_name << " : " << std::get<std::string>(value) << std::endl;
+				std::cout << "OSMPInterface: write " << input.interface_name << " : " << std::get<std::string>(value) << std::endl;
 			}
 			else {
-				std::cout << input.interface_name << " : Large OSI Message Size : " << std::get<std::string>(value).size() << std::endl;
+				std::cout << "OSMPInterface: write " << input.interface_name << " : Large OSI Message Size : " << std::get<std::string>(value).size() << std::endl;
 			}
 		}
 		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
