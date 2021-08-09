@@ -19,6 +19,6 @@
 #include "SimulationInterfaceFactory.h"
 
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem);
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, bool& debug);
 
 #endif // !COSIMA_H
