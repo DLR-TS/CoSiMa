@@ -47,7 +47,7 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	context.set_deadline(deadline);
 
 	CoSiMa::rpc::Int32 response;
-	
+
 	auto status = osmpStub->SetConfig(&context, rpcConfig, &response);
 
 	auto channelState = channel->GetState(true);
@@ -119,7 +119,6 @@ int OSMPInterface::doStep(double stepsize)
 }
 
 int OSMPInterface::writeToInternalState() {
-	//std::cout << "Write" << std::endl;
 	// context to handle the following rpc call
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
@@ -152,22 +151,26 @@ int OSMPInterface::writeToInternalState() {
 }
 
 int OSMPInterface::readFromInternalState() {
-	//std::cout << "Read" << std::endl;
 
 	for (auto input : config.inputs) {
 		// context to handle the following rpc call
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		auto namedValue = CoSiMa::rpc::NamedBytes();
 		namedValue.set_name(input.interface_name);
+		if (debug) {
+			std::cout << "OSMPInterface: write " << input.interface_name;
+		}
 		values_t value = mapper->mapFromInternalState(input.interface_name, STRINGCOSIMA);
 		namedValue.set_value(std::get<std::string>(value));
 
 		CoSiMa::rpc::Int32 rpcRetVal;
-		if (std::get<std::string>(value).size() < 100) {
-			std::cout << input.interface_name << " : " << std::get<std::string>(value) << std::endl;
-		}
-		else {
-			std::cout << input.interface_name << " : Large OSI Message Size : " << std::get<std::string>(value).size() << std::endl;
+		if (debug) {
+			if (std::get<std::string>(value).size() < 100) {
+				std::cout << input.interface_name << " : " << std::get<std::string>(value) << std::endl;
+			}
+			else {
+				std::cout << input.interface_name << " : Large OSI Message Size : " << std::get<std::string>(value).size() << std::endl;
+			}
 		}
 		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
 
