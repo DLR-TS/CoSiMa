@@ -44,12 +44,15 @@ int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, Sing
 					return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
 				case FMI:
 					std::cout << "Add FMI module" << std::endl;
+					simulator->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 					return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 				case OSI:
 					std::cout << "Add OSI module" << std::endl;
+					simulator->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
 					return simulator->getMapper()->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
 				case OSMP:
 					std::cout << "Add OSMP module" << std::endl;
+					simulator->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
 					return simulator->getMapper()->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
 				}
 			}

@@ -80,6 +80,16 @@ public:
 	\return Success status.
 	*/
 	int doStep(double stepSize = 1) override;
+
+	int readConfiguration(configVariants_t configVariants) override;
+
+private:
+	/**
+	Check if value is set by default parameter in configuration file.
+	*/
+	std::string get_default(std::string& name);
+
+	FMIInterfaceConfig config;
 };
 
 #endif // !FMIBRIDGE_H

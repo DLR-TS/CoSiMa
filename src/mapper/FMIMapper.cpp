@@ -12,7 +12,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 		return 1;
 	}
 
-	FMIInterfaceConfig interfaceConfig = std::get<FMIInterfaceConfig>(configVariants);
+	interfaceConfig = std::get<FMIInterfaceConfig>(configVariants);
 
 	//TODO retrieve FMU location from SSP - currently interprets ssp file node as FMU path for testing
 
@@ -114,13 +114,5 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 			}
 		}
 	}
-
-	//set default parameter
-	if (interfaceConfig.parameter.size() != 0) {
-		for (auto& parameter : interfaceConfig.parameter) {
-			mapToInternalState(parameter.value, parameter.name, STRINGCOSIMA);
-		}
-	}
-
 	return 0;
 }

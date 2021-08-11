@@ -1,6 +1,18 @@
 ﻿#include <string>
 #include "simulation_interfaces/FMIBridge.h"
 
+int FMIBridge::readConfiguration(configVariants_t variant) {
+	FMIInterfaceConfig* config = std::get_if<FMIInterfaceConfig>(&variant);
+	if (nullptr == config) {
+		std::cerr << "Called with wrong configuration variant!" << std::endl;
+		return 1;
+	}
+
+	this->config = *config;
+
+	return 0;
+}
+
 int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	
 	//TODO cannot set up the stepFinished callback in fmi2CallbackFunctions because it is not available in FMI4cpp => have to fallback to polling the fmu preStepState
@@ -217,9 +229,15 @@ int FMIBridge::readFromInternalState() {
 			}
 			else if (variable.is_string())
 			{
-				const values_t value = mapper->mapFromInternalState(variable.name, eDataType::STRINGCOSIMA);
-				const fmi2String str = std::get<std::string>(value).c_str();
-				coSimSlave->write_string(variable.value_reference, str);
+				std::string default_value = get_default(std::string{ variable.name });
+				if (default_value.size() != 0) {
+					coSimSlave->write_string(variable.value_reference, default_value.c_str());
+				}
+				else {
+					const values_t value = mapper->mapFromInternalState(variable.name, eDataType::STRINGCOSIMA);
+					const fmi2String str = std::get<std::string>(value).c_str();
+					coSimSlave->write_string(variable.value_reference, str);
+				}
 			}
 			else {
 				//this would indicate and error in FMI4cpp...
@@ -245,4 +263,13 @@ std::optional<FMIBridge::FMUSlaveStateWrapper> FMIBridge::FMUSlaveStateWrapper::
 		return FMIBridge::FMUSlaveStateWrapper(slave);
 	}
 	return std::nullopt;
+}
+
+std::string FMIBridge::get_default(std::string& name) {
+	for (auto& parameter : config.parameter) {
+		if (parameter.name == name) {
+			return parameter.value;
+		}
+	}
+	return "";
 }

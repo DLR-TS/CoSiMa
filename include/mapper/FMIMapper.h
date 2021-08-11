@@ -20,6 +20,9 @@ public:
 
 	void setConfiguration();
 
+private:
+	FMIInterfaceConfig interfaceConfig;
+
 };
 
 #endif // !FMIMAPPER_H
