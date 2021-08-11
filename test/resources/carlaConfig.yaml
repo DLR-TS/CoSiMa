@@ -6,4 +6,4 @@
   delta: 0.03
   timeout: 3
 - simulator: FMI
-  models: PATH_TO_.ssp
+  model: PATH_TO_.ssp

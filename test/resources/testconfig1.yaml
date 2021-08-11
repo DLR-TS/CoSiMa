@@ -1,2 +1,2 @@
 - simulator: FMI
-  models: ../test/resources/OSMPDummySensor.fmu
+  model: ../test/resources/OSMPDummySensor.fmu

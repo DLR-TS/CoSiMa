@@ -8,7 +8,7 @@
   step_timeout: 30000
   initialisation_timeout: 60000
 - simulator: FMI
-  models: /Path/to/FMU.fmu # path to model.xml files
+  model: /Path/to/FMU.fmu # path to model.xml files
 - simulator: OSMP
   model: pathToModel
   prefix: "#test#"

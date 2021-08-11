@@ -16,7 +16,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 
 	//TODO retrieve FMU location from SSP - currently interprets ssp file node as FMU path for testing
 
-	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.models));
+	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.model));
 	if (!fmu->supports_cs()) {
 		// FMU contains no cs model
 		return 216373;
@@ -82,6 +82,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 				if (stringVar.start().has_value()) {
 					config.stringInputList.push_back(NamesAndIndex(modelDescription->model_identifier + "." + var.name, var.name, (int)state->strings.size()));
 					state->strings.push_back(stringVar.start().value());
+					
 				}
 				else {
 					return 11833;
@@ -111,6 +112,13 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 				config.stringOutputList.push_back(NamesAndIndex(modelDescription->model_identifier + "." + var.name, var.name, (int)state->strings.size()));
 				state->strings.push_back(std::string());
 			}
+		}
+	}
+
+	//set default parameter
+	if (interfaceConfig.parameter.size() != 0) {
+		for (auto& parameter : interfaceConfig.parameter) {
+			mapToInternalState(parameter.value, parameter.name, STRINGCOSIMA);
 		}
 	}
 

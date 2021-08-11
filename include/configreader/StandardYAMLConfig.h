@@ -90,6 +90,17 @@ struct VariableDefinition {
 };
 
 /**
+* \var std::string name
+* holds name of the parameter
+* \var std::string value
+* holds value of the variable
+*/
+struct FMIParameter {
+	std::string name;
+	std::string value;
+};
+
+/**
 * \var std::string simulator
 * name of simulator type
 * \var std::string model
@@ -98,7 +109,8 @@ struct VariableDefinition {
 */
 struct FMIInterfaceConfig {
 	std::string simulator;
-	std::string models;
+	std::string model;
+	std::vector<FMIParameter> parameter;
 };
 
 
@@ -112,17 +124,6 @@ struct OSIMessageConfig {
 	std::string interface_name;
 	std::string base_name;
 	std::string default_value;
-};
-
-/**
-* \var std::string name
-* holds name of the parameter
-* \var std::string value
-* holds value of the variable
-*/
-struct FMIParameter {
-	std::string name;
-	std::string value;
 };
 
 /**
@@ -275,7 +276,8 @@ namespace YAML {
 		static bool decode(const Node& node, FMIInterfaceConfig& fmiInterface)
 		{
 			fmiInterface.simulator = node["simulator"].as<std::string>();
-			fmiInterface.models = node["models"].as<std::string>();
+			fmiInterface.model = node["model"].as<std::string>();
+			fmiInterface.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
 			return true;
 		}
 	};

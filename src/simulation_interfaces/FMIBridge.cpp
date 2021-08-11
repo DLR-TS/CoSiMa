@@ -2,7 +2,7 @@
 #include "simulation_interfaces/FMIBridge.h"
 
 int FMIBridge::init(std::string scenario, float starttime, int mode) {
-
+	
 	//TODO cannot set up the stepFinished callback in fmi2CallbackFunctions because it is not available in FMI4cpp => have to fallback to polling the fmu preStepState
 	////TODO move this block. While setting up fmi2Callbackfunctions is required before instanciating the model, it is not required to this every time
 	//if (coSimFMU->get_model_description()->can_run_asynchronuously) {
