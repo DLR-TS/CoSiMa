@@ -229,7 +229,7 @@ int FMIBridge::readFromInternalState() {
 			}
 			else if (variable.is_string())
 			{
-				std::string default_value = get_default(std::string{ variable.name });
+				std::string default_value = get_default(std::string(variable.name));
 				if (default_value.size() != 0) {
 					coSimSlave->write_string(variable.value_reference, default_value.c_str());
 				}
@@ -265,7 +265,7 @@ std::optional<FMIBridge::FMUSlaveStateWrapper> FMIBridge::FMUSlaveStateWrapper::
 	return std::nullopt;
 }
 
-std::string FMIBridge::get_default(std::string& name) {
+std::string FMIBridge::get_default(std::string name) {
 	for (auto& parameter : config.parameter) {
 		if (parameter.name == name) {
 			return parameter.value;

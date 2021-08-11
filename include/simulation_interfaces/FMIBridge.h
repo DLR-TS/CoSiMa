@@ -87,7 +87,7 @@ private:
 	/**
 	Check if value is set by default parameter in configuration file.
 	*/
-	std::string get_default(std::string& name);
+	std::string get_default(std::string name);
 
 	FMIInterfaceConfig config;
 };
