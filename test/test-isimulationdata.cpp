@@ -10,7 +10,7 @@
 
 TEST_CASE("internalstate is available") {
 	std::shared_ptr<Mapper> mapper = std::static_pointer_cast<Mapper>(std::make_shared<FMIMapper>());
-	std::shared_ptr<iSimulationData> simulationdata = std::static_pointer_cast<iSimulationData>(std::make_shared<FMIBridge>(mapper));
+	std::shared_ptr<iSimulationData> simulationdata = std::static_pointer_cast<iSimulationData>(std::make_shared<FMIBridge>(mapper, false));
 
 	simulationdata->getMapper()->getInternalState()->bools.push_back(true);
 	simulationdata->getMapper()->getInternalState()->bools.push_back(false);
@@ -36,7 +36,7 @@ TEST_CASE("internalstate is available") {
 
 TEST_CASE("set mapper") {
 	std::shared_ptr<Mapper> mapper = std::static_pointer_cast<Mapper>(std::make_shared<FMIMapper>());
-	std::shared_ptr<iSimulationData> simulationdata = std::static_pointer_cast<iSimulationData>(std::make_shared<FMIBridge>(mapper));
+	std::shared_ptr<iSimulationData> simulationdata = std::static_pointer_cast<iSimulationData>(std::make_shared<FMIBridge>(mapper, false));
 
 	REQUIRE(simulationdata->getMapper() == mapper);
 }

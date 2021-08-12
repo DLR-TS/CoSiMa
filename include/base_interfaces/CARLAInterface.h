@@ -33,7 +33,7 @@ class CARLAInterface : public BaseSystemInterface
 
 public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;
-	virtual int initialise(bool debug) override;
+	virtual int initialise(bool debug, bool logOSI) override;
 	virtual double doStep() override;
 
 	virtual int getIntValue(std::string base_name) override;
@@ -58,6 +58,7 @@ private:
 	std::map <std::string, bool> boolMap{};
 
 	bool debug = false;
+	bool logOSI = false;
 };
 
 #endif // !CARLAINTERFACE_H

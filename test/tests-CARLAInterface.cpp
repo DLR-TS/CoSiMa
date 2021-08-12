@@ -27,31 +27,22 @@ TEST_CASE("CARLAInterface", "[CARLAInterface]") {
 
 	auto server = future.get();
 
-	REQUIRE(0 == carla->initialise(false));
+	REQUIRE(0 == carla->initialise(false, false));
 
-	CHECK(carla->getBoolValue("some_name"));
-	CHECK_THROWS(carla->getBoolValue(""));
-	CHECK(32 == carla->getIntValue("some_name"));
-	CHECK_THROWS(carla->getIntValue(""));
-	CHECK(32.f == carla->getFloatValue("some_name"));
-	CHECK_THROWS(carla->getFloatValue(""));
-	CHECK(64.0 == carla->getDoubleValue("some_name"));
-	CHECK_THROWS(carla->getDoubleValue(""));
+	CHECK(!carla->getBoolValue("some_name"));
+	CHECK(0 == carla->getIntValue("some_name"));
+	CHECK(0.f == carla->getFloatValue("some_name"));
+	CHECK(0 == carla->getDoubleValue("some_name"));
 	CHECK("string" == carla->getStringValue("some_name"));
-	CHECK_THROWS(carla->getStringValue(""));
 
 	CHECK(0 == carla->setBoolValue("some_name", true));
-	CHECK(42 == carla->setBoolValue("some_name", false));
-	CHECK_THROWS(carla->setBoolValue("", true));
+	CHECK(0 == carla->setBoolValue("some_name", false));
 	CHECK(0 == carla->setIntValue("some_name", -1));
-	CHECK(1 == carla->setIntValue("some_name", 0));
-	CHECK_THROWS(carla->setIntValue("", 1));
+	CHECK(0 == carla->setIntValue("some_name", 0));
 	CHECK(0.f == carla->setFloatValue("some_name", -1.f));
-	CHECK(1.f == carla->setFloatValue("some_name", 0.f));
-	CHECK_THROWS(carla->setFloatValue("", 1.f));
+	CHECK(0.f == carla->setFloatValue("some_name", 0.f));
 	CHECK(0.0 == carla->setDoubleValue("some_name", -1.0));
-	CHECK(1.0 == carla->setDoubleValue("some_name", 0.0));
-	CHECK_THROWS(carla->setDoubleValue("", 1.0));
+	CHECK(0.0 == carla->setDoubleValue("some_name", 0.0));
 
 	CHECK(0.123456 == carla->doStep());
 

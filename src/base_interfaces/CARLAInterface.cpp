@@ -12,8 +12,9 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 	return 0;
 }
 
-int CARLAInterface::initialise(bool debug) {
+int CARLAInterface::initialise(bool debug, bool logOSI) {
 	this->debug = debug;
+	this->logOSI = true;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	grpc::ChannelArguments channelArgs;
@@ -219,6 +220,10 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	CoSiMa::rpc::Bytes rpcValue;
 
 	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
+
+	if (logOSI) {
+		std::cout << "Message: " << rpcValue.value() << std::endl;
+	}
 
 	if (!status.ok()) {
 		auto msg = status.error_message();

@@ -1,10 +1,12 @@
 ﻿#include "CoSiMa.h"
 #include <filesystem>
+#include <fstream>
 #include "base_interfaces/CARLAInterface.h"
 
 int main(int argc, char *argv[])
 {
-	bool debug = false;
+	cmdParameter runtimeParameter;
+
 	std::cout << "Welcome to CoSiMa." << std::endl << std::endl;
 #if __cplusplus > 201703L
 	std::cout << std::filesystem::current_path() << std::endl << std::endl;
@@ -18,14 +20,37 @@ int main(int argc, char *argv[])
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		if (currentArg == "-d") {
-			debug = true;
+			runtimeParameter.debug = true;
+		}
+		else if (currentArg == "-l") {
+			runtimeParameter.log = true;
+		}
+		else if (currentArg == "-OSI") {
+			runtimeParameter.logOSI = true;
+			std::cout << "You started CoSiMa with OSI. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
+			std::string in;
+			std::cin >> in;
+			if (in != "Y" && in != "y")
+			{
+				std::cout << "Close CoSiMa" << std::endl;
+				exit(0);
+			}
 		}
 		else {
 			path = currentArg;//add more complex evaluation if necessary
 		}
 	}
 
-	if (debug) {
+	//Logging
+	std::ofstream out;
+
+	if (runtimeParameter.log) {
+		out = std::ofstream("cosima.log");
+		std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
+		std::cout.rdbuf(out.rdbuf()); //redirect std::cout
+	}
+
+	if (runtimeParameter.debug) {
 		std::cout << "Path: " << path << "\n";
 	}
 
@@ -52,7 +77,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, debug);
+		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
 		if (newInterface == nullptr) {
 			std::cout << "Failed to create a simulator." << std::endl;
 			exit(1);
@@ -65,12 +90,12 @@ int main(int argc, char *argv[])
 		simulationInterfaces.push_back(newInterface);
 	}
 
-	if (debug) {
+	if (runtimeParameter.debug) {
 		std::cout << "Begin Initializiation \n" << std::endl;
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialise(debug)) {
+	if (0 != baseSystem->initialise(runtimeParameter.debug, runtimeParameter.logOSI)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
@@ -81,7 +106,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (debug) {
+	if (runtimeParameter.debug) {
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
@@ -93,13 +118,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (debug) {
+	if (runtimeParameter.debug) {
 		std::cout << "End Connect Phase \nBegin Simulation Loops\n " << std::endl;
 	}
 
-	simulationLoop(simulationInterfaces, baseSystem, debug);
+	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
 
-	if (debug) {
+	if (runtimeParameter.debug) {
 		std::cout << "Begin Disconnect Phase\n " << std::endl;
 	}
 
@@ -112,14 +137,14 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, bool& debug) {
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
 	//start simulationloop
 	bool continueSimulationLoop = true;
 
 	while (continueSimulationLoop) {
 
 		//read from base_system
-		if (debug) {
+		if (runtimeParameter.debug) {
 			std::cout << "Read Base System and write to Interfaces Phase\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {
@@ -135,7 +160,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 			}
 		}
 
-		if (debug) {
+		if (runtimeParameter.debug) {
 			std::cout << "DoStep Phase\n";
 		}
 
@@ -146,12 +171,18 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		// base simulation interface also performs a step, at least to update its clock
 		baseSystem->doStep();
 
-		if (debug) {
+		if (runtimeParameter.debug) {
 			std::cout << "Read Interfaces Phase\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
 			simInterface->writeToInternalState();
+			if (runtimeParameter.logOSI) {
+				//log all String entries of interface
+				for (std::string& osi_message : simInterface->getMapper()->getInternalState()->strings) {
+					std::cout << "Message:" << osi_message << "\n";
+				}
+			}
 			//and write to base system
 			simInterface->mapFromInterfaceSystem(baseSystem);
 		}

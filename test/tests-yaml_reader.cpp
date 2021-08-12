@@ -24,7 +24,7 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 		conf.index = 0;
 		conf.simulator = eSimulatorName::FMI;
 
-		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper())));
+		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper()), false));
 		fmiSimulator->getMapper()->setOwner(fmiSimulator);
 
 		REQUIRE(reader.setConfig(fmiSimulator, conf) == 0);
@@ -35,7 +35,7 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 		conf.index = 1;
 		conf.simulator = eSimulatorName::SIMULATORNAME_ERROR;
 
-		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper())));
+		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper()), false));
 
 		REQUIRE(reader.setConfig(fmiSimulator, conf) == 1);
 	}
@@ -43,7 +43,7 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 
 TEST_CASE("Default prefix value for OSIMapper", "[YAML Reader]") {
 
-	std::shared_ptr<iSimulationData> osibridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSIBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper())));
+	std::shared_ptr<iSimulationData> osibridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSIBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper()), false));
 	osibridge->getMapper()->setOwner(osibridge);
 	SingleYAMLConfig conf;
 	conf.index = 0;
@@ -63,7 +63,7 @@ TEST_CASE("Default prefix value for OSIMapper", "[YAML Reader]") {
 }
 
 TEST_CASE("Read OSMP config") {
-	std::shared_ptr<iSimulationData> osmpbridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSMPBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper())));
+	std::shared_ptr<iSimulationData> osmpbridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSMPBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper()), false));
 	osmpbridge->getMapper()->setOwner(osmpbridge);
 	SingleYAMLConfig conf;
 	conf.index = 0;

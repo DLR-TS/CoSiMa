@@ -71,7 +71,7 @@ public:
 		return 0;
 	};
 
-	virtual int initialise() override {
+	virtual int initialise(bool debug, bool log) override {
 		return 0;
 	};
 

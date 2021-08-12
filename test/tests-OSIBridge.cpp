@@ -15,7 +15,7 @@ TEST_CASE("OSIBridge Test") {
 
 	const auto osiMapper = new OSIMapper();
 	auto mapper = std::shared_ptr<Mapper>((Mapper*)osiMapper);
-	OSIBridge bridge(mapper);
+	OSIBridge bridge(mapper, false);
 
 	SECTION("write to internalstate") {
 	

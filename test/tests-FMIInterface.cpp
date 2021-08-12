@@ -22,7 +22,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 	auto mapper = std::shared_ptr<Mapper>((Mapper*)fmiMapper);
 	auto baseInterface = new MockBaseSimulator();
 	auto baseSystem = std::shared_ptr<BaseSystemInterface>((BaseSystemInterface*)baseInterface);
-	const auto fmiBridge = new FMIBridge(mapper);
+	const auto fmiBridge = new FMIBridge(mapper, false);
 	std::shared_ptr<iSimulationData> simulationInterface = std::shared_ptr<iSimulationData>((iSimulationData*)fmiBridge);
 	mapper->setOwner(simulationInterface);
 
@@ -30,7 +30,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 	config.simulator = "FMI";
 
 	SECTION("CoSim-only FMU should load fine") {
-		config.models = "../test/resources/Feedthrough_cs.fmu";
+		config.model = "../test/resources/Feedthrough_cs.fmu";
 
 		REQUIRE(0 == mapper->readConfiguration(config));
 		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
@@ -228,11 +228,11 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 		}
 	}
 	SECTION("ME-only FMUs are not supported and should fail to load") {
-		config.models = "../test/resources/Feedthrough_me.fmu";
+		config.model = "../test/resources/Feedthrough_me.fmu";
 		REQUIRE(216373 == mapper->readConfiguration(config));
 	}
 	SECTION("Dual definition FMUs can also be imported for coSim") {
-		config.models = "../test/resources/Stair.fmu";
+		config.model = "../test/resources/Stair.fmu";
 
 		REQUIRE(0 == mapper->readConfiguration(config));
 		//starting the experiment at timepoint 1s

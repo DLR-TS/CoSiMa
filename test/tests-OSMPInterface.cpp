@@ -15,11 +15,11 @@
 
 std::string osimessage = "";
 
-TEST_CASE("OSMP Test") {
+TEST_CASE("OSMP Test", "[Linux]") {
 
 	const auto osiMapper = new OSIMapper();
 	auto mapper = std::shared_ptr<Mapper>((Mapper*)osiMapper);
-	const auto bridge = new OSMPBridge(mapper);
+	const auto bridge = new OSMPBridge(mapper, false);
 
 	SECTION("OSMP methods")
 	{
@@ -153,7 +153,7 @@ TEST_CASE("OSMP gRPC Test","[.][Requires OSMP client]") {
 	//Test together with OSMP-Client
 	
 	SimulationInterfaceFactory factory;
-	auto osmpinterface = factory.makeInterface(OSMP);
+	auto osmpinterface = factory.makeInterface(OSMP, false);
 	auto base = std::make_shared<MockBaseSimulator>();
 
 	YAMLConfigReader reader("../test/resources/osmp-grpc-config.yaml");
