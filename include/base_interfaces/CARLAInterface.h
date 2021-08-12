@@ -6,6 +6,7 @@
 #define CARLAINTERFACE_H
 
 #include <string>
+#include <map>
 
 #include "BaseSystemInterface.h"
 #include "configreader/BaseConfigVariants.h"
@@ -32,7 +33,7 @@ class CARLAInterface : public BaseSystemInterface
 
 public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;
-	virtual int initialise() override;
+	virtual int initialise(bool debug) override;
 	virtual double doStep() override;
 
 	virtual int getIntValue(std::string base_name) override;
@@ -50,6 +51,13 @@ public:
 private:
 	virtual CoSiMa::rpc::CarlaConfig parseConfigToGRPC();
 	virtual void copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition* rpcMountingPosition);
+
+	std::map <std::string, int> integerMap{};
+	std::map <std::string, float> floatMap{};
+	std::map <std::string, double> doubleMap{};
+	std::map <std::string, bool> boolMap{};
+
+	bool debug = false;
 };
 
 #endif // !CARLAINTERFACE_H

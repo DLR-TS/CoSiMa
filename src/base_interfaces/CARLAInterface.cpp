@@ -12,7 +12,8 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 	return 0;
 }
 
-int CARLAInterface::initialise() {
+int CARLAInterface::initialise(bool debug) {
+	this->debug = debug;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	grpc::ChannelArguments channelArgs;
@@ -96,7 +97,15 @@ double CARLAInterface::doStep()
 }
 
 int CARLAInterface::getIntValue(std::string base_name) {
-	// context to handle the following rpc call - cannot be reused
+	auto entry = integerMap.find(base_name);
+	if (integerMap.end() == entry) {
+		if (debug) {
+			std::cout << "CarlaInterface: getIntValue(" << base_name << ") No variable found.\n";
+		}
+		return 0;
+	}
+	return entry->second;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto string = CoSiMa::rpc::String();
@@ -109,18 +118,22 @@ int CARLAInterface::getIntValue(std::string base_name) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcValue.value();
+	return rpcValue.value();*/
 };
 
 bool CARLAInterface::getBoolValue(std::string base_name) {
-	// context to handle the following rpc call - cannot be reused
+	auto entry = boolMap.find(base_name);
+	if (boolMap.end() == entry) {
+		if (debug) {
+			std::cout << "CarlaInterface: getBoolValue(" << base_name << ") No variable found.\n";
+		}
+		return 0;
+	}
+	return entry->second;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto string = CoSiMa::rpc::String();
@@ -133,18 +146,22 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcValue.value();
+	return rpcValue.value();*/
 };
 
 float CARLAInterface::getFloatValue(std::string base_name) {
-	// context to handle the following rpc call - cannot be reused
+	auto entry = floatMap.find(base_name);
+	if (floatMap.end() == entry) {
+		if (debug) {
+			std::cout << "CarlaInterface: getFloatValue(" << base_name << ") No variable found.\n";
+		}
+		return 0;
+	}
+	return entry->second;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto string = CoSiMa::rpc::String();
@@ -157,18 +174,22 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcValue.value();
+	return rpcValue.value();*/
 };
 
 double CARLAInterface::getDoubleValue(std::string base_name) {
-	// context to handle the following rpc call - cannot be reused
+	auto entry = doubleMap.find(base_name);
+	if (doubleMap.end() == entry) {
+		if (debug) {
+			std::cout << "CarlaInterface: getDoubleValue(" << base_name << ") No variable found.\n";
+		}
+		return 0;
+	}
+	return entry->second;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto string = CoSiMa::rpc::String();
@@ -181,15 +202,11 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
 
-	return rpcValue.value();
+	return rpcValue.value();*/
 };
 
 std::string CARLAInterface::getStringValue(std::string base_name) {
@@ -217,7 +234,12 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 };
 
 int CARLAInterface::setIntValue(std::string base_name, int value) {
-	// context to handle the following rpc call - cannot be reused
+	integerMap[base_name] = value;
+	if (debug) {
+		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
+	}
+	return 0;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto namedValue = CoSiMa::rpc::NamedInt32();
@@ -231,18 +253,19 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcRetVal.value();
+	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setBoolValue(std::string base_name, bool value) {
-	// context to handle the following rpc call - cannot be reused
+	boolMap[base_name] = value;
+	if (debug) {
+		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
+	}
+	return 0;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto namedValue = CoSiMa::rpc::NamedBool();
@@ -256,18 +279,19 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcRetVal.value();
+	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setFloatValue(std::string base_name, float value) {
-	// context to handle the following rpc call - cannot be reused
+	floatMap[base_name] = value;
+	if (debug) {
+		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
+	}
+	return 0;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto namedValue = CoSiMa::rpc::NamedFloat();
@@ -281,18 +305,19 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcRetVal.value();
+	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setDoubleValue(std::string base_name, double value) {
-	// context to handle the following rpc call - cannot be reused
+	doubleMap[base_name] = value;
+	if (debug) {
+		std::cout << "CarlaInterface: setDoubleValue() to " << value << "\n";
+	}
+	return 0;
+	/*// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto namedValue = CoSiMa::rpc::NamedDouble();
@@ -306,14 +331,10 @@ int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg;
-#ifdef __linux__
-		throw std::exception();
-#else
 		throw std::exception(msg.c_str());
-#endif
 	}
 
-	return rpcRetVal.value();
+	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setStringValue(std::string base_name, std::string value) {

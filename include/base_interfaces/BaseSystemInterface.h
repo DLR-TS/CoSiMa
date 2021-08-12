@@ -21,7 +21,7 @@ public:
 	Connect grpc with host/port information from corresponding fields
 	\return Success status.
 	*/
-	virtual int initialise() = 0;
+	virtual int initialise(bool debug) = 0;
 	/**
 	Perform a simulation step
 	\return Time in seconds advanced during step

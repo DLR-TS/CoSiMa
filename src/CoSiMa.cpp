@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialise()) {
+	if (0 != baseSystem->initialise(debug)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
