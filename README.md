@@ -65,8 +65,7 @@ FMUs can send information by any not yet defined base_name between each other.
 | ------ | ------ |
 | -d | Additional debug outputs. |
 | -l | Create a log file, named cosima.log. No output in console. |
-| -OSI | Additional OSI outputs to log or command line output. Be careful, since OSI messages can be very large.\
-Potentially flooding the systems storage. |
+| -OSI | Additional OSI outputs to log or command line output. Be careful, since OSI messages can be very large. Potentially flooding the systems storage. |
 | PATH.yaml | Path to Configuration. |
 
 ## Used Libraries
