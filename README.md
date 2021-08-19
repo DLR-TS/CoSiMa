@@ -49,7 +49,7 @@ The OSMP simulator configuration contains the path to the FMU.\
 A prefix is needed for internal use to mark OSI Messages. There should be no reason to change the value.\
 The communication is established through the OSMPService (add Link).
 
-##FMI
+## FMI
 The configuration for an FMU contains the path to the packed .fmu.\
 Parameters can be set and outputs of the fmu are mapped with their interface_name to the base_name.\
 Note: FMI-FMUs can not communicate directly with OSMP-FMUs.
