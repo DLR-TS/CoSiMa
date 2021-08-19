@@ -14,9 +14,8 @@ int main(int argc, char *argv[])
 	//start parameter
 	std::string path(std::filesystem::current_path().string());
 #else
-	std::string path("");
+	std::string path;
 #endif
-	path.append("C:\\Users\\bahn_bj\\CMakeBuilds\\f6acdf8a-24df-1732-aec3-2176fe4b1df7\\build\\x64-Debug\\bin\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		if (currentArg == "-d") {
@@ -37,7 +36,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		else {
-			path = currentArg;//add more complex evaluation if necessary
+			path = std::move(currentArg);//add more complex evaluation if necessary
 		}
 	}
 

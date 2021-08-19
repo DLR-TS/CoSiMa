@@ -37,7 +37,7 @@ LibCarla_client, its dependencies and gRPC currently are included using FetchCon
 # Configure CoSiMa
 To start CoSiMa a YAML File needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
 The configuration contains information about all connected simulators.
-Currently implemented are CARLA and OSMP.
+Currently implemented are CARLA and OSMP and plain FMI.
 
 ## CARLA
 Between CARLA and CoSiMa sits the CARLA-OSI-Client.\
@@ -46,13 +46,28 @@ delta defines the step size in seconds.
 
 ## OSMP
 The OSMP simulator configuration contains the path to the FMU.\
-A prefix is needed for internal use to mark OSI Messages. There should be no reason to change the value.
+A prefix is needed for internal use to mark OSI Messages. There should be no reason to change the value.\
+The communication is established through the OSMPService (add Link).
+
+##FMI
+The configuration for an FMU contains the path to the packed .fmu.\
+Parameters can be set and outputs of the fmu are mapped with their interface_name to the base_name.\
+Note: FMI-FMUs can not communicate directly with OSMP-FMUs.
 
 ### Input and Output
 The interface_name defines the name of a OSI message, which the FMU expects.\
 The base_name defines the name used by the base simulator (CARLA).\
 This differentiation allows free adjustments between FMUs and the base simulator.\
 FMUs can send information by any not yet defined base_name between each other.
+
+## Parameters
+| Parameter | Description |
+| ------ | ------ |
+| -d | Additional debug outputs. |
+| -l | Create a log file, named cosima.log. No output in console. |
+| -OSI | Additional OSI outputs to log or command line output. Be careful, since OSI messages can be very large.\
+Potentially flooding the systems storage. |
+| PATH.yaml | Path to Configuration. |
 
 ## Used Libraries
 
