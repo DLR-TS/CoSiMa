@@ -32,7 +32,7 @@ const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
 	return names;
 }
 
-int YAMLConfigReader::setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname) {
+int YAMLConfigReader::setConfig(iSimulationData* simulator, SingleYAMLConfig simulatorname) {
 	int index = 0;
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();

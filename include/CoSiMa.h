@@ -19,12 +19,12 @@
 #include "SimulationInterfaceFactory.h"
 
 struct cmdParameter {
-  bool log = false;
-  bool debug = false;
-  bool logOSI = false;
-  std::string logPath;
+    bool log = false;
+    bool debug = false;
+    bool logOSI = false;
+    std::string logPath;
 };
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
+void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
 
 #endif // !COSIMA_H

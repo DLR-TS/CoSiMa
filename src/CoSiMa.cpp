@@ -14,9 +14,8 @@ int main(int argc, char *argv[])
 	//start parameter
 	std::string path(std::filesystem::current_path().string());
 #else
-	std::string path("");
+	std::string path;
 #endif
-	path.append("C:\\Users\\bahn_bj\\CMakeBuilds\\f6acdf8a-24df-1732-aec3-2176fe4b1df7\\build\\x64-Debug\\bin\\config.yaml");
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		if (currentArg == "-d") {
@@ -38,7 +37,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		else {
-			path = currentArg;//add more complex evaluation if necessary
+			path = std::move(currentArg);//add more complex evaluation if necessary
 		}
 	}
 
@@ -65,7 +64,7 @@ int main(int argc, char *argv[])
 	/**
 	* Vector that holds every simulation interface.
 	*/
-	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
+	std::vector<std::unique_ptr<iSimulationData>> simulationInterfaces;
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		if (simulatorname.simulator == CARLA) {
@@ -79,17 +78,17 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
+		std::unique_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
 		if (newInterface == nullptr) {
 			std::cout << "Failed to create a simulator." << std::endl;
 			exit(1);
 		}
 		//set parameters of config
-		if (reader.setConfig(newInterface, simulatorname)) {
+		if (reader.setConfig(newInterface.get(), simulatorname)) {
 			std::cout << "Problem occured during interpretation of configuration file. (Interfaces)" << std::endl;
 			exit(2);
 		}
-		simulationInterfaces.push_back(newInterface);
+		simulationInterfaces.push_back(std::move(newInterface));
 	}
 
 	if (runtimeParameter.debug) {
@@ -101,7 +100,7 @@ int main(int argc, char *argv[])
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
-	for (auto simInterface : simulationInterfaces) {
+	for (auto &simInterface : simulationInterfaces) {
 		if (simInterface->init("Scenario", 0.0, 0) != 0) { //TODO set as parameters?
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
 			exit(3);
@@ -113,7 +112,7 @@ int main(int argc, char *argv[])
 	}
 
 	//connect interfaces
-	for (auto simInterface : simulationInterfaces) {
+	for (auto &simInterface : simulationInterfaces) {
 		if (simInterface->connect("")) { //TODO set as parameters?
 			std::cout << "Error in connect of simulation interfaces." << std::endl;
 			exit(4);
@@ -131,7 +130,7 @@ int main(int argc, char *argv[])
 	}
 
 	//disconnect interfaces
-	for (auto simInterface : simulationInterfaces) {
+	for (auto &simInterface : simulationInterfaces) {
 		if (simInterface->disconnect()) {
 			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
 		}
@@ -139,7 +138,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
 	//start simulationloop
 	bool continueSimulationLoop = true;
 

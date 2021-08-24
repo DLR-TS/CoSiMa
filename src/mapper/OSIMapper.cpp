@@ -9,8 +9,8 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 		return 1;
 	}
 
-	if (owner.lock() != nullptr) {
-		owner.lock()->readConfiguration(configVariants);
+	if (owner != nullptr) {
+		owner->readConfiguration(configVariants);
 	}
 
 	if (std::get_if<OSIInterfaceConfig>(&configVariants) != nullptr) {
