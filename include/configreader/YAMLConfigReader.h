@@ -41,7 +41,7 @@ public:
 	* \param simulator Mapper to be configured.
 	* \param simulatorname Read simulator configuration of this name.
 	*/
-	int setConfig(std::shared_ptr<iSimulationData> simulator, SingleYAMLConfig simulatorname);
+	int setConfig(iSimulationData* simulator, SingleYAMLConfig simulatorname);
 
 	/**
 	* Set config of simulator to given mapper.

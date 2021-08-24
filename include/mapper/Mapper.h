@@ -113,13 +113,13 @@ protected:
 	/**
 	This interface has this mapper
 	*/
-	std::weak_ptr<iSimulationData> owner;
+	iSimulationData* owner;
 public:
 	/**
 	Constructor of Mapper
 	\param owner the owner of this mapper
 	*/
-	virtual void setOwner(std::shared_ptr<iSimulationData> owner) final;
+	virtual void setOwner(iSimulationData* owner) final;
 	/**
 	search input of this mapper from base system interface
 	\param simulationInterface base system simulation interfaces

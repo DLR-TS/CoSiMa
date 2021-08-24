@@ -27,7 +27,7 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	auto modelDescription = coSimFMU->get_model_description();
 
 	//cast iSimulationData to FMIBridge to move co-simulation FMU into it
-	auto bridge = std::dynamic_pointer_cast<FMIBridge>(owner.lock());
+	auto bridge = (FMIBridge*) owner;
 	if (!bridge) {
 		//Incompatible owner; Not a FMIBridge
 		return 2142;
