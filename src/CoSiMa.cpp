@@ -24,10 +24,11 @@ int main(int argc, char *argv[])
 		}
 		else if (currentArg == "-l") {
 			runtimeParameter.log = true;
+      runtimeParameter.logPath = std::string(argv[++i]);
 		}
 		else if (currentArg == "-OSI") {
 			runtimeParameter.logOSI = true;
-			std::cout << "You started CoSiMa with OSI. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
+			std::cout << "You started CoSiMa with OSI messages activated in output. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
 			std::string in;
 			std::cin >> in;
 			if (in != "Y" && in != "y")
@@ -45,9 +46,10 @@ int main(int argc, char *argv[])
 	std::ofstream out;
 
 	if (runtimeParameter.log) {
-		out = std::ofstream("cosima.log");
+		out = std::ofstream(runtimeParameter.logPath);
 		std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
 		std::cout.rdbuf(out.rdbuf()); //redirect std::cout
+		std::cout << "##########" << "COSIMALOG" << "##########" << std::endl;
 	}
 
 	if (runtimeParameter.debug) {

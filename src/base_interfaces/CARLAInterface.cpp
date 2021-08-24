@@ -14,7 +14,7 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 
 int CARLAInterface::initialise(bool debug, bool logOSI) {
 	this->debug = debug;
-	this->logOSI = true;
+	this->logOSI = logOSI;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	grpc::ChannelArguments channelArgs;
