@@ -386,8 +386,8 @@ namespace YAML {
 			carlaInterface.client_host = node["client_host"].IsDefined() ? node["client_host"].as<std::string>() : "";
 			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 0;
 			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
-			carlaInterface.transactionTimeout = node["timeout"].IsDefined() ? node["timeout"].as<double>() : 0;
-			carlaInterface.doStepTransactionTimeout = node["step_timeout"].IsDefined() ? node["step_timeout"].as<uint32_t>() : 0;
+			carlaInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0;
+			carlaInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<uint32_t>() : 0;
 			carlaInterface.initialisationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() : 0;
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			return true;

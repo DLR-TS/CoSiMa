@@ -42,13 +42,12 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 		parameter->set_value(param.value);
 	}
 
-	grpc::ClientContext context;
-	std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.transactionTimeout*1e3));
-	context.set_deadline(deadline);
+	// context to handle the following rpc call - cannot be reused
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	CoSiMa::rpc::Int32 response;
 
-	auto status = osmpStub->SetConfig(&context, rpcConfig, &response);
+	auto status = osmpStub->SetConfig(context.get(), rpcConfig, &response);
 
 	auto channelState = channel->GetState(true);
 	switch (channelState)
@@ -89,13 +88,8 @@ int OSMPInterface::connect(std::string) {
 
 int OSMPInterface::doStep(double stepsize)
 {
-	//std::cout << "DoStep" << std::endl;
 	// context to handle the following rpc call - cannot be reused
-	grpc::ClientContext context;
-	if (0 < config.doStepTransactionTimeout) {
-		std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.doStepTransactionTimeout));
-		context.set_deadline(deadline);
-	}
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.doStepTransactionTimeout);
 
 	CoSiMa::rpc::Double rpcStepSize;
 	CoSiMa::rpc::Int32 rpcResponse;
@@ -103,7 +97,7 @@ int OSMPInterface::doStep(double stepsize)
 	if (debug) {
 		std::cout << "OSMPInterface: doStep \n";
 	}
-	auto status = stub->DoStep(&context, rpcStepSize, &rpcResponse);
+	auto status = stub->DoStep(context.get(), rpcStepSize, &rpcResponse);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();

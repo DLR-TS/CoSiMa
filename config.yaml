@@ -4,8 +4,8 @@
   client_host: localhost
   client_port: 51425
   delta: 0.03
-  timeout: 3
-  step_timeout: 30000
+  transaction_timeout: 3
+  do_step_timeout: 30000
   initialisation_timeout: 60000
 - simulator: FMI
   model: /Path/to/FMU.fmu # path to model.xml files

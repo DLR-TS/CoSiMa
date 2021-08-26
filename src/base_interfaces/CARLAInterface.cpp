@@ -71,18 +71,14 @@ int CARLAInterface::initialise(bool debug, bool logOSI) {
 double CARLAInterface::doStep()
 {
 	// context to handle the following rpc call - cannot be reused
-	grpc::ClientContext context;
-	if (0 < config.doStepTransactionTimeout) {
-		std::chrono::time_point deadline = std::chrono::system_clock::now() + std::chrono::milliseconds((uint64_t)(config.doStepTransactionTimeout));
-		context.set_deadline(deadline);
-	}
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.doStepTransactionTimeout);
 
 	//TODO fix import in proto file
 	//auto empty = google::protobuf::Empty();
 	auto empty = CoSiMa::rpc::Empty();
 	CoSiMa::rpc::Double rpcValue;
 
-	auto status = stub->DoStep(&context, empty, &rpcValue);
+	auto status = stub->DoStep(context.get(), empty, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
