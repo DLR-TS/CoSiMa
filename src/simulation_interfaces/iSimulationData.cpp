@@ -15,6 +15,6 @@ std::shared_ptr<Mapper> iSimulationData::getMapper() {
 int iSimulationData::readConfiguration(configVariants_t configVariants) {
 	std::cout << "Calling the read configuration method, which is not implemented by selected interface: " <<
 	std::get_if<InterfaceYAMLConfig>(&configVariants)->simulator << std::endl;
-	throw 354;
+	throw 1;
 	return 0;
 }

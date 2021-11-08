@@ -1,15 +1,10 @@
 #include "simulation_interfaces/OSIBridge.h"
 
-int OSIBridge::init(std::string scenario, float starttime, int mode) {
+int OSIBridge::init(float starttime) {
 	return 0;
 }
 
 int OSIBridge::readConfiguration(configVariants_t configVariants) {
-	return 0;
-}
-
-int OSIBridge::connect(std::string) {
-	//write osi configuration in writeAddressInformation and readAddressInformation
 	return 0;
 }
 

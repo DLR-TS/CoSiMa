@@ -56,7 +56,7 @@ struct CARLAInterfaceConfig {
 	uint16_t carla_port;
 	double transactionTimeout;
 	double deltaSeconds;
-	uint32_t initialisationTransactionTimeout;
+	uint32_t initializationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
 	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
@@ -388,7 +388,8 @@ namespace YAML {
 			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			carlaInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0;
 			carlaInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<uint32_t>() : 0;
-			carlaInterface.initialisationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() : 0;
+			carlaInterface.initializationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() :
+				node["initialization_timeout"].IsDefined() ? node["initialization_timeout"].as<uint32_t>() : 60000; //1 minute timeout
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			return true;
 		}

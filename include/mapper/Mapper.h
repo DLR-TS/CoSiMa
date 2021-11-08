@@ -111,15 +111,15 @@ protected:
 	*/
 	std::shared_ptr<internalState> state;
 	/**
-	This interface has this mapper
+	This interface contains this mapper
 	*/
-	iSimulationData* owner;
+	std::weak_ptr<iSimulationData> owner;
 public:
 	/**
 	Constructor of Mapper
 	\param owner the owner of this mapper
 	*/
-	virtual void setOwner(iSimulationData* owner) final;
+	virtual void setOwner(std::weak_ptr<iSimulationData> owner) final;
 	/**
 	search input of this mapper from base system interface
 	\param simulationInterface base system simulation interfaces

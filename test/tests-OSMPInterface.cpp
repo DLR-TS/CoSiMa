@@ -92,8 +92,8 @@ TEST_CASE("OSMP Test", "[Linux]") {
 			config.outputs.push_back(message1);
 
 			REQUIRE(0 == mapper->readConfiguration(config));
-			REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
-
+			//this FMU does not contain .dll just linux .so so it fails on windows
+#ifndef _WIN32
 			REQUIRE(0 == simulationInterface->doStep());
 
 			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0).size() == 0);
@@ -108,8 +108,10 @@ TEST_CASE("OSMP Test", "[Linux]") {
 			//string looks different each timestep
 			std::string newosimessage = simulationInterface->getMapper()->getInternalState()->strings.at(0);
 			REQUIRE(osimessage != newosimessage);
+#endif	
 		}
 
+#ifndef _WIN32
 		SECTION("Dummy Sensor reads osi messages") {
 			OSMPInterfaceConfig config;
 
@@ -125,7 +127,7 @@ TEST_CASE("OSMP Test", "[Linux]") {
 			config.outputs.push_back(message2);
 
 			REQUIRE(0 == mapper->readConfiguration(config));
-			REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
+			REQUIRE(0 == simulationInterface->init(0));
 
 			REQUIRE(0 == simulationInterface->doStep());
 
@@ -146,6 +148,7 @@ TEST_CASE("OSMP Test", "[Linux]") {
 			//output has overwritten input
 			REQUIRE(simulationInterface->getMapper()->getInternalState()->strings.at(0) != osimessage);
 		}
+#endif
 	}
 }
 
@@ -158,11 +161,10 @@ TEST_CASE("OSMP gRPC Test","[.][Requires OSMP client]") {
 
 	YAMLConfigReader reader("../test/resources/osmp-grpc-config.yaml");
 	auto names = reader.getSimulatorNames();
-	reader.setConfig(osmpinterface, names.at(0));
+	reader.setConfig(*osmpinterface, names.at(0));
 
 	//all inital steps
-	REQUIRE(0 == osmpinterface->init("Scenario", 0.0, 0));
-	REQUIRE(0 == osmpinterface->connect(""));
+	REQUIRE(0 == osmpinterface->init(0));
 
 	//repetitive steps
 	for (int i = 0; i < 5; i++) {

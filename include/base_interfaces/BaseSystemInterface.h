@@ -21,12 +21,18 @@ public:
 	Connect grpc with host/port information from corresponding fields
 	\return Success status.
 	*/
-	virtual int initialise(bool debug, bool log) = 0;
+	virtual int initialize(bool debug, bool log) = 0;
 	/**
 	Perform a simulation step
 	\return Time in seconds advanced during step
 	*/
-	virtual double doStep() = 0;
+	virtual double doStep(double stepSize = 1) = 0;
+
+	/**
+	Disconnect from base system interface
+	\return Time in seconds advanced during step
+	*/
+	virtual int disconnect() = 0;
 
 	virtual int getIntValue(std::string base_name) = 0;
 	virtual bool getBoolValue(std::string base_name) = 0;

@@ -8,18 +8,17 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	std::cout << "Read Configuration of FMI Mapper" << std::endl;
 
 	if (std::get_if<FMIInterfaceConfig>(&configVariants) == nullptr) {
-		std::cout << "Called with wrong configuration variant!" << std::endl;
+		std::cerr << __FUNCTION__ << "Called with wrong configuration variant!" << std::endl;
 		return 1;
 	}
 
 	interfaceConfig = std::get<FMIInterfaceConfig>(configVariants);
 
-	//TODO retrieve FMU location from SSP - currently interprets ssp file node as FMU path for testing
-
 	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu(new fmi4cpp::fmi2::fmu(interfaceConfig.model));
+	//CS = CoSimulation
 	if (!fmu->supports_cs()) {
-		// FMU contains no cs model
-		return 216373;
+		std::cerr << __FUNCTION__ << "FMU contains no cs (CoSimulation) model" << std::endl;
+		return 1;
 	}
 
 	// load co-simulation description from FMU
@@ -27,19 +26,19 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 	auto modelDescription = coSimFMU->get_model_description();
 
 	//cast iSimulationData to FMIBridge to move co-simulation FMU into it
-	auto bridge = (FMIBridge*) owner;
+	auto owner_tmp = owner.lock();
+	auto bridge = (FMIBridge*) owner_tmp.get();
 	if (!bridge) {
-		//Incompatible owner; Not a FMIBridge
-		return 2142;
+		std::cerr << __FUNCTION__ << "Incompatible owner, Not a FMIBridge" << std::endl;
+		return 1;
 	}
 	bridge->coSimFMU = std::move(coSimFMU);
 
-	//TODO need basename definitions for base interface. Current implementation prepends the modelIdentifier, separated with "."
 	for (const auto& var : *modelDescription->model_variables) {
 		// cannot switch on outputVar.value_type because fmi4cpp uses strings and cannot use getType because type name 'Real' is not defined (maps to some floating point type, typically double) 
 		if (fmi4cpp::fmi2::causality::input == var.causality || fmi4cpp::fmi2::causality::parameter == var.causality) {
 			// FMI p56: Variables with causality = "parameter" or "input", as well as variables with variability = "constant", must have a "start" value.
-			// return value 11833 if "start" is missing
+			// return value 1 if "start" is missing
 			if (var.is_boolean()) {
 				auto boolVar = var.as_boolean();
 				if (boolVar.start().has_value()) {
@@ -47,7 +46,8 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 					state->bools.push_back(boolVar.start().value());
 				}
 				else {
-					return 11833;
+					std::cerr << __FUNCTION__ << "boolean: start is missing" << std::endl;
+					return 1;
 				}
 			}
 			else if (var.is_enumeration() || var.is_integer()) {
@@ -57,7 +57,8 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 					state->integers.push_back(intVar.start().value());
 				}
 				else {
-					return 11833;
+					std::cerr << __FUNCTION__ << "integer or enum: start is missing" << std::endl;
+					return 1;
 				}
 			}
 			else if (var.is_real()) {
@@ -74,7 +75,8 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 					}
 				}
 				else {
-					return 11833;
+					std::cerr << __FUNCTION__ << "float: start is missing" << std::endl;
+					return 1;
 				}
 			}
 			else /*if (var.is_string())*/ {
@@ -85,7 +87,8 @@ int FMIMapper::readConfiguration(configVariants_t configVariants) {
 					
 				}
 				else {
-					return 11833;
+					std::cerr << __FUNCTION__ << "string: start is missing" << std::endl;
+					return 1;
 				}
 			}
 		}

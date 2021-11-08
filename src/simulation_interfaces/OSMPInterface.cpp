@@ -1,32 +1,21 @@
 #include "simulation_interfaces/OSMPInterface.h"
 
 int OSMPInterface::readConfiguration(configVariants_t variant) {
-	OSMPInterfaceConfig* config = std::get_if<OSMPInterfaceConfig>(&variant);
-	if (nullptr == config) {
+	if (std::get_if<OSMPInterfaceConfig>(&variant) == nullptr) {
 		std::cerr << "Called with wrong configuration variant!" << std::endl;
 		return 1;
 	}
-
-	this->config = *config;
+	config = std::get<OSMPInterfaceConfig>(variant);
 
 	return 0;
 }
 
-int OSMPInterface::init(std::string scenario, float starttime, int mode) {
+int OSMPInterface::init(float starttime) {
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 	grpc::ChannelArguments channelArgs;
 	channelArgs.SetMaxSendMessageSize(-1);
 	channelArgs.SetMaxReceiveMessageSize(-1);
-	std::cout << channelArgs.c_channel_args().num_args << std::endl;
-	//channelArgs.SetInt("grpc.max_receive_message_length", -1);
-	//channelArgs.SetInt("grpc.max_send_message_length", -1);
-
-	//channelArgs.SetString("grpc.max_receive_message_length", "-1"); <- message: must be an integer
-	//channelArgs.SetString("grpc.max_send_message_length", "-1"); <- message: must be an integer
-	std::cout << channelArgs.c_channel_args().num_args << std::endl;
-	//std::cout << channelArgs.c_channel_args().num_args << std::endl;
-	//std::cout << channelArgs.c_channel_args().num_args << std::endl;
 
 	//https://grpc.github.io/grpc/core/group__grpc__arg__keys.html#ga813f94f9ac3174571dd712c96cdbbdc1
 	//https://grpc.github.io/grpc/cpp/classgrpc_1_1_channel_arguments.html#ac1fa513191e8104ec57dfd6598297ce5
@@ -80,10 +69,6 @@ int OSMPInterface::init(std::string scenario, float starttime, int mode) {
 	}
 
 	return response.value();
-}
-
-int OSMPInterface::connect(std::string) {
-	return 0;
 }
 
 int OSMPInterface::doStep(double stepsize)

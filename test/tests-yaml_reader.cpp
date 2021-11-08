@@ -27,7 +27,7 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper()), false));
 		fmiSimulator->getMapper()->setOwner(fmiSimulator);
 
-		REQUIRE(reader.setConfig(fmiSimulator, conf) == 0);
+		REQUIRE(reader.setConfig(*fmiSimulator, conf) == 0);
 	}
 
 	SECTION("set invalid configuration of simulator", "[YAML Reader]") {
@@ -37,7 +37,7 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 
 		std::shared_ptr<iSimulationData> fmiSimulator = std::shared_ptr<iSimulationData>((iSimulationData*) new FMIBridge(std::shared_ptr<Mapper>((Mapper*)new FMIMapper()), false));
 
-		REQUIRE(reader.setConfig(fmiSimulator, conf) == 1);
+		REQUIRE(reader.setConfig(*fmiSimulator, conf) == 1);
 	}
 }
 
@@ -51,13 +51,13 @@ TEST_CASE("Default prefix value for OSIMapper", "[YAML Reader]") {
 
 	SECTION("Prefix is set"){
 		YAMLConfigReader reader("../test/resources/testconfig2.yaml");
-		reader.setConfig(osibridge, conf);
+		reader.setConfig(*osibridge, conf);
 		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#prefix#");
 	}
 
 	SECTION("Prefix is not set (default value used)") {
 		YAMLConfigReader reader("../test/resources/testconfig3.yaml");
-		reader.setConfig(osibridge, conf);
+		reader.setConfig(*osibridge, conf);
 		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#");
 	}
 }
@@ -71,7 +71,7 @@ TEST_CASE("Read OSMP config") {
 
 	SECTION("Just read complete configuration") {
 		YAMLConfigReader reader("../test/resources/testconfig4.yaml");
-		REQUIRE(reader.setConfig(osmpbridge, conf) == 0);
+		REQUIRE(reader.setConfig(*osmpbridge, conf) == 0);
 	}
 }
 
@@ -95,8 +95,8 @@ R"multiline(
   client_host: 127.0.0.1
   client_port: 51425
   delta: 0.03
-  timeout: 30 #seconds, floating point
-  step_timeout: 30000 # milliseconds, integer
+  transaction_timeout: 30 #seconds, floating point
+  do_step_timeout: 30000 # milliseconds, integer
   initialisation_timeout: 60000 # milliseconds, integer
   sensor_view_config:
     - camera_sensor_mounting_position:
@@ -118,7 +118,7 @@ R"multiline(
 	CHECK(Approx(0.03) == carlaConfig.deltaSeconds);
 	CHECK(Approx(30.0) == carlaConfig.transactionTimeout);
 	CHECK(30000 == carlaConfig.doStepTransactionTimeout);
-	CHECK(60000 == carlaConfig.initialisationTransactionTimeout);
+	CHECK(60000 == carlaConfig.initializationTransactionTimeout);
 	CHECK(0 < carlaConfig.osiSensorViewConfig.size());
 	CHECK("#prefix#OSMPSensorViewIn" == carlaConfig.osiSensorViewConfig[0].prefixedFmuVariableName);
 	CHECK(0 < carlaConfig.osiSensorViewConfig[0].cameraSensorMountingPosition.size());

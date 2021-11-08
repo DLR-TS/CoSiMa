@@ -67,18 +67,10 @@ protected:
 public:
 	/**
 	Initialize the interface.
-	\param scenario Scenario identification.
 	\param starttime Time of start.
-	\param mode The mode to start in.
 	\return Success status.
 	*/
-	virtual int init(std::string scenario, float starttime, int mode) = 0;
-	/**
-	Connect with followed information.
-	\param info Information to connect with simulator.
-	\return Success status.
-	*/
-	virtual int connect(std::string info) = 0;
+	virtual int init(float starttime) = 0;
 	/**
 	Disconnect from interface.
 	\return Success status.

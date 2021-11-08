@@ -1,10 +1,10 @@
 ﻿#include "SimulationInterfaceFactory.h"
 
-std::unique_ptr<iSimulationData> SimulationInterfaceFactory::makeInterface(eSimulatorName simulatorname, bool debug) {
-	std::unique_ptr<iSimulationData> newInterface = createInterface(simulatorname, debug);
+std::shared_ptr<iSimulationData> SimulationInterfaceFactory::makeInterface(eSimulatorName simulatorname, bool debug) {
+	std::shared_ptr<iSimulationData> newInterface = createInterface(simulatorname, debug);
 	//connect mapper with its interface
 	if (newInterface != nullptr) {
-		newInterface->getMapper()->setOwner(newInterface.get());
+		newInterface->getMapper()->setOwner(newInterface);
 	}
 	return newInterface;
 }

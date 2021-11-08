@@ -1,18 +1,16 @@
 #include "base_interfaces/CARLAInterface.h"
 
 int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
-	CARLAInterfaceConfig* config = std::get_if<CARLAInterfaceConfig>(&variant);
-	if (nullptr == config) {
+	if (std::get_if<CARLAInterfaceConfig>(&variant) == nullptr) {
 		std::cerr << "Called with wrong configuration variant!" << std::endl;
 		return 1;
 	}
-
-	this->config = *config;
+	config = std::get<CARLAInterfaceConfig>(variant);
 
 	return 0;
 }
 
-int CARLAInterface::initialise(bool debug, bool logOSI) {
+int CARLAInterface::initialize(bool debug, bool logOSI) {
 	this->debug = debug;
 	this->logOSI = logOSI;
 	std::ostringstream sstr;
@@ -25,15 +23,15 @@ int CARLAInterface::initialise(bool debug, bool logOSI) {
 	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
 	// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initialisationTransactionTimeout);
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initializationTransactionTimeout);
 
 	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
 
 	CoSiMa::rpc::Int32 response;
 
-	//TODO does this call take ownership of the context, thus freeing it twice? (would need context.release() instead of context.get() to prevent double free)
 	auto status = configStub->SetConfig(context.get(), rpcConfig, &response);
-
+	//Does the context need to be released manually?
+	//context.release();
 
 	auto channelState = channel->GetState(true);
 	switch (channelState)
@@ -68,16 +66,14 @@ int CARLAInterface::initialise(bool debug, bool logOSI) {
 	return response.value();
 }
 
-double CARLAInterface::doStep()
+double CARLAInterface::doStep(double stepSize)
 {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.doStepTransactionTimeout);
 
-	//TODO fix import in proto file
-	//auto empty = google::protobuf::Empty();
 	auto empty = CoSiMa::rpc::Empty();
 	CoSiMa::rpc::Double rpcValue;
-
+	//Empty is intepreted as 1
 	auto status = stub->DoStep(context.get(), empty, &rpcValue);
 
 	if (!status.ok()) {
@@ -102,23 +98,6 @@ int CARLAInterface::getIntValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto string = CoSiMa::rpc::String();
-	string.set_value(base_name);
-
-	CoSiMa::rpc::Int32 rpcValue;
-
-	auto status = stub->GetIntValue(context.get(), string, &rpcValue);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcValue.value();*/
 };
 
 bool CARLAInterface::getBoolValue(std::string base_name) {
@@ -130,23 +109,6 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto string = CoSiMa::rpc::String();
-	string.set_value(base_name);
-
-	CoSiMa::rpc::Bool rpcValue;
-
-	auto status = stub->GetBoolValue(context.get(), string, &rpcValue);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcValue.value();*/
 };
 
 float CARLAInterface::getFloatValue(std::string base_name) {
@@ -158,23 +120,6 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto string = CoSiMa::rpc::String();
-	string.set_value(base_name);
-
-	CoSiMa::rpc::Float rpcValue;
-
-	auto status = stub->GetFloatValue(context.get(), string, &rpcValue);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcValue.value();*/
 };
 
 double CARLAInterface::getDoubleValue(std::string base_name) {
@@ -186,24 +131,6 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto string = CoSiMa::rpc::String();
-	string.set_value(base_name);
-
-	CoSiMa::rpc::Double rpcValue;
-
-	auto status = stub->GetDoubleValue(context.get(), string, &rpcValue);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-
-	return rpcValue.value();*/
 };
 
 std::string CARLAInterface::getStringValue(std::string base_name) {
@@ -218,7 +145,8 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
 	if (logOSI) {
-		std::cout << "Message: " << rpcValue.value() << std::endl;
+		//Log OSI Message
+		std::cout << "Message:\n" << rpcValue.value() << std::endl;
 	}
 
 	if (!status.ok()) {
@@ -240,24 +168,6 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
 	}
 	return 0;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto namedValue = CoSiMa::rpc::NamedInt32();
-	namedValue.set_name(base_name);
-	namedValue.set_value(value);
-
-	CoSiMa::rpc::Int32 rpcRetVal;
-
-	auto status = stub->SetIntValue(context.get(), namedValue, &rpcRetVal);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setBoolValue(std::string base_name, bool value) {
@@ -266,24 +176,6 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
 	}
 	return 0;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto namedValue = CoSiMa::rpc::NamedBool();
-	namedValue.set_name(base_name);
-	namedValue.set_value(value);
-
-	CoSiMa::rpc::Int32 rpcRetVal;
-
-	auto status = stub->SetBoolValue(context.get(), namedValue, &rpcRetVal);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setFloatValue(std::string base_name, float value) {
@@ -292,24 +184,6 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
 	}
 	return 0;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto namedValue = CoSiMa::rpc::NamedFloat();
-	namedValue.set_name(base_name);
-	namedValue.set_value(value);
-
-	CoSiMa::rpc::Int32 rpcRetVal;
-
-	auto status = stub->SetFloatValue(context.get(), namedValue, &rpcRetVal);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setDoubleValue(std::string base_name, double value) {
@@ -318,24 +192,6 @@ int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 		std::cout << "CarlaInterface: setDoubleValue() to " << value << "\n";
 	}
 	return 0;
-	/*// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	auto namedValue = CoSiMa::rpc::NamedDouble();
-	namedValue.set_name(base_name);
-	namedValue.set_value(value);
-
-	CoSiMa::rpc::Int32 rpcRetVal;
-
-	auto status = stub->SetDoubleValue(context.get(), namedValue, &rpcRetVal);
-
-	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-		throw std::exception(msg.c_str());
-	}
-
-	return rpcRetVal.value();*/
 };
 
 int CARLAInterface::setStringValue(std::string base_name, std::string value) {
@@ -408,3 +264,4 @@ void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition
 	}
 }
 
+int CARLAInterface::disconnect() { return 0; };

@@ -255,7 +255,7 @@ eDataType Mapper::getType(std::string type) {
 	}
 }
 
-void Mapper::setOwner(iSimulationData* owner) {
+void Mapper::setOwner(std::weak_ptr<iSimulationData> owner) {
 	this->owner = owner;
 }
 

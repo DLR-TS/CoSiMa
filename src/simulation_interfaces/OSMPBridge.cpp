@@ -10,7 +10,8 @@ int OSMPBridge::readConfiguration(configVariants_t configVariants) {
 	std::unique_ptr<fmi4cpp::fmi2::fmu> fmu = std::make_unique<fmi4cpp::fmi2::fmu>(interfaceConfig.model);
 	if (!fmu->supports_cs()) {
 		// FMU contains no cs model
-		return 216373;
+		std::cerr << __FUNCTION__ << "FMU contains no cs (CoSimulation) model" << std::endl;
+		return 1;
 	}
 
 	// load co-simulation description from FMU
@@ -20,7 +21,7 @@ int OSMPBridge::readConfiguration(configVariants_t configVariants) {
 }
 
 
-int OSMPBridge::init(std::string scenario, float starttime, int mode) {
+int OSMPBridge::init(float starttime) {
 	//Instance name cannot be set with FMU4cpp. The model identifier is used automatically instead
 	coSimSlave = coSimFMU->new_instance();
 
@@ -30,9 +31,48 @@ int OSMPBridge::init(std::string scenario, float starttime, int mode) {
 	return 0;
 }
 
-int OSMPBridge::connect(std::string config) {
+int OSMPBridge::doStep(double stepSize) {
+	//TODO
+	//which parts of FMIBridge::doStep are needed?
+		//TODO set independent tunable parameters
+	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
+
+	//TODO support rollback in case step is incomplete?
+	auto preStepState = OSMPFMUSlaveStateWrapper::tryGetStateOf(coSimSlave);
+
+	//TODO step by stepSize
+	if (!coSimSlave->step(stepSize)) {
+		while (fmi4cpp::status::Pending == coSimSlave->last_status()) {
+			//wait for asynchronous fmu to finish
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
+
+		switch (coSimSlave->last_status()) {
+		case fmi4cpp::status::Fatal:
+			return -1;//TODO decide on common error return values
+		case fmi4cpp::status::Error:
+			return -2;//TODO decide on common error return values
+		case fmi4cpp::status::Discard:
+			//If a pre step state could be captured and the slave supports step size variation, try performing smaller substeps instead of one stepSize step
+			if (!preStepState || !coSimSlave->get_model_description()->can_handle_variable_communication_step_size) {
+				return 2;
+			}
+			//restore state before failed step
+			coSimSlave->set_fmu_state(preStepState.value().state);
+			// perform some smaller substeps
+			int substeps = 2;
+			for (int i = 0; i < substeps; i++) {
+				int err = doStep(stepSize / 2);
+				if (0 != err) {
+					return 2;
+				}
+			}
+		}
+	}
 	return 0;
 }
+
+
 
 int OSMPBridge::disconnect() {
 	return OSIBridge::disconnect();
@@ -94,46 +134,6 @@ int OSMPBridge::readFromInternalState() {
 		}
 	}
 
-	return 0;
-}
-int OSMPBridge::doStep(double stepSize) {
-	//TODO
-	//which parts of FMIBridge::doStep are needed?
-		//TODO set independent tunable parameters
-	//TODO set continuous- and discrete-time inputs and optionally also the derivatives of the former
-
-	//TODO support rollback in case step is incomplete?
-	auto preStepState = OSMPFMUSlaveStateWrapper::tryGetStateOf(coSimSlave);
-
-	//TODO step by stepSize
-	if (!coSimSlave->step(stepSize)) {
-		while (fmi4cpp::status::Pending == coSimSlave->last_status()) {
-			//wait for asynchronous fmu to finish
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
-		}
-
-		switch (coSimSlave->last_status()) {
-		case fmi4cpp::status::Fatal:
-			return -1;//TODO decide on common error return values
-		case fmi4cpp::status::Error:
-			return -2;//TODO decide on common error return values
-		case fmi4cpp::status::Discard:
-			//If a pre step state could be captured and the slave supports step size variation, try performing smaller substeps instead of one stepSize step
-			if (!preStepState || !coSimSlave->get_model_description()->can_handle_variable_communication_step_size) {
-				return 2;
-			}
-			//restore state before failed step
-			coSimSlave->set_fmu_state(preStepState.value().state);
-			// perform some smaller substeps
-			int substeps = 2;
-			for (int i = 0; i < substeps; i++) {
-				int err = doStep(stepSize / 2);
-				if (0 != err) {
-					return 2;
-				}
-			}
-		}
-	}
 	return 0;
 }
 

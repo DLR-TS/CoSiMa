@@ -27,7 +27,7 @@ TEST_CASE("CARLAInterface", "[CARLAInterface]") {
 
 	auto server = future.get();
 
-	REQUIRE(0 == carla->initialise(false, false));
+	REQUIRE(0 == carla->initialize(false, false));
 
 	CHECK(!carla->getBoolValue("some_name"));
 	CHECK(0 == carla->getIntValue("some_name"));

@@ -32,7 +32,7 @@ const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
 	return names;
 }
 
-int YAMLConfigReader::setConfig(iSimulationData* simulator, SingleYAMLConfig simulatorname) {
+int YAMLConfigReader::setConfig(iSimulationData& simulator, SingleYAMLConfig simulatorname) {
 	int index = 0;
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
@@ -41,19 +41,19 @@ int YAMLConfigReader::setConfig(iSimulationData* simulator, SingleYAMLConfig sim
 				switch (simulatorname.simulator) {
 				case DEFAULT:
 					std::cout << "Add DEFAULT module" << std::endl;
-					return simulator->getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
+					return simulator.getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
 				case FMI:
 					std::cout << "Add FMI module" << std::endl;
-					simulator->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
-					return simulator->getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
+					simulator.readConfiguration(simulators[i].as<FMIInterfaceConfig>());
+					return simulator.getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
 				case OSI:
 					std::cout << "Add OSI module" << std::endl;
-					simulator->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
-					return simulator->getMapper()->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
+					simulator.readConfiguration(simulators[i].as<OSIInterfaceConfig>());
+					return simulator.getMapper()->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
 				case OSMP:
 					std::cout << "Add OSMP module" << std::endl;
-					simulator->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
-					return simulator->getMapper()->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
+					simulator.readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
+					return simulator.getMapper()->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
 				}
 			}
 			else {

@@ -71,12 +71,15 @@ public:
 		return 0;
 	};
 
-	virtual int initialise(bool debug, bool log) override {
+	virtual int initialize(bool debug, bool log) override {
 		return 0;
 	};
 
-	virtual double doStep() override {
+	virtual double doStep(double stepSize = 1) override {
 		return 0;
 	}
 
+	virtual int disconnect() override {
+		return 0;
+	};
 };

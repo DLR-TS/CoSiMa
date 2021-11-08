@@ -1,11 +1,7 @@
 #include <string>
 #include "simulation_interfaces/DefaultBridge.h"
 
-int DefaultBridge::init(std::string scenario, float starttime, int mode) {
-	return 0;
-}
-
-int DefaultBridge::connect(std::string) {
+int DefaultBridge::init(float starttime) {
 	return 0;
 }
 

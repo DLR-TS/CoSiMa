@@ -20,8 +20,7 @@ class OSMPInterface : public iSimulationData {
 public:
 	OSMPInterface(std::shared_ptr<Mapper> mapper, bool debug) : iSimulationData(mapper, debug) {};
 	
-	int init(std::string scenario, float starttime, int mode) override;
-	int connect(std::string) override;
+	int init(float starttime) override;
 	int disconnect() override;
 	
 	int writeToInternalState() override;

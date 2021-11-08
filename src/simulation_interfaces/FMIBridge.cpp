@@ -2,18 +2,16 @@
 #include "simulation_interfaces/FMIBridge.h"
 
 int FMIBridge::readConfiguration(configVariants_t variant) {
-	FMIInterfaceConfig* config = std::get_if<FMIInterfaceConfig>(&variant);
-	if (nullptr == config) {
+	if (std::get_if<FMIInterfaceConfig>(&variant) == nullptr) {
 		std::cerr << "Called with wrong configuration variant!" << std::endl;
 		return 1;
 	}
-
-	this->config = *config;
+	config = std::get<FMIInterfaceConfig>(variant);
 
 	return 0;
 }
 
-int FMIBridge::init(std::string scenario, float starttime, int mode) {
+int FMIBridge::init(float starttime) {
 	
 	//TODO cannot set up the stepFinished callback in fmi2CallbackFunctions because it is not available in FMI4cpp => have to fallback to polling the fmu preStepState
 	////TODO move this block. While setting up fmi2Callbackfunctions is required before instanciating the model, it is not required to this every time
@@ -38,10 +36,6 @@ int FMIBridge::init(std::string scenario, float starttime, int mode) {
 	////TODO get (calculated or dependent) values and derivatives, if needed
 	//coSimSlave->exit_initialization_mode();
 	enteredInitializationMode = true;
-	return 0;
-}
-
-int FMIBridge::connect(std::string info) {
 	return 0;
 }
 

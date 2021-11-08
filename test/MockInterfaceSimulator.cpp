@@ -11,7 +11,7 @@ class MockInterfaceSimulator : public iSimulationData {
 public:
 	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper, false) {};
 
-	int init(std::string scenario, float starttime, int mode) {
+	int init(float starttime) {
 		return 0;
 	}
 

@@ -33,7 +33,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 		config.model = "../test/resources/Feedthrough_cs.fmu";
 
 		REQUIRE(0 == mapper->readConfiguration(config));
-		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 0, 0));
+		REQUIRE(0 == simulationInterface->init(0));
 
 		auto state = simulationInterface->getMapper()->getInternalState();
 
@@ -229,14 +229,14 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 	}
 	SECTION("ME-only FMUs are not supported and should fail to load") {
 		config.model = "../test/resources/Feedthrough_me.fmu";
-		REQUIRE(216373 == mapper->readConfiguration(config));
+		REQUIRE(1 == mapper->readConfiguration(config));
 	}
 	SECTION("Dual definition FMUs can also be imported for coSim") {
 		config.model = "../test/resources/Stair.fmu";
 
 		REQUIRE(0 == mapper->readConfiguration(config));
 		//starting the experiment at timepoint 1s
-		REQUIRE(0 == simulationInterface->init("A co-simulation fmu", 1, 0));
+		REQUIRE(0 == simulationInterface->init(1));
 
 		SECTION("Negative stepSize should fail") {
 			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));

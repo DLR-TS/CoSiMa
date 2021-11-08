@@ -57,13 +57,10 @@ public:
 	<\br>
 	Leaves the FMU in InitializationMode until the first call of FMIBridge::doStep. Thus, initial approximations of calculatedParameters cannot be set.
 
-	\param scenario Scenario identification. -- Currently ignored because FMI4cpp autogenerates instance names
 	\param starttime Time of start.
-	\param mode The mode to start in.
 	\return Success status.
 	*/
-	int init(std::string scenario, float starttime, int mode) override;
-	int connect(std::string info) override;
+	int init(float starttime) override;
 	int disconnect() override;
 
 	int writeToInternalState() override;

@@ -23,9 +23,9 @@ int main(int argc, char *argv[])
 		}
 		else if (currentArg == "-l") {
 			runtimeParameter.log = true;
-      runtimeParameter.logPath = std::string(argv[++i]);
+			runtimeParameter.logPath = std::string(argv[++i]);
 		}
-		else if (currentArg == "-OSI") {
+		else if (currentArg == "-OSI" || currentArg == "-osi") {
 			runtimeParameter.logOSI = true;
 			std::cout << "You started CoSiMa with OSI messages activated in output. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
 			std::string in;
@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 	std::ofstream out;
 
 	if (runtimeParameter.log) {
+		std::cout << "No more output on the console. Output is directed to " << runtimeParameter.logPath << std::endl;
 		out = std::ofstream(runtimeParameter.logPath);
 		std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
 		std::cout.rdbuf(out.rdbuf()); //redirect std::cout
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (runtimeParameter.debug) {
-		std::cout << "Path: " << path << "\n";
+		std::cout << "Configuration file: " << path << "\n";
 	}
 
 	//read config
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 	/**
 	* Vector that holds every simulation interface.
 	*/
-	std::vector<std::unique_ptr<iSimulationData>> simulationInterfaces;
+	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		if (simulatorname.simulator == CARLA) {
@@ -78,13 +79,13 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		std::unique_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
+		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
 		if (newInterface == nullptr) {
-			std::cout << "Failed to create a simulator." << std::endl;
+			std::cout << "Failed to create a simulator interface." << std::endl;
 			exit(1);
 		}
 		//set parameters of config
-		if (reader.setConfig(newInterface.get(), simulatorname)) {
+		if (reader.setConfig(*newInterface, simulatorname)) {
 			std::cout << "Problem occured during interpretation of configuration file. (Interfaces)" << std::endl;
 			exit(2);
 		}
@@ -96,12 +97,12 @@ int main(int argc, char *argv[])
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialise(runtimeParameter.debug, runtimeParameter.logOSI)) {
+	if (0 != baseSystem->initialize(runtimeParameter.debug, runtimeParameter.logOSI)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
 	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->init("Scenario", 0.0, 0) != 0) { //TODO set as parameters?
+		if (simInterface->init(0.0) != 0) { //TODO 
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
 			exit(3);
 		}
@@ -109,18 +110,6 @@ int main(int argc, char *argv[])
 
 	if (runtimeParameter.debug) {
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
-	}
-
-	//connect interfaces
-	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->connect("")) { //TODO set as parameters?
-			std::cout << "Error in connect of simulation interfaces." << std::endl;
-			exit(4);
-		}
-	}
-
-	if (runtimeParameter.debug) {
-		std::cout << "End Connect Phase \nBegin Simulation Loops\n " << std::endl;
 	}
 
 	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
@@ -135,10 +124,13 @@ int main(int argc, char *argv[])
 			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
 		}
 	}
+	//base system disconnect
+	baseSystem->disconnect();
 	return 0;
 }
 
-void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInterfaces, std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
 	//start simulationloop
 	bool continueSimulationLoop = true;
 
@@ -146,7 +138,7 @@ void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInt
 
 		//read from base_system
 		if (runtimeParameter.debug) {
-			std::cout << "Read Base System and write to Interfaces Phase\n";
+			std::cout << "Read Base System and write to Interfaces\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {
 			//read from baseSystem, sort in internalState
@@ -162,7 +154,7 @@ void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInt
 		}
 
 		if (runtimeParameter.debug) {
-			std::cout << "DoStep Phase\n";
+			std::cout << "DoStep\n";
 		}
 
 		for (auto &simInterface : simulationInterfaces) {
@@ -173,7 +165,7 @@ void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInt
 		baseSystem->doStep();
 
 		if (runtimeParameter.debug) {
-			std::cout << "Read Interfaces Phase\n";
+			std::cout << "Read Interfaces\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
@@ -181,7 +173,7 @@ void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInt
 			if (runtimeParameter.logOSI) {
 				//log all String entries of interface
 				for (std::string& osi_message : simInterface->getMapper()->getInternalState()->strings) {
-					std::cout << "Message:" << osi_message << "\n";
+					std::cout << "Message:\n" << osi_message << "\n";
 				}
 			}
 			//and write to base system
