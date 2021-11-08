@@ -45,6 +45,8 @@ public:
 	virtual int setFloatValue(std::string base_name, float value) = 0;
 	virtual int setDoubleValue(std::string base_name, double value) = 0;
 	virtual int setStringValue(std::string base_name, std::string value) = 0;
+
+	virtual double getStepSize() = 0;
 };
 
 #endif // !BASESYSTEMINTERFACE_H

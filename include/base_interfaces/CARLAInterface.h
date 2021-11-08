@@ -35,6 +35,7 @@ public:
 	virtual int readConfiguration(baseConfigVariants_t config) override;
 	virtual int initialize(bool debug, bool logOSI) override;
 	virtual double doStep(double stepSize = 1) override;
+	virtual double getStepSize() override;
 	virtual int disconnect() override;
 
 	virtual int getIntValue(std::string base_name) override;

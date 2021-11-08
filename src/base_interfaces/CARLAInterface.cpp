@@ -264,4 +264,8 @@ void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition
 	}
 }
 
+double CARLAInterface::getStepSize() {
+	return config.deltaSeconds;
+}
+
 int CARLAInterface::disconnect() { return 0; };

@@ -134,6 +134,8 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 	//start simulationloop
 	bool continueSimulationLoop = true;
 
+	double stepsize = baseSystem->getStepSize();
+
 	while (continueSimulationLoop) {
 
 		//read from base_system
@@ -154,15 +156,15 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		}
 
 		if (runtimeParameter.debug) {
-			std::cout << "DoStep\n";
+			std::cout << "DoStep with stepsize: " << stepsize << std::endl;
 		}
 
 		for (auto &simInterface : simulationInterfaces) {
 			//do simulaton step
-			simInterface->doStep();
+			simInterface->doStep(stepsize);
 		}
-		// base simulation interface also performs a step, at least to update its clock
-		baseSystem->doStep();
+		// base simulation interface also performs a step
+		baseSystem->doStep(stepsize);
 
 		if (runtimeParameter.debug) {
 			std::cout << "Read Interfaces\n";

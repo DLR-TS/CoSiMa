@@ -82,4 +82,8 @@ public:
 	virtual int disconnect() override {
 		return 0;
 	};
+
+	virtual double getStepSize() override {
+		return 0.03;
+	};
 };
