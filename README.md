@@ -1,5 +1,13 @@
 # CoSimulationManager for SETLevel4to5
 
+# Usage of the DLR research implementation:
+The DLR research implementation consists at the moment out of 4 distinct programs. Start the following programs in this order:
+
+1. Carla OSI
+2. Carla OSI Service
+3. OSMP Services for each FMU
+4. CoSiMa with corresponding configuration file
+
 ## Installation Guide
 
 preparations:\
@@ -74,3 +82,8 @@ gRPC\
 protobuf\
 yaml-cpp\
 open-simulation-interface
+
+# Contacts
+
+bjoern.bahn@dlr.de
+danny.behnecke@dlr.de
