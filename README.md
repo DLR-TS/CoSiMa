@@ -15,8 +15,7 @@ in root folder:
 ```sh
  mkdir build && cd build
  cmake .. -DCMAKE_BUILD_TYPE=Release # or 'cmake -D BUILD_SHARED_LIBS=false ..' on windows, see below
- cmake --build . --target CoSimulationManager 
- cmake --install . # not yet defined
+ cmake --build . --target CoSimulationManager
 ```
 
  Because of broken dependencies using MSVC, build and use static libraries on windows by appending '-D BUILD_SHARED_LIBS=false' to all cmake generation calls
@@ -35,19 +34,19 @@ Some dependencies are retrieved using CMake's FetchContent Module. To override t
 LibCarla_client, its dependencies and gRPC currently are included using FetchContent.
 
 # Configure CoSiMa
-To start CoSiMa a YAML File needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
+To start CoSiMa a config file (yaml) needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
 The configuration contains information about all connected simulators.
 Currently implemented are CARLA and OSMP and plain FMI.
 
 ## CARLA
 Between CARLA and CoSiMa sits the CARLA-OSI-Client.\
 The carla_host and carla_port address information are seen from the CARLA-OSI-Client.\
-delta defines the step size in seconds.
+delta defines the simulation step size in seconds.
 
 ## OSMP
 The OSMP simulator configuration contains the path to the FMU.\
 A prefix is needed for internal use to mark OSI Messages. There should be no reason to change the value.\
-The communication is established through the OSMPService (add Link).
+The communication is established through the OSMPService. For each model an individual service is needed.
 
 ## FMI
 The configuration for an FMU contains the path to the packed .fmu.\
@@ -66,12 +65,11 @@ FMUs can send information by any not yet defined base_name between each other.
 | -d | Additional debug outputs. |
 | -l | Create a log file, named cosima.log. No output in console. |
 | -OSI | Additional OSI outputs to log or command line output. Be careful, since OSI messages can be very large. Potentially flooding the systems storage. |
-| PATH.yaml | Path to Configuration. |
+| PATH.yaml | Path to Configuration file. |
 
 ## Used Libraries
 
 cmake-conan 0.15\
-LibCarla_client + dependencies (Carla 0.9.9.4)\
 gRPC\
 protobuf\
 yaml-cpp\
