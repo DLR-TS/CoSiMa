@@ -25,7 +25,7 @@ struct cmdParameter {
     std::string logPath;
 };
 
-void simulationLoop(std::vector<std::unique_ptr<iSimulationData>> &simulationInterfaces,
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
 	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
 
 #endif // !COSIMA_H
