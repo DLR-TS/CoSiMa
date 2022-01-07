@@ -231,20 +231,41 @@ CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
 		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
 
-		copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
-			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
-
-		copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
-			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
-
-		copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
-			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
-
-		copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
-			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
-
-		copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
-			rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+		if (sensorViewExtra.cameraSensorMountingPosition.size()) {
+			if (debug) {
+				std::cout << "Set CameraSensorMountingPositon\n";
+			}
+			copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
+				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
+		}
+		if (sensorViewExtra.radarSensorMountingPosition.size()) {
+			if (debug) {
+				std::cout << "Set RadarSensorMountingPosition\n";
+			}
+			copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
+				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
+		}
+		if (sensorViewExtra.lidarSensorMountingPosition.size()) {
+			if (debug) {
+				std::cout << "Set LidarSensorMountingPosition\n";
+			}
+			copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
+				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
+		}
+		if (sensorViewExtra.ultrasonicSensorMountingPosition.size()) {
+			if (debug) {
+				std::cout << "Set UltrasonicSensorMountingPosition\n";
+			}
+			copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
+				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
+		}
+		if (sensorViewExtra.genericSensorMountingPosition.size()) {
+			if (debug) {
+				std::cout << "Set GenericSensorMountingPosition\n";
+			}
+			copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
+				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+		}
 	}
 
 	return rpcConfig;

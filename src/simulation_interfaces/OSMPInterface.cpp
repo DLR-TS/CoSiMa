@@ -105,9 +105,6 @@ int OSMPInterface::writeToInternalState() {
 	for (auto output : config.outputs) {
 		string.set_value(output.interface_name);
 
-		if (debug) {
-			std::cout << "OSMPInterface: read " << output.interface_name;
-		}
 		CoSiMa::rpc::Bytes rpcValue;
 
 		auto status = stub->GetStringValue(context.get(), string, &rpcValue);
@@ -122,7 +119,6 @@ int OSMPInterface::writeToInternalState() {
 #endif
 		}
 		if (debug) {
-			std::cout << ", Size: " << rpcValue.value().size() << "\n";
 			std::cout << "OSMPInterface: read " << output.interface_name << ", Size : " << rpcValue.value().size()
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
