@@ -1,7 +1,4 @@
 ﻿#include "CoSiMa.h"
-#include <filesystem>
-#include <fstream>
-#include "base_interfaces/CARLAInterface.h"
 
 int main(int argc, char *argv[])
 {

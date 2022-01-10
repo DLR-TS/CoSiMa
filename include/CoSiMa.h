@@ -5,15 +5,13 @@
 #ifndef COSIMA_H
 #define COSIMA_H
 
-#cmakedefine WITH_CARLA
-
-#include <iostream>
 #include <vector>
 #include <string>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include "base_interfaces/BaseSystemInterface.h"
-//#ifdef WITH_CARLA
-//#include "base_interfaces/CARLAInterface.h"
-//#endif
+#include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "configreader/YAMLConfigReader.h"
 #include "SimulationInterfaceFactory.h"
