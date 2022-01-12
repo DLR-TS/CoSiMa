@@ -88,11 +88,6 @@ add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("test")
 
-option(WITH_CARLA "Build CoSimulationManagerLib with CARLA base simulaton interface" ON)
-if(WITH_CARLA)
-    message(STATUS "Will add CARLA base interface to build")
-endif(WITH_CARLA)
-
 #create library to
 add_library(CoSimulationManagerLib ${COSIMA_SOURCE} ${COSIMA_INCLUDES})
 # CoSimulationManagerLib exports no symbols, thereby preventing linking of its dll on windows. Force export of all global symbols
@@ -171,8 +166,6 @@ include(CTest)
 include(Catch)
 catch_discover_tests(test_CoSiMa)
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h ${CMAKE_CURRENT_BINARY_DIR}/include/CoSiMa.h)
-#configure_file(${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp ${CMAKE_CURRENT_BINARY_DIR}/src/CoSiMa.cpp)
-add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_BINARY_DIR}/include/CoSiMa.h")
+add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h")
 target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
-target_include_directories(CoSimulationManager PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include/)
+target_include_directories(CoSimulationManager PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)

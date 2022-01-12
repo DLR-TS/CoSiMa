@@ -51,8 +51,8 @@ public:
 	virtual int setStringValue(std::string base_name, std::string value) override;
 
 private:
-	virtual CoSiMa::rpc::CarlaConfig parseConfigToGRPC();
-	virtual void copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition* rpcMountingPosition);
+	CoSiMa::rpc::CarlaConfig parseConfigToGRPC();
+	void copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition* rpcMountingPosition);
 
 	std::map <std::string, int> integerMap{};
 	std::map <std::string, float> floatMap{};
