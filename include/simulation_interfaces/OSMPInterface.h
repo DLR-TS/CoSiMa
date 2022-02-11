@@ -5,6 +5,9 @@
 #ifndef OSMPINTERFACE_H
 #define OSMPINTERFACE_H
 
+#include <thread>
+#include <chrono>
+
 #include "simulation_interfaces/iSimulationData.h"
 
 #include "CoSiMaUtility.h"
@@ -37,6 +40,8 @@ private:
 	std::unique_ptr<CoSiMa::rpc::OSMPSimulationInterface::Stub> osmpStub;
 	OSMPInterfaceConfig config;
 
+	const int retries = 5;
+	int retry_counter = 0;
 };
 
 #endif //!OSMPINTERFACE_H

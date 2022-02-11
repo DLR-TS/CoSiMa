@@ -11,8 +11,13 @@ int OSMPInterface::readConfiguration(configVariants_t variant) {
 }
 
 int OSMPInterface::init(float starttime) {
+
+  if (debug){
+    std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
+  }
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
+  
 	grpc::ChannelArguments channelArgs;
 	channelArgs.SetMaxSendMessageSize(-1);
 	channelArgs.SetMaxReceiveMessageSize(-1);
@@ -52,6 +57,12 @@ int OSMPInterface::init(float starttime) {
 		break;
 	case GRPC_CHANNEL_TRANSIENT_FAILURE:
 		std::cout << "channel has seen a failure but expects to recover" << std::endl;
+      		retry_counter++;
+		if (retry_counter < retries) {
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+			std::cout << "Retry" << std::endl;
+			return init(starttime);
+		}
 		return -502;
 	case GRPC_CHANNEL_SHUTDOWN:
 		std::cout << "channel has seen a failure that it cannot recover from" << std::endl;

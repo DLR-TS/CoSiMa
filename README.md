@@ -22,7 +22,7 @@ add conan.exe to PATH environment variable
 in root folder:
 ```sh
  mkdir build && cd build
- cmake .. -DCMAKE_BUILD_TYPE=Release # or 'cmake -D BUILD_SHARED_LIBS=false ..' on windows, see below
+ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=false ..
  cmake --build . --target CoSimulationManager
 ```
 
