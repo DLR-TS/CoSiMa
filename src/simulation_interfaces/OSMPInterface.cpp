@@ -17,7 +17,7 @@ int OSMPInterface::init(float starttime) {
   }
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
-  
+
 	grpc::ChannelArguments channelArgs;
 	channelArgs.SetMaxSendMessageSize(-1);
 	channelArgs.SetMaxReceiveMessageSize(-1);
@@ -109,11 +109,11 @@ int OSMPInterface::doStep(double stepsize)
 }
 
 int OSMPInterface::writeToInternalState() {
-	// context to handle the following rpc call
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
 	auto string = CoSiMa::rpc::String();
 	for (auto output : config.outputs) {
+		//context to handle the following rpc call
+		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		string.set_value(output.interface_name);
 
 		CoSiMa::rpc::Bytes rpcValue;
