@@ -6,7 +6,7 @@
 #define BASESYSTEMINTERFACE_H
 
 #include <string>
-#include "configreader/BaseConfigVariants.h"
+#include "reader/BaseConfigVariants.h"
 
 class BaseSystemInterface
 {

@@ -1,6 +1,6 @@
 add_subdirectory(mapper)
 add_subdirectory(simulation_interfaces)
-add_subdirectory(configreader)
+add_subdirectory(reader)
 add_subdirectory(base_interfaces)
 
 set(COSIMA_INCLUDES ${MAPPER_INCLUDES} ${SIMULATION_INTERFACE_INCLUDES} ${CONFIGREADER_INCLUDES} ${BASE_INTERFACE_INCLUDES}

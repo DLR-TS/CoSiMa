@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "simulation_interfaces/iSimulationData.h"
+#include "reader/FMUReader.h"
 
 #include "CoSiMaUtility.h"
 
@@ -33,6 +34,8 @@ public:
 	int readConfiguration(configVariants_t configVariants) override;
 
 private:
+
+	bool sendFMU();
 
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;

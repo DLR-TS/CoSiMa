@@ -29,7 +29,7 @@ int OSMPInterface::init(float starttime) {
 	osmpStub = CoSiMa::rpc::OSMPSimulationInterface::NewStub(channel);
 
 	CoSiMa::rpc::OSMPConfig rpcConfig;
-	rpcConfig.set_fmu_path(config.model);
+	//rpcConfig.set_fmu_path(config.model);
 	for (const auto& param : config.parameter) {
 		auto parameter = rpcConfig.add_parameter();
 		parameter->set_name(param.name);
@@ -72,14 +72,33 @@ int OSMPInterface::init(float starttime) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg << std::endl;
-#ifdef __linux__
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
+	sendFMU();
+
 	return response.value();
+}
+
+bool OSMPInterface::sendFMU() {
+
+	FMUReader fmureader(config.model);
+	
+	CoSiMa::rpc::FMUPart fmupart;
+	std::vector<char> bytes = fmureader.getBytes();
+	for (char byte : bytes) {
+		CoSiMa::rpc::Chunk* chunk = fmupart.add_chunk();
+		chunk->set_content(&byte);
+	}
+
+	// context to handle the following rpc call - cannot be reused
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+
+	CoSiMa::rpc::UploadStatus response;
+
+	auto status = osmpStub->UploadFMU(context.get(), fmupart, &response);
+
+	return true;
 }
 
 int OSMPInterface::doStep(double stepsize)
@@ -98,11 +117,7 @@ int OSMPInterface::doStep(double stepsize)
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg << std::endl;
-#ifdef __linux__
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
 	return rpcResponse.value();
@@ -123,11 +138,7 @@ int OSMPInterface::writeToInternalState() {
 		if (!status.ok()) {
 			auto msg = status.error_message();
 			std::cerr << msg << std::endl;
-#ifdef __linux__
 			throw std::exception();
-#else
-			throw std::exception(msg.c_str());
-#endif
 		}
 		if (debug) {
 			std::cout << "OSMPInterface: read " << output.interface_name << ", Size : " << rpcValue.value().size()
@@ -157,12 +168,8 @@ int OSMPInterface::readFromInternalState() {
 
 		if (!status.ok()) {
 			auto msg = status.error_message();
-			std::cerr << msg;
-#ifdef __linux__
+			std::cerr << msg << std::endl;
 			throw std::exception();
-#else
-			throw std::exception(msg.c_str());
-#endif
 		}
 	}
 	return 0;

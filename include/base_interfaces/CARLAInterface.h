@@ -9,7 +9,7 @@
 #include <map>
 
 #include "BaseSystemInterface.h"
-#include "configreader/BaseConfigVariants.h"
+#include "reader/BaseConfigVariants.h"
 #include "CoSiMaUtility.h"
 
 #include <grpc/grpc.h>

@@ -11,7 +11,7 @@
 #include "base_interfaces/BaseSystemInterface.h"
 #include "mapper/Mapper.h"
 #include "internalState.h"
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 
 //forward declarations
 /**

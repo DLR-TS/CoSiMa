@@ -10,7 +10,7 @@
 #include "yaml-cpp/yaml.h"
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 
 class SingleYAMLConfig {
 public:

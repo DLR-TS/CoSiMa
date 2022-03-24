@@ -7,7 +7,7 @@
 
 #include <variant>
 #include <string>
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 
 typedef std::variant<CARLAInterfaceConfig> baseConfigVariants_t;
 

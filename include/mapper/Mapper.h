@@ -13,7 +13,7 @@
 #include "base_interfaces/BaseSystemInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/internalState.h"
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 #include "mapper/NamesAndIndex.h"
 
 //forward declaration
