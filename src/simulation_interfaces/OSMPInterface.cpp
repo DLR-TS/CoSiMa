@@ -29,11 +29,17 @@ int OSMPInterface::init(float starttime) {
 	osmpStub = CoSiMa::rpc::OSMPSimulationInterface::NewStub(channel);
 
 	CoSiMa::rpc::OSMPConfig rpcConfig;
-	//rpcConfig.set_fmu_path(config.model);
+
 	for (const auto& param : config.parameter) {
 		auto parameter = rpcConfig.add_parameter();
 		parameter->set_name(param.name);
 		parameter->set_value(param.value);
+	}
+
+	//send FMU before rest of configuration
+	if (!sendFMU()) {
+		//if FMU could not be send the path may be a local path in OMSP environment
+		rpcConfig.set_fmupath(config.model);
 	}
 
 	// context to handle the following rpc call - cannot be reused
@@ -74,20 +80,23 @@ int OSMPInterface::init(float starttime) {
 		std::cerr << msg << std::endl;
 		throw std::exception();
 	}
-
-	sendFMU();
-
 	return response.value();
 }
 
 bool OSMPInterface::sendFMU() {
 
 	FMUReader fmureader(config.model);
+
+	if (!fmureader.fileExists()) {
+		std::cout << "Could not send given FMU path: " << config.model
+			<< " Will try this path as a local path direct in OSMP environment." << std::endl;
+		return false;
+	}
 	
-	CoSiMa::rpc::FMUPart fmupart;
+	CoSiMa::rpc::FMU fmu;
 	std::vector<char> bytes = fmureader.getBytes();
 	for (char byte : bytes) {
-		CoSiMa::rpc::Chunk* chunk = fmupart.add_chunk();
+		CoSiMa::rpc::Chunk* chunk = fmu.add_chunk();
 		chunk->set_content(&byte);
 	}
 
@@ -96,7 +105,7 @@ bool OSMPInterface::sendFMU() {
 
 	CoSiMa::rpc::UploadStatus response;
 
-	auto status = osmpStub->UploadFMU(context.get(), fmupart, &response);
+	auto status = osmpStub->UploadFMU(context.get(), fmu, &response);
 
 	return true;
 }

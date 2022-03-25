@@ -4,14 +4,13 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cstdint>
 #include <vector>
-#include <iomanip>
 
 class FMUReader {
 public:
 	FMUReader(const std::string path) : file(path, std::ios::binary) {};
 
+	bool fileExists();
 	std::vector<char> getBytes();
 
 private:

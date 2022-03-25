@@ -8,24 +8,20 @@ std::vector<char> FMUReader::getBytes() {
 	return bytes;
 }
 
+bool FMUReader::fileExists() {
+	return !file.fail();
+}
+
 bool FMUReader::fillBuffer() {
-	if (!file) {
-		std::cerr << "Could not fill Buffer since file is not available." << std::endl;
+	std::vector<char> buff(nbytes);
+	file.read(buff.data(), buff.size());
+	readBytes = file.gcount(); // number of bytes that were actually read
+
+	if (readBytes == 0) {
 		return false;
 	}
-
-	std::vector<char> buff(nbytes);
-
-	if (file.read(buff.data(), buff.size()))
-	{
-		readBytes = file.gcount(); // number of bytes that were actually read
-
-		if (readBytes == 0) {
-			return false;
-		}
-
-		std::vector<std::uint8_t> bytes(buff.begin(), buff.begin() + readBytes);
-		byteVector = bytes;
-	}
+	std::vector<std::uint8_t> bytes(buff.begin(), buff.begin() + readBytes);
+	byteVector = bytes;
+	
 	return true;
 }
