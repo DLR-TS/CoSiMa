@@ -85,27 +85,41 @@ int OSMPInterface::init(float starttime) {
 
 bool OSMPInterface::sendFMU() {
 
-	FMUReader fmureader(config.model);
+	std::ifstream is(config.model, std::ios::binary);
+	if (is) {
+		// get length of file:
+		is.seekg(0, is.end);
+		int length = is.tellg();
+		is.seekg(0, is.beg);
 
-	if (!fmureader.fileExists()) {
-		std::cout << "Could not send given FMU path: " << config.model
+		// allocate memory:
+		char* buffer = new char[length];
+
+		// read data as a block:
+		is.read(buffer, length);
+
+		is.close();
+
+		CoSiMa::rpc::FMU fmu;
+		fmu.set_binaryfmu(buffer, length);
+
+		// context to handle the following rpc call - cannot be reused
+		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+
+		CoSiMa::rpc::UploadStatus response;
+
+		auto status = osmpStub->UploadFMU(context.get(), fmu, &response);
+
+		if (response.code() != CoSiMa::rpc::UploadStatusCode::Ok) {
+			std::cout << "Could not send given FMU path: " << config.model
+				<< " Will try this path as a local path direct in OSMP environment." << std::endl;
+			return false;
+		}
+	} else {
+		std::cout << "Could not find given FMU path: " << config.model
 			<< " Will try this path as a local path direct in OSMP environment." << std::endl;
 		return false;
 	}
-	
-	CoSiMa::rpc::FMU fmu;
-	std::vector<char> bytes = fmureader.getBytes();
-	for (char byte : bytes) {
-		CoSiMa::rpc::Chunk* chunk = fmu.add_chunk();
-		chunk->set_content(&byte);
-	}
-
-	// context to handle the following rpc call - cannot be reused
-	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-	CoSiMa::rpc::UploadStatus response;
-
-	auto status = osmpStub->UploadFMU(context.get(), fmu, &response);
 
 	return true;
 }

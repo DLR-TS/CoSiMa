@@ -7,9 +7,9 @@
 
 #include <thread>
 #include <chrono>
+#include <fstream>
 
 #include "simulation_interfaces/iSimulationData.h"
-#include "reader/FMUReader.h"
 
 #include "CoSiMaUtility.h"
 
