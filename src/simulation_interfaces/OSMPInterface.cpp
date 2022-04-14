@@ -164,7 +164,7 @@ int OSMPInterface::writeToInternalState() {
 			throw std::exception();
 		}
 		if (debug) {
-			std::cout << "OSMPInterface: read " << output.interface_name << ", Size : " << rpcValue.value().size()
+			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << rpcValue.value().size()
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
 		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
@@ -184,7 +184,7 @@ int OSMPInterface::readFromInternalState() {
 
 		CoSiMa::rpc::Int32 rpcRetVal;
 		if (debug) {
-			std::cout << "OSMPInterface: write " << input.interface_name << ", Size : " << std::get<std::string>(value).size()
+			std::cout << "OSMPInterface: write " << input.interface_name << ", Size: " << std::get<std::string>(value).size()
 				<< ", Hash: " << std::hash<std::string>{}(std::get<std::string>(value)) << std::endl;
 		}
 		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);

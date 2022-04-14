@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		exit(6);
 	}
 	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->init(0.0) != 0) { //TODO 
+		if (simInterface->init(0.0) != 0) { //TODO
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
 			exit(3);
 		}
@@ -132,6 +132,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 	bool continueSimulationLoop = true;
 
 	double stepsize = baseSystem->getStepSize();
+	double total_time = 0;
 
 	while (continueSimulationLoop) {
 
@@ -153,8 +154,9 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		}
 
 		if (runtimeParameter.debug) {
-			std::cout << "DoStep with stepsize: " << stepsize << std::endl;
+			std::cout << "DoStep with stepsize: " << stepsize << " Time: " << total_time << std::endl;
 		}
+		total_time += stepsize;
 
 		for (auto &simInterface : simulationInterfaces) {
 			//do simulaton step
