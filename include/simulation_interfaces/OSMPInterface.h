@@ -22,7 +22,7 @@
 
 class OSMPInterface : public iSimulationData {
 public:
-	OSMPInterface(std::shared_ptr<Mapper> mapper, bool debug) : iSimulationData(mapper, debug) {};
+	OSMPInterface(std::shared_ptr<Mapper> mapper, bool verbose) : iSimulationData(mapper, verbose) {};
 	
 	int init(float starttime) override;
 	int disconnect() override;

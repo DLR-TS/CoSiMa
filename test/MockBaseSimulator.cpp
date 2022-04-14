@@ -71,7 +71,7 @@ public:
 		return 0;
 	};
 
-	virtual int initialize(bool debug, bool log) override {
+	virtual int initialize(bool verbose, bool log) override {
 		return 0;
 	};
 

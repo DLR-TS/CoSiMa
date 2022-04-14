@@ -10,8 +10,8 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 	return 0;
 }
 
-int CARLAInterface::initialize(bool debug, bool logOSI) {
-	this->debug = debug;
+int CARLAInterface::initialize(bool verbose, bool logOSI) {
+	this->verbose = verbose;
 	this->logOSI = logOSI;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
@@ -92,7 +92,7 @@ double CARLAInterface::doStep(double stepSize)
 int CARLAInterface::getIntValue(std::string base_name) {
 	auto entry = integerMap.find(base_name);
 	if (integerMap.end() == entry) {
-		if (debug) {
+		if (verbose) {
 			std::cout << "CarlaInterface: getIntValue(" << base_name << ") No variable found.\n";
 		}
 		return 0;
@@ -103,7 +103,7 @@ int CARLAInterface::getIntValue(std::string base_name) {
 bool CARLAInterface::getBoolValue(std::string base_name) {
 	auto entry = boolMap.find(base_name);
 	if (boolMap.end() == entry) {
-		if (debug) {
+		if (verbose) {
 			std::cout << "CarlaInterface: getBoolValue(" << base_name << ") No variable found.\n";
 		}
 		return 0;
@@ -114,7 +114,7 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 float CARLAInterface::getFloatValue(std::string base_name) {
 	auto entry = floatMap.find(base_name);
 	if (floatMap.end() == entry) {
-		if (debug) {
+		if (verbose) {
 			std::cout << "CarlaInterface: getFloatValue(" << base_name << ") No variable found.\n";
 		}
 		return 0;
@@ -125,7 +125,7 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 double CARLAInterface::getDoubleValue(std::string base_name) {
 	auto entry = doubleMap.find(base_name);
 	if (doubleMap.end() == entry) {
-		if (debug) {
+		if (verbose) {
 			std::cout << "CarlaInterface: getDoubleValue(" << base_name << ") No variable found.\n";
 		}
 		return 0;
@@ -164,7 +164,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 
 int CARLAInterface::setIntValue(std::string base_name, int value) {
 	integerMap[base_name] = value;
-	if (debug) {
+	if (verbose) {
 		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
 	}
 	return 0;
@@ -172,7 +172,7 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 
 int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 	boolMap[base_name] = value;
-	if (debug) {
+	if (verbose) {
 		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
 	}
 	return 0;
@@ -180,7 +180,7 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 
 int CARLAInterface::setFloatValue(std::string base_name, float value) {
 	floatMap[base_name] = value;
-	if (debug) {
+	if (verbose) {
 		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
 	}
 	return 0;
@@ -188,7 +188,7 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 
 int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 	doubleMap[base_name] = value;
-	if (debug) {
+	if (verbose) {
 		std::cout << "CarlaInterface: setDoubleValue() to " << value << "\n";
 	}
 	return 0;
@@ -232,35 +232,35 @@ CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
 
 		if (sensorViewExtra.cameraSensorMountingPosition.size()) {
-			if (debug) {
+			if (verbose) {
 				std::cout << "Set CameraSensorMountingPositon\n";
 			}
 			copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
 				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
 		}
 		if (sensorViewExtra.radarSensorMountingPosition.size()) {
-			if (debug) {
+			if (verbose) {
 				std::cout << "Set RadarSensorMountingPosition\n";
 			}
 			copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
 				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
 		}
 		if (sensorViewExtra.lidarSensorMountingPosition.size()) {
-			if (debug) {
+			if (verbose) {
 				std::cout << "Set LidarSensorMountingPosition\n";
 			}
 			copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
 				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
 		}
 		if (sensorViewExtra.ultrasonicSensorMountingPosition.size()) {
-			if (debug) {
+			if (verbose) {
 				std::cout << "Set UltrasonicSensorMountingPosition\n";
 			}
 			copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
 				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
 		}
 		if (sensorViewExtra.genericSensorMountingPosition.size()) {
-			if (debug) {
+			if (verbose) {
 				std::cout << "Set GenericSensorMountingPosition\n";
 			}
 			copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,

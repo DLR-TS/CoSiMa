@@ -29,7 +29,7 @@ public:
 	\param simulator simulator type to create
 	\return simulator interface
 	*/
-	static std::shared_ptr<iSimulationData> makeInterface(eSimulatorName simulator, bool debug);
+	static std::shared_ptr<iSimulationData> makeInterface(eSimulatorName simulator, bool verbose);
 
 private:
 	/**
@@ -37,7 +37,7 @@ private:
 	\param simulator simulator type to create
 	\return simulator interface
 	*/
-	static std::unique_ptr<iSimulationData> createInterface(eSimulatorName simulator, bool debug);
+	static std::unique_ptr<iSimulationData> createInterface(eSimulatorName simulator, bool verbose);
 };
 
 #endif // !SIMULATIONINTERFACEFACTORY_H

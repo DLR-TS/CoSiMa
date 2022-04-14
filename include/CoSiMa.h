@@ -18,7 +18,7 @@
 
 struct cmdParameter {
     bool log = false;
-    bool debug = false;
+    bool verbose = false;
     bool logOSI = false;
     std::string logPath;
 };

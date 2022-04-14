@@ -12,9 +12,9 @@ int OSMPInterface::readConfiguration(configVariants_t variant) {
 
 int OSMPInterface::init(float starttime) {
 
-  if (debug){
-    std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
-  }
+	if (verbose) {
+		std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
+	}
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
 
@@ -132,7 +132,7 @@ int OSMPInterface::doStep(double stepsize)
 	CoSiMa::rpc::Double rpcStepSize;
 	CoSiMa::rpc::Int32 rpcResponse;
 	rpcStepSize.set_value(stepsize);
-	if (debug) {
+	if (verbose) {
 		std::cout << "OSMPInterface: doStep \n";
 	}
 	auto status = stub->DoStep(context.get(), rpcStepSize, &rpcResponse);
@@ -163,7 +163,7 @@ int OSMPInterface::writeToInternalState() {
 			std::cerr << msg << std::endl;
 			throw std::exception();
 		}
-		if (debug) {
+		if (verbose) {
 			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << rpcValue.value().size()
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
@@ -183,7 +183,7 @@ int OSMPInterface::readFromInternalState() {
 		namedValue.set_value(std::get<std::string>(value));
 
 		CoSiMa::rpc::Int32 rpcRetVal;
-		if (debug) {
+		if (verbose) {
 			std::cout << "OSMPInterface: write " << input.interface_name << ", Size: " << std::get<std::string>(value).size()
 				<< ", Hash: " << std::hash<std::string>{}(std::get<std::string>(value)) << std::endl;
 		}

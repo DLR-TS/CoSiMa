@@ -46,10 +46,10 @@ public:
 	Constructor of iSimulationData.
 	\param mapper Mapper to be set.
 	*/
-	iSimulationData(std::shared_ptr<Mapper> mapper, bool debug)
+	iSimulationData(std::shared_ptr<Mapper> mapper, bool verbose)
 	{
 		this->mapper = mapper;
-		this->debug = debug;
+		this->verbose = verbose;
 	}
 
 protected:
@@ -61,8 +61,10 @@ protected:
 	Specific mapper of this interface.
 	*/
 	std::shared_ptr<Mapper> mapper;
-
-	bool debug;
+	/**
+	* log level
+	*/
+	bool verbose = false;
 
 public:
 	/**

@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
 #endif
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
-		if (currentArg == "-d") {
-			runtimeParameter.debug = true;
+		if (currentArg == "-d" || currentArg == "-v") {
+			runtimeParameter.verbose = true;
 		}
 		else if (currentArg == "-l") {
 			runtimeParameter.log = true;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 		std::cout << "##########" << "COSIMALOG" << "##########" << std::endl;
 	}
 
-	if (runtimeParameter.debug) {
+	if (runtimeParameter.verbose) {
 		std::cout << "Configuration file: " << path << "\n";
 	}
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.debug);
+		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.verbose);
 		if (newInterface == nullptr) {
 			std::cout << "Failed to create a simulator interface." << std::endl;
 			exit(1);
@@ -89,12 +89,12 @@ int main(int argc, char *argv[])
 		simulationInterfaces.push_back(std::move(newInterface));
 	}
 
-	if (runtimeParameter.debug) {
+	if (runtimeParameter.verbose) {
 		std::cout << "Begin Initializiation \n" << std::endl;
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialize(runtimeParameter.debug, runtimeParameter.logOSI)) {
+	if (0 != baseSystem->initialize(runtimeParameter.verbose, runtimeParameter.logOSI)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (runtimeParameter.debug) {
+	if (runtimeParameter.verbose) {
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
 	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
 
-	if (runtimeParameter.debug) {
+	if (runtimeParameter.verbose) {
 		std::cout << "Begin Disconnect Phase\n " << std::endl;
 	}
 
@@ -137,7 +137,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 	while (continueSimulationLoop) {
 
 		//read from base_system
-		if (runtimeParameter.debug) {
+		if (runtimeParameter.verbose) {
 			std::cout << "Read Base System and write to Interfaces\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {
@@ -153,7 +153,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 			}
 		}
 
-		if (runtimeParameter.debug) {
+		if (runtimeParameter.verbose) {
 			std::cout << "DoStep with stepsize: " << stepsize << " Time: " << total_time << std::endl;
 		}
 		total_time += stepsize;
@@ -165,7 +165,7 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		// base simulation interface also performs a step
 		baseSystem->doStep(stepsize);
 
-		if (runtimeParameter.debug) {
+		if (runtimeParameter.verbose) {
 			std::cout << "Read Interfaces\n";
 		}
 		for (auto &simInterface : simulationInterfaces) {

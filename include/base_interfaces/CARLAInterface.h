@@ -59,7 +59,7 @@ private:
 	std::map <std::string, double> doubleMap{};
 	std::map <std::string, bool> boolMap{};
 
-	bool debug = false;
+	bool verbose = false;
 	bool logOSI = false;
 };
 
