@@ -22,6 +22,9 @@ int main(int argc, char *argv[])
 			runtimeParameter.log = true;
 			runtimeParameter.logPath = std::string(argv[++i]);
 		}
+		else if (currentArg == "-t") {
+			runtimeParameter.timestamps = true;
+		}
 		else if (currentArg == "-OSI" || currentArg == "-osi") {
 			runtimeParameter.logOSI = true;
 			std::cout << "You started CoSiMa with OSI messages activated in output. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
@@ -126,6 +129,14 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+inline void printTimeStamp(bool printtimestamps) {
+	auto time = std::chrono::system_clock::now().time_since_epoch();
+	auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+	auto sec_since_epoch = std::chrono::duration_cast<std::chrono::seconds>(time).count();
+
+	std::cout << "Time:" << sec_since_epoch << ":" << millisec_since_epoch << "\n";
+}
+
 void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
 	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
 	//start simulationloop
@@ -138,47 +149,54 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 
 		//read from base_system
 		if (runtimeParameter.verbose) {
-			std::cout << "Read Base System and write to Interfaces\n";
+			std::cout << "Write information to all interfaces" << std::endl;
 		}
 		for (auto &simInterface : simulationInterfaces) {
 			//read from baseSystem, sort in internalState
+			printTimeStamp(runtimeParameter.timestamps);
 			if (simInterface->mapToInterfaceSystem(baseSystem)) {
 				std::cout << "Error in input matching while updating internal state." << std::endl;
 				continueSimulationLoop = false;
 			}
+			printTimeStamp(runtimeParameter.timestamps);
 			//write to interface
 			if (simInterface->readFromInternalState()) {
 				std::cout << "Error in input matching while updating simulation interface inputs." << std::endl;
 				continueSimulationLoop = false;
 			}
+			printTimeStamp(runtimeParameter.timestamps);
 		}
 
 		if (runtimeParameter.verbose) {
-			std::cout << "DoStep with stepsize: " << stepsize << " Time: " << total_time << std::endl;
+			std::cout << "Modules DoStep with stepsize: " << stepsize << " Simulation Time: " << total_time << std::endl;
 		}
 		total_time += stepsize;
 
 		for (auto &simInterface : simulationInterfaces) {
 			//do simulaton step
+			printTimeStamp(runtimeParameter.timestamps);
 			simInterface->doStep(stepsize);
+			printTimeStamp(runtimeParameter.timestamps);
 		}
 		// base simulation interface also performs a step
+		if (runtimeParameter.verbose) {
+			std::cout << "BaseSystem do step" << std::endl;
+		}
+		printTimeStamp(runtimeParameter.timestamps);
 		baseSystem->doStep(stepsize);
+		printTimeStamp(runtimeParameter.timestamps);
 
 		if (runtimeParameter.verbose) {
-			std::cout << "Read Interfaces\n";
+			std::cout << "Read information from all interfaces" << std::endl;
 		}
 		for (auto &simInterface : simulationInterfaces) {
 			//get output data from interface and sort into internalState
+			printTimeStamp(runtimeParameter.timestamps);
 			simInterface->writeToInternalState();
-			if (runtimeParameter.logOSI) {
-				//log all String entries of interface
-				for (std::string& osi_message : simInterface->getMapper()->getInternalState()->strings) {
-					std::cout << "Message:\n" << osi_message << "\n";
-				}
-			}
+			printTimeStamp(runtimeParameter.timestamps);
 			//and write to base system
 			simInterface->mapFromInterfaceSystem(baseSystem);
+			printTimeStamp(runtimeParameter.timestamps);
 		}
 	}
 }
