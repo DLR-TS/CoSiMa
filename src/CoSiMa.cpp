@@ -130,11 +130,13 @@ int main(int argc, char *argv[])
 }
 
 inline void printTimeStamp(bool printtimestamps) {
-	auto time = std::chrono::system_clock::now().time_since_epoch();
-	auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-	auto sec_since_epoch = std::chrono::duration_cast<std::chrono::seconds>(time).count();
+	if (printtimestamps) {
+		auto time = std::chrono::system_clock::now().time_since_epoch();
+		auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
+		auto sec_since_epoch = std::chrono::duration_cast<std::chrono::seconds>(time).count();
 
-	std::cout << "Time:" << sec_since_epoch << ":" << millisec_since_epoch << "\n";
+		std::cout << "Time:" << sec_since_epoch << ":" << millisec_since_epoch << "\n";
+	}
 }
 
 void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
