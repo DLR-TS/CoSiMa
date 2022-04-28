@@ -173,7 +173,7 @@ void Mapper::mapToInternalState(values_t value, std::string interfaceName, eData
 		}
 		break;
 	}
-	std::cout << "Mapper.cpp(Mapper::mapToInternalState): Could not map variable " << interfaceName << " of type " 
+	std::cerr << __FUNCTION__ << " Could not map variable " << interfaceName << " of type "
 		<< type << " to internal state because there is no variable of such name and type to map to." << std::endl;
 	//Not found
 	//TODO really use throw?
@@ -224,7 +224,7 @@ values_t Mapper::mapFromInternalState(std::string interfaceName, eDataType type)
 		}
 		break;
 	}
-	std::cout << "Mapper.cpp(Mapper::mapFromInternalState): Could not map variable " << interfaceName << " of type " << std::boolalpha
+	std::cout << __FUNCTION__ << " Could not map variable " << interfaceName << " of type " << std::boolalpha
 		<< type << " from internal state because there is no variable of such name and type to map from." << std::endl;
 	//Not found
 	//TODO really use throw?

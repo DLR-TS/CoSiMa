@@ -4,9 +4,9 @@ int main(int argc, char *argv[])
 {
 	cmdParameter runtimeParameter;
 
-	std::cout << "Welcome to CoSiMa." << std::endl << std::endl;
+	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 #if __cplusplus > 201703L
-	std::cout << std::filesystem::current_path() << std::endl << std::endl;
+	std::cout << std::filesystem::current_path() << "\n" << std::endl;
 
 	//start parameter
 	std::string path(std::filesystem::current_path().string());
@@ -18,38 +18,12 @@ int main(int argc, char *argv[])
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
-		else if (currentArg == "-l") {
-			runtimeParameter.log = true;
-			runtimeParameter.logPath = std::string(argv[++i]);
-		}
-		else if (currentArg == "-t") {
+		else if (currentArg == "-t" || currentArg == "-timestamp") {
 			runtimeParameter.timestamps = true;
-		}
-		else if (currentArg == "-OSI" || currentArg == "-osi") {
-			runtimeParameter.logOSI = true;
-			std::cout << "You started CoSiMa with OSI messages activated in output. This will generate large output, since OSI messages can be very large.\nWrite Y to proceed an N to quit.\n";
-			std::string in;
-			std::cin >> in;
-			if (in != "Y" && in != "y")
-			{
-				std::cout << "Close CoSiMa" << std::endl;
-				exit(0);
-			}
 		}
 		else {
 			path = std::move(currentArg);//add more complex evaluation if necessary
 		}
-	}
-
-	//Logging
-	std::ofstream out;
-
-	if (runtimeParameter.log) {
-		std::cout << "No more output on the console. Output is directed to " << runtimeParameter.logPath << std::endl;
-		out = std::ofstream(runtimeParameter.logPath);
-		std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
-		std::cout.rdbuf(out.rdbuf()); //redirect std::cout
-		std::cout << "##########" << "COSIMALOG" << "##########" << std::endl;
 	}
 
 	if (runtimeParameter.verbose) {
@@ -97,7 +71,7 @@ int main(int argc, char *argv[])
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialize(runtimeParameter.verbose, runtimeParameter.logOSI)) {
+	if (0 != baseSystem->initialize(runtimeParameter.verbose)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
 		exit(6);
 	}
