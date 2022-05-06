@@ -72,7 +72,7 @@ public:
 	\param starttime Time of start.
 	\return Success status.
 	*/
-	virtual int init(float starttime) = 0;
+	virtual int init(float starttime = 0.0) = 0;
 	/**
 	Disconnect from interface.
 	\return Success status.

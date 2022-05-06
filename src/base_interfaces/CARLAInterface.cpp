@@ -53,13 +53,8 @@ int CARLAInterface::initialize(bool verbose) {
 	}
 
 	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-#ifdef __linux__
+		std::cerr << status.error_message() << std::endl;
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
 	return response.value();
@@ -76,13 +71,8 @@ double CARLAInterface::doStep(double stepSize)
 	auto status = stub->DoStep(context.get(), empty, &rpcValue);
 
 	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-#ifdef __linux__
+		std::cerr << status.error_message() << std::endl;
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
 	return rpcValue.value();
@@ -144,13 +134,8 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-#ifdef __linux__
+		std::cerr << status.error_message() << std::endl;
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
 	return rpcValue.value();
@@ -201,13 +186,8 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
 
 	if (!status.ok()) {
-		auto msg = status.error_message();
-		std::cerr << msg;
-#ifdef __linux__
+		std::cerr << status.error_message() << std::endl;
 		throw std::exception();
-#else
-		throw std::exception(msg.c_str());
-#endif
 	}
 
 	return rpcRetVal.value();

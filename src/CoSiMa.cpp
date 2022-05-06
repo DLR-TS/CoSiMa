@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 		else if (currentArg == "-t" || currentArg == "-timestamp") {
 			runtimeParameter.timestamps = true;
 		}
-		else if (currentArg == "-m") {
+		else if (currentArg == "-m" || currentArg == "-multithread") {
 			runtimeParameter.multithread = true;
 		}
 		else {
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 		exit(6);
 	}
 	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->init(0.0) != 0) { //TODO
+		if (simInterface->init() != 0) {
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
 			exit(3);
 		}
@@ -140,11 +140,9 @@ void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulati
 
 	//start simulationloop
 	bool continueSimulationLoop = true;
-
 	double stepsize = baseSystem->getStepSize();
-	double total_time = 0;
-
 	std::vector<std::thread> simulationThreads;
+
 	while (continueSimulationLoop) {
 
 		for (auto &simInterface : simulationInterfaces) {
