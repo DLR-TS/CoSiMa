@@ -21,6 +21,9 @@ int main(int argc, char *argv[])
 		else if (currentArg == "-t" || currentArg == "-timestamp") {
 			runtimeParameter.timestamps = true;
 		}
+		else if (currentArg == "-m") {
+			runtimeParameter.multithread = true;
+		}
 		else {
 			path = std::move(currentArg);//add more complex evaluation if necessary
 		}
@@ -86,7 +89,12 @@ int main(int argc, char *argv[])
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
-	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
+	if (runtimeParameter.multithread) {
+		simulationLoopMulti(simulationInterfaces, baseSystem, runtimeParameter);
+	}
+	else {
+		simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
+	}
 
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin Disconnect Phase\n " << std::endl;
@@ -110,6 +118,59 @@ inline void printTimeStamp(bool printtimestamps) {
 		auto sec_since_epoch = std::chrono::duration_cast<std::chrono::seconds>(time).count();
 
 		std::cout << "Time:" << sec_since_epoch << ":" << millisec_since_epoch << "\n";
+	}
+}
+
+void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
+	simInterface->mapToInterfaceSystem(baseSystem);
+	simInterface->readFromInternalState();
+}
+
+void doSimulationStep(std::shared_ptr<iSimulationData> simInterface, double stepsize) {
+	simInterface->doStep(stepsize);
+}
+
+void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
+	simInterface->writeToInternalState();
+	simInterface->mapFromInterfaceSystem(baseSystem);
+}
+
+void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+
+	//start simulationloop
+	bool continueSimulationLoop = true;
+
+	double stepsize = baseSystem->getStepSize();
+	double total_time = 0;
+
+	std::vector<std::thread> simulationThreads;
+	while (continueSimulationLoop) {
+
+		for (auto &simInterface : simulationInterfaces) {
+			simulationThreads.push_back(std::thread (prepareSimulationStep, simInterface, baseSystem));
+		}
+		for (auto &thread : simulationThreads) {
+			thread.join();
+		}
+		simulationThreads.clear();
+
+		for (auto &simInterface : simulationInterfaces) {
+			simulationThreads.push_back(std::thread (doSimulationStep, simInterface, stepsize));
+		}
+		baseSystem->doStep(stepsize);
+		for (auto &thread : simulationThreads) {
+			thread.join();
+		}
+		simulationThreads.clear();
+
+		for (auto &simInterface : simulationInterfaces) {
+			simulationThreads.push_back(std::thread(postSimulationStep, simInterface, baseSystem));
+		}
+		for (auto &thread : simulationThreads) {
+			thread.join();
+		}
+		simulationThreads.clear();
 	}
 }
 

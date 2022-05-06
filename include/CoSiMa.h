@@ -19,9 +19,13 @@
 struct cmdParameter {
 	bool verbose = false;
 	bool timestamps = false;
+	bool multithread = false;
 };
 
 void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
+
+void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
 	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
 
 #endif // !COSIMA_H
