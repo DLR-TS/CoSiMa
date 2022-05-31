@@ -3,5 +3,5 @@
 	url = https://github.com/NTNU-IHB/FMI4cpp.git
 [submodule "lib/open-simulation-interface"]
 	path = lib/open-simulation-interface
-	url = https://gitlab.sl4to5.de/deliverables/architecture/open-simulation-interface.git
+	url = https://gitlab.setlevel.de/deliverables/architecture/open-simulation-interface.git
 	branch = sl45/v3.2.2
