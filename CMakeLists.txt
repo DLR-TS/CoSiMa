@@ -123,7 +123,7 @@ set(COSIMA_GRPC_PROTO_FILES
 	grpc_proto_files/simulation_interface/OSMPSimulationInterface.proto
 )
 add_library(CoSimulationManagerGRPCLib ${COSIMA_GRPC_PROTO_FILES})
-generate_grpc_cpp(TARGET CoSimulationManagerGRPCLib IMPORT_DIRS ${CONAN_INCLUDE_DIRS_PROTOBUF} lib/open-simulation-interface)
+generate_grpc_cpp(TARGET CoSimulationManagerGRPCLib IMPORT_DIRS ${CONAN_INCLUDE_DIRS_PROTOBUF})
 if(BUILD_SHARED_LIBS)
 	target_link_libraries(CoSimulationManagerGRPCLib PUBLIC open_simulation_interface)
 else()
