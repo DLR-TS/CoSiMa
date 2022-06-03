@@ -79,8 +79,8 @@ include(FetchGRPC)
 # This allows us to unify package versions and remove unneeded options. (libzip:with_openssl introduces dependency on openssl, which collides with gRPC's boringssl)
 add_subdirectory(lib/FMI4cpp/ EXCLUDE_FROM_ALL)
 
-# add OSI as cmake subproject
-add_subdirectory ("lib/open-simulation-interface" EXCLUDE_FROM_ALL)
+# OSI is not distributed as conan package, but we already took care of installig its dependency (protobuf), so we can just fetch it
+include(FetchOpenSimulationInterface)
 
 ## main project
 # set up variables that are used below
