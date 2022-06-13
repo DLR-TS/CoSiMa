@@ -1,4 +1,3 @@
-#include <string>
 #include "simulation_interfaces/DefaultBridge.h"
 
 int DefaultBridge::init(float starttime) {

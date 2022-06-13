@@ -12,6 +12,7 @@
 #define NOMINMAX
 #include "fmi4cpp/fmi4cpp.hpp"
 //sleep to reduce poll interval for async FMUs
+#include <string>
 #include <thread>
 #include <optional>
 #include <chrono>
