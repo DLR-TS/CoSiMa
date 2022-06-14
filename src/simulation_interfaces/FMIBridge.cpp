@@ -1,5 +1,4 @@
-﻿#include <string>
-#include "simulation_interfaces/FMIBridge.h"
+﻿#include "simulation_interfaces/FMIBridge.h"
 
 int FMIBridge::readConfiguration(configVariants_t variant) {
 	if (std::get_if<FMIInterfaceConfig>(&variant) == nullptr) {

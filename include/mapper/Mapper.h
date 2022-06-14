@@ -10,6 +10,8 @@
 #include <map>
 #include <variant>
 #include <iostream>
+#include <algorithm>
+
 #include "base_interfaces/BaseSystemInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "simulation_interfaces/internalState.h"
