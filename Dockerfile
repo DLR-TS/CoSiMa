@@ -15,5 +15,4 @@ RUN cmake --build . --target CoSimulationManager -j 4
 
 FROM ubuntu
 COPY --from=cosima_builder /cosima/build/bin/CoSimulationManager .
-ENTRYPOINT ./OSMPService
 CMD ./CoSimulationManager SetLevelConfig.yml
