@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
+
 #include "yaml-cpp/yaml.h"
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
