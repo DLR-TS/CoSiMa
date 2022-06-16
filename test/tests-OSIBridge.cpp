@@ -9,7 +9,7 @@
 #include "simulation_interfaces/OSIBridge.h"
 #include "osi_sensorview.pb.h"
 #include "osi_common.pb.h"
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 
 TEST_CASE("OSIBridge Test") {
 

@@ -32,11 +32,12 @@ if(GIT_SUBMODULE)
 endif()
 
 # Download automatically, you can also just copy the conan.cmake file
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+#if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+# Somehow an empty conan.cmake file gets generated the first time in MSVC -> Always download the file.
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
                  "${CMAKE_BINARY_DIR}/conan.cmake")
-endif()
+#endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 

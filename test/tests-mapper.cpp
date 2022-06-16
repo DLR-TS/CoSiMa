@@ -8,7 +8,7 @@
 #include "MockBaseSimulator.cpp"
 #include "MockInterfaceSimulator.cpp"
 #include "MockMapper.cpp"
-#include "configreader/StandardYAMLConfig.h"
+#include "reader/StandardYAMLConfig.h"
 
 TEST_CASE("Request variable from base system") {
 

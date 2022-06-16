@@ -6,7 +6,7 @@
 
 #include "mapper/Mapper.h"
 #include "mapper/FMIMapper.h"
-#include "configreader/YAMLConfigReader.h"
+#include "reader/YAMLConfigReader.h"
 #include "SimulationInterfaceFactory.h"
 #include "simulation_interfaces/FMIBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"

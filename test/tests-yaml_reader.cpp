@@ -4,7 +4,7 @@
 
 #include "catch2/catch.hpp"
 
-#include "configreader/YAMLConfigReader.h"
+#include "reader/YAMLConfigReader.h"
 #include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/OSIBridge.h"
 #include "simulation_interfaces/OSMPBridge.h"
