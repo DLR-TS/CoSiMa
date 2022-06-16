@@ -8,17 +8,15 @@ The DLR research implementation consists at the moment out of 4 distinct program
 3. OSMP Services for each FMU
 4. CoSiMa with corresponding configuration file
 
-## Installation Guide
+## Manual Installation Guide
 
 preparations:\
 install cmake (version 3.12 or newer)\
 install (conan.io)[conan.io] (version 1.29.x or newer )\
 add conan.exe to PATH environment variable
-<!--check out submodules (git submodule update --init --recursive) to get FMI4cpp or use GIT_SUBMODULE CMake option to do so automatically during build
-	- FMI4cpp is not available as conan package (might change in the future?)
-	- its dependencies are installed using conan, invoked from cmake when building CoSimulationManagerLib-->
 
-# manual build
+### Linux
+
 in root folder:
 ```sh
  mkdir build && cd build
@@ -26,20 +24,23 @@ in root folder:
  cmake --build . --target CoSimulationManager
 ```
 
- Because of broken dependencies using MSVC, build and use static libraries on windows by appending '-D BUILD_SHARED_LIBS=false' to all cmake generation calls
+### Docker
+Create personal access token (PAT) for gitlab.setlevel.de.\
+Create .TOKEN file in project root.
 
-# building in Visual Studio 2017
-just open the folder in Visual Studio and use the cmake integration
+Paste PAT in file: \<username\>:\<accesstoken\>
+```sh
+ docker build -t setlevel:cosima .
+```
 
-In Windows in den CMakeSettings.json "cmakeCommandArgs": "-D BUILD_SHARED_LIBS=false", einfügen.\
-Do not build the libs shared.
+The docker container contains no configuration file. Import it by docker volume and add the according path as a runtime parameter.
 
-use cmake for project generation
+### Windows with MSVC 2017
+Open the folder in Visual Studio and use the cmake integration.
 
-# CMake FetchContent Overrides
-Some dependencies are retrieved using CMake's FetchContent Module. To override their source in your local repository, create a file named 'CMake_FetchContent_Overrides.cmake' and use the FetchContent_declare() to declare your desired replacement. The will be included by the root CmakeLists.txt file. CMake_FetchContent_Overrides.cmake is ignored and thus will not be added to the global repository. 
 
-LibCarla_client, its dependencies and gRPC currently are included using FetchContent.
+### CMake FetchContent Overrides
+Some dependencies are retrieved using CMake's FetchContent Module. To override their source in your local repository, create a file named 'CMake_FetchContent_Overrides.cmake' and use the FetchContent_declare() to declare your desired replacement. They will be included by the root CMakeLists.txt file. CMake_FetchContent_Overrides.cmake is ignored and thus will not be added to the global repository. 
 
 # Configure CoSiMa
 To start CoSiMa a config file (yaml) needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
