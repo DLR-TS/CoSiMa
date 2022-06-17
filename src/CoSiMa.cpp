@@ -5,14 +5,8 @@ int main(int argc, char *argv[])
 	cmdParameter runtimeParameter;
 
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
-#if __cplusplus > 201703L
-	std::cout << std::filesystem::current_path() << "\n" << std::endl;
 
-	//start parameter
-	std::string path(std::filesystem::current_path().string());
-#else
 	std::string path;
-#endif
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		if (currentArg == "-d" || currentArg == "-v") {
@@ -29,11 +23,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (path.size() == 0) {
+		std::cout << "No yaml configuration file!" << std::endl;
+		exit(0);
+	}
+
 	if (runtimeParameter.verbose) {
 		std::cout << "Configuration file: " << path << "\n";
 	}
 
-	//read config
 	YAMLConfigReader reader = YAMLConfigReader(path);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
 
@@ -43,6 +41,7 @@ int main(int argc, char *argv[])
 	* Vector that holds every simulation interface.
 	*/
 	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
+
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		if (simulatorname.simulator == CARLA) {
