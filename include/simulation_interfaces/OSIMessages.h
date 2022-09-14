@@ -6,10 +6,15 @@
 #define OSIMESSAGES_H
 
 #include <variant>
-#include "osi_sensorview.pb.h"
-#include "osi_sensordata.pb.h"
-#include "osi_sensorviewconfiguration.pb.h"
 #include "osi_groundtruth.pb.h"
+#include "osi_sensorview.pb.h"
+#include "osi_sensorviewconfiguration.pb.h"
+#include "osi_sensordata.pb.h"
+#include "osi_trafficcommand.pb.h"
+#include "osi_trafficupdate.pb.h"
+
+#include "sl45_motioncommand.pb.h"
+#include "sl45_vehiclecommunicationdata.pb.h"
 
 /**
 * Implemented OSI Messages

@@ -11,12 +11,6 @@
 #include "../mapper/Mapper.h"
 #include "../mapper/OSIMapper.h"
 #include "OSIMessages.h"
-#include "osi_sensorview.pb.h"
-#include "osi_trafficcommand.pb.h"
-#include "osi_trafficupdate.pb.h"
-#include "sl45_motioncommand.pb.h"
-#include "sl45_vehiclecommunicationdata.pb.h"
-
 
 class OSIBridge : public iSimulationData
 {
