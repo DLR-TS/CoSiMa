@@ -124,14 +124,14 @@ public:
 	virtual void setOwner(std::weak_ptr<iSimulationData> owner) final;
 	/**
 	search input of this mapper from base system interface
-	\param simulationInterface base system simulation interfaces
-	\return success status
+	\param simulationInterface simulation system interfaces
 	*/
-	int searchInput(std::shared_ptr<BaseSystemInterface> simulationInterface);
+	void searchInput(std::shared_ptr<BaseSystemInterface> simulationInterface);
 	/**
 	write output variables to base interface
+	\param baseInterface base system simulation interfaces
 	*/
-	int writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface);
+	void writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Read configuration and fill mapper configuration.
 	\param config the decoding struct

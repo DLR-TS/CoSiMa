@@ -3,39 +3,32 @@
 int main(int argc, char *argv[])
 {
 	cmdParameter runtimeParameter;
+	std::string configurationPath;
 
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 
-	std::string path;
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg = argv[i];
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
-		else if (currentArg == "-t" || currentArg == "-timestamp") {
-			runtimeParameter.timestamps = true;
-		}
-		else if (currentArg == "-m" || currentArg == "-multithread") {
-			runtimeParameter.multithread = true;
-		}
 		else {
-			path = std::move(currentArg);//add more complex evaluation if necessary
+			configurationPath = currentArg;
 		}
 	}
 
-	if (path.size() == 0) {
+	if (configurationPath.size() == 0) {
 		std::cout << "No yaml configuration file!" << std::endl;
 		exit(0);
 	}
 
 	if (runtimeParameter.verbose) {
-		std::cout << "Configuration file: " << path << "\n";
+		std::cout << "Configuration file: " << configurationPath << std::endl;
 	}
 
-	YAMLConfigReader reader = YAMLConfigReader(path);
+	YAMLConfigReader reader = YAMLConfigReader(configurationPath);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
 
-	bool carlaUsedAsBaseInterface = false;
 	std::shared_ptr<BaseSystemInterface> baseSystem;
 	/**
 	* Vector that holds every simulation interface.
@@ -46,7 +39,6 @@ int main(int argc, char *argv[])
 	for (SingleYAMLConfig simulatorname : simulatornames) {
 		if (simulatorname.simulator == CARLA) {
 			std::cout << "Add CARLA module" << std::endl;
-			carlaUsedAsBaseInterface = true;
 			baseSystem = std::make_shared<CARLAInterface>();
 			if (reader.setBaseSystemConfig(baseSystem, simulatorname)) {
 				std::cout << "Problem occured during interpretation of configuration file. (Base System)" << std::endl;
@@ -88,12 +80,7 @@ int main(int argc, char *argv[])
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
-	if (runtimeParameter.multithread) {
-		simulationLoopMulti(simulationInterfaces, baseSystem, runtimeParameter);
-	}
-	else {
-		simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
-	}
+	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
 
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin Disconnect Phase\n " << std::endl;
@@ -110,16 +97,6 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-inline void printTimeStamp(bool printtimestamps) {
-	if (printtimestamps) {
-		auto time = std::chrono::system_clock::now().time_since_epoch();
-		auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-		auto sec_since_epoch = std::chrono::duration_cast<std::chrono::seconds>(time).count();
-
-		std::cout << "Time:" << sec_since_epoch << ":" << millisec_since_epoch << "\n";
-	}
-}
-
 void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
 	simInterface->mapToInterfaceSystem(baseSystem);
 	simInterface->readFromInternalState();
@@ -134,11 +111,12 @@ void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shar
 	simInterface->mapFromInterfaceSystem(baseSystem);
 }
 
-void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
 	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
 
 	//start simulationloop
 	bool continueSimulationLoop = true;
+	double total_time = 0;
 	double stepsize = baseSystem->getStepSize();
 	std::vector<std::thread> simulationThreads;
 
@@ -151,6 +129,11 @@ void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulati
 			thread.join();
 		}
 		simulationThreads.clear();
+
+		if (runtimeParameter.verbose) {
+			std::cout << "Modules DoStep with stepsize: " << stepsize << " Simulation Time: " << total_time << std::endl;
+			total_time += stepsize;
+		}
 
 		for (auto &simInterface : simulationInterfaces) {
 			simulationThreads.push_back(std::thread (doSimulationStep, simInterface, stepsize));
@@ -168,69 +151,5 @@ void simulationLoopMulti(std::vector<std::shared_ptr<iSimulationData>> &simulati
 			thread.join();
 		}
 		simulationThreads.clear();
-	}
-}
-
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
-	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
-	//start simulationloop
-	bool continueSimulationLoop = true;
-
-	double stepsize = baseSystem->getStepSize();
-	double total_time = 0;
-
-	while (continueSimulationLoop) {
-
-		//read from base_system
-		if (runtimeParameter.verbose) {
-			std::cout << "Write information to all interfaces" << std::endl;
-		}
-		for (auto &simInterface : simulationInterfaces) {
-			//read from baseSystem, sort in internalState
-			printTimeStamp(runtimeParameter.timestamps);
-			if (simInterface->mapToInterfaceSystem(baseSystem)) {
-				std::cout << "Error in input matching while updating internal state." << std::endl;
-				continueSimulationLoop = false;
-			}
-			printTimeStamp(runtimeParameter.timestamps);
-			//write to interface
-			if (simInterface->readFromInternalState()) {
-				std::cout << "Error in input matching while updating simulation interface inputs." << std::endl;
-				continueSimulationLoop = false;
-			}
-			printTimeStamp(runtimeParameter.timestamps);
-		}
-
-		if (runtimeParameter.verbose) {
-			std::cout << "Modules DoStep with stepsize: " << stepsize << " Simulation Time: " << total_time << std::endl;
-		}
-		total_time += stepsize;
-
-		for (auto &simInterface : simulationInterfaces) {
-			//do simulaton step
-			printTimeStamp(runtimeParameter.timestamps);
-			simInterface->doStep(stepsize);
-			printTimeStamp(runtimeParameter.timestamps);
-		}
-		// base simulation interface also performs a step
-		if (runtimeParameter.verbose) {
-			std::cout << "BaseSystem do step" << std::endl;
-		}
-		printTimeStamp(runtimeParameter.timestamps);
-		baseSystem->doStep(stepsize);
-		printTimeStamp(runtimeParameter.timestamps);
-
-		if (runtimeParameter.verbose) {
-			std::cout << "Read information from all interfaces" << std::endl;
-		}
-		for (auto &simInterface : simulationInterfaces) {
-			//get output data from interface and sort into internalState
-			printTimeStamp(runtimeParameter.timestamps);
-			simInterface->writeToInternalState();
-			printTimeStamp(runtimeParameter.timestamps);
-			//and write to base system
-			simInterface->mapFromInterfaceSystem(baseSystem);
-			printTimeStamp(runtimeParameter.timestamps);
-		}
 	}
 }

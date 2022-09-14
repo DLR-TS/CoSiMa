@@ -1,6 +1,6 @@
 #include "mapper/Mapper.h"
 
-int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
+void Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer
 	for (const NamesAndIndex &input : config.intInputList) {
 		int value = baseInterface->getIntValue(input.baseName);
@@ -26,10 +26,9 @@ int Mapper::searchInput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 		std::string value = baseInterface->getStringValue(input.baseName);
 		state->strings[input.index] = value;
 	}
-	return 0;
 }
 
-int Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
+void Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	//integer
 	for (const NamesAndIndex &output : config.intOutputList) {
 		baseInterface->setIntValue(output.baseName, state->integers[output.index]);
@@ -50,7 +49,6 @@ int Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	for (const NamesAndIndex &output : config.stringOutputList) {
 		baseInterface->setStringValue(output.baseName, state->strings[output.index]);
 	}
-	return 0;
 }
 
 int Mapper::readConfiguration(configVariants_t configVariants) {

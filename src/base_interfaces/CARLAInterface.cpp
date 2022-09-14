@@ -87,7 +87,7 @@ int CARLAInterface::getIntValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-};
+}
 
 bool CARLAInterface::getBoolValue(std::string base_name) {
 	auto entry = boolMap.find(base_name);
@@ -98,7 +98,7 @@ bool CARLAInterface::getBoolValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-};
+}
 
 float CARLAInterface::getFloatValue(std::string base_name) {
 	auto entry = floatMap.find(base_name);
@@ -109,7 +109,7 @@ float CARLAInterface::getFloatValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-};
+}
 
 double CARLAInterface::getDoubleValue(std::string base_name) {
 	auto entry = doubleMap.find(base_name);
@@ -120,7 +120,7 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 		return 0;
 	}
 	return entry->second;
-};
+}
 
 std::string CARLAInterface::getStringValue(std::string base_name) {
 	// context to handle the following rpc call - cannot be reused
@@ -139,7 +139,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	}
 
 	return rpcValue.value();
-};
+}
 
 int CARLAInterface::setIntValue(std::string base_name, int value) {
 	integerMap[base_name] = value;
@@ -147,7 +147,7 @@ int CARLAInterface::setIntValue(std::string base_name, int value) {
 		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
 	}
 	return 0;
-};
+}
 
 int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 	boolMap[base_name] = value;
@@ -155,7 +155,7 @@ int CARLAInterface::setBoolValue(std::string base_name, bool value) {
 		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
 	}
 	return 0;
-};
+}
 
 int CARLAInterface::setFloatValue(std::string base_name, float value) {
 	floatMap[base_name] = value;
@@ -163,7 +163,7 @@ int CARLAInterface::setFloatValue(std::string base_name, float value) {
 		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
 	}
 	return 0;
-};
+}
 
 int CARLAInterface::setDoubleValue(std::string base_name, double value) {
 	doubleMap[base_name] = value;
@@ -263,4 +263,6 @@ double CARLAInterface::getStepSize() {
 	return config.deltaSeconds;
 }
 
-int CARLAInterface::disconnect() { return 0; };
+int CARLAInterface::disconnect() {
+	return 0;
+}

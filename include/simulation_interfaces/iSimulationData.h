@@ -81,14 +81,12 @@ public:
 	/**
 	Search and map needed information of this interface from all other interfaces.
 	\param baseInterface base interface
-	\return Success status.
 	*/
-	int mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
+	void mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Write output data of interface to base system
-	\return Success status.
 	*/
-	int mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
+	void mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface);
 	/**
 	Do simulation step.
 	\return Success status.
