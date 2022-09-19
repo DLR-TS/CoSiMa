@@ -72,8 +72,6 @@ FMUs can send information by any not yet defined base_name between each other.
 | Parameter | Description |
 | ------ | ------ |
 | -v | Verbose outputs. |
-| -t | Add timestamps for simple performance debugging. |
-| -m | Experimental: Enable multithreaded calculation. |
 | PATH.yaml | Path to Configuration file. |
 
 ## Used Libraries
