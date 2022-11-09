@@ -52,8 +52,6 @@ protected:
 	osi3::GroundTruth groundTruth;
 	osi3::TrafficCommand trafficCommand;
 	osi3::TrafficUpdate trafficUpdate;
-	setlevel4to5::MotionCommand motionCommand;
-	setlevel4to5::VehicleCommunicationData vehicleCommunicationData;
 
 	/**
 	* OSI message type and its location

@@ -58,18 +58,6 @@ int OSIBridge::writeToInternalState(address address)
 		}
 		mapper->mapToInternalState(trafficUpdate.SerializeAsString(), address.name, STRINGCOSIMA);
 		break;
-	case SL45MotionCommandMessage:
-		if(!motionCommand.ParseFromArray((const void*)address.addr.address, address.size)){
-			return 1;
-		}
-		mapper->mapToInternalState(motionCommand.SerializeAsString(), address.name, STRINGCOSIMA);
-		break;
-	case SL45VehicleCommunicationDataMessage:
-		if(!vehicleCommunicationData.ParseFromArray((const void*)address.addr.address, address.size)){
-			return 1;
-		}
-		mapper->mapToInternalState(vehicleCommunicationData.SerializeAsString(), address.name, STRINGCOSIMA);
-		break;
 	}
 	return 0;
 }
@@ -129,18 +117,6 @@ int OSIBridge::readFromInternalState(address& address) {
 		address.addr.address = (unsigned long long)malloc(address.size);
 		trafficUpdate.SerializeToArray((void*)address.addr.address, address.size);
 		break;
-	case SL45MotionCommandMessage:
-		motionCommand.ParseFromString(message);
-		address.size = (int)motionCommand.ByteSizeLong();
-		address.addr.address = (unsigned long long)malloc(address.size);
-		motionCommand.SerializeToArray((void*)address.addr.address, address.size);
-		break;
-	case SL45VehicleCommunicationDataMessage:
-		vehicleCommunicationData.ParseFromString(message);
-		address.size = (int)vehicleCommunicationData.ByteSizeLong();
-		address.addr.address = (unsigned long long)malloc(address.size);
-		vehicleCommunicationData.SerializeToArray((void*)address.addr.address, address.size);
-		break;
 	}
 
 	return 0;
@@ -159,8 +135,6 @@ eOSIMessage OSIBridge::getMessageType(std::string messageType) {
 	else if (messageType.find("GroundTruth") != std::string::npos) { return GroundTruthMessage; }
 	else if (messageType.find("TrafficCommand") != std::string::npos) { return TrafficCommandMessage; }
 	else if (messageType.find("TrafficUpdate") != std::string::npos) { return TrafficUpdateMessage; }
-	else if (messageType.find("MotionCommand") != std::string::npos) { return SL45MotionCommandMessage; }
-	else if (messageType.find("VehicleCommunicationData") != std::string::npos) { return SL45VehicleCommunicationDataMessage; }
 	else {
 		std::cout << "Error: Can not find message " << messageType << std::endl;
 		throw 5372;

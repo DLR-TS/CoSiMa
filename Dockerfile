@@ -10,7 +10,6 @@ WORKDIR /cosima/build
 COPY . /cosima/
 
 RUN cmake .. -DBUILD_SHARED_LIBS=false -DCMAKE_BUILD_TYPE=Release
-RUN rm /cosima/.TOKEN
 RUN cmake --build . --target CoSimulationManager -j 4
 
 FROM ubuntu

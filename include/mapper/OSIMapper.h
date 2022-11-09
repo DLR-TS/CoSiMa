@@ -7,8 +7,6 @@
 
 #include "Mapper.h"
 #include "simulation_interfaces/OSIMessages.h"
-#include "sl45_motioncommand.pb.h"
-#include "sl45_vehiclecommunicationdata.pb.h"
 
 class OSIMapper : public Mapper {
 

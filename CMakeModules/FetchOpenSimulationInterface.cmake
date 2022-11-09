@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 include(FetchContent)
 
-if (EXISTS ${PROJECT_SOURCE_DIR}/.TOKEN)
-    file(READ ${PROJECT_SOURCE_DIR}/.TOKEN ACCESS_TOKEN_GITLAB)
-    string(REGEX REPLACE "\n$" "" ACCESS_TOKEN_GITLAB_STRIPPED ${ACCESS_TOKEN_GITLAB})
-else()
-    message(No .TOKEN file found!)
-    set(ACCESS_TOKEN_GITLAB_STRIPPED "")
-endif()
-
 FetchContent_Declare(
   osi
-  GIT_REPOSITORY https://${ACCESS_TOKEN_GITLAB_STRIPPED}@gitlab.setlevel.de/deliverables/architecture/open-simulation-interface.git
-  GIT_TAG "sl45/v3.2.2"
+  GIT_REPOSITORY https://github.com/OpenSimulationInterface/open-simulation-interface.git
+  GIT_TAG "v3.5.0"
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
@@ -26,3 +18,4 @@ if(NOT osi_POPULATED)
   FetchContent_Populate(osi)
   add_subdirectory(${osi_SOURCE_DIR} ${osi_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif(NOT osi_POPULATED)
+
