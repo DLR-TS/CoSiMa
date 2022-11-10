@@ -1,14 +1,17 @@
-# CoSimulationManager for SETLevel4to5
+# OSTAR CoSimulationManager
 
-# Usage of the DLR research implementation:
-The DLR research implementation consists at the moment out of 4 distinct programs. Start the following programs in this order:
+## Usage of the OSTAR implementation
+See [Quickstart](https://github.com/DLR-TS/OSTAR-Quickstart).
 
-1. Carla OSI
-2. Carla OSI Service
-3. OSMP Services for each FMU
-4. CoSiMa with corresponding configuration file
+### Docker build
 
-## Manual Installation Guide
+```sh
+ docker build -t ostar:cosima .
+```
+
+The docker container contains no configuration file. Import it by docker volume and add the according path as a runtime parameter. See example at [Quickstart](https://github.com/DLR-TS/OSTAR-Quickstart).
+
+## Manual build
 
 preparations:\
 install cmake (version 3.12 or newer)\
@@ -23,17 +26,6 @@ in root folder:
  cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=false ..
  cmake --build . --target CoSimulationManager
 ```
-
-### Docker
-Create personal access token (PAT) for gitlab.setlevel.de.\
-Create .TOKEN file in project root.
-
-Paste PAT in file: \<username\>:\<accesstoken\>
-```sh
- docker build -t setlevel:cosima .
-```
-
-The docker container contains no configuration file. Import it by docker volume and add the according path as a runtime parameter.
 
 ### Windows with MSVC 2017
 Open the folder in Visual Studio and use the cmake integration.
@@ -86,3 +78,5 @@ open-simulation-interface
 
 bjoern.bahn@dlr.de
 danny.behnecke@dlr.de
+
+This software was originally developed as part of SetLevel.
