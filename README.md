@@ -60,6 +60,8 @@ The base_name defines the name used by the base simulator (CARLA).\
 This differentiation allows free adjustments between FMUs and the base simulator.\
 FMUs can send information by any not yet defined base_name between each other.
 
+Additional information: [YAML Configuration](https://github.com/DLR-TS/CoSiMa/blob/master/Configuration.md)
+
 ## Parameters
 | Parameter | Description |
 | ------ | ------ |
