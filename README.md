@@ -14,8 +14,8 @@ The docker container contains no configuration file. Import it by docker volume 
 ## Manual build
 
 preparations:\
-install cmake (version 3.12 or newer)\
-install (conan.io)[conan.io] (version 1.29.x or newer )\
+install [cmake](https://cmake.org/) (version 3.12 or newer)\
+install [conan.io](https://conan.io/) (version 1.29.x or newer )\
 add conan.exe to PATH environment variable
 
 ### Linux
