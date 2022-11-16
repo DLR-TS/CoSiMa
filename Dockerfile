@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS cosima_builder
+FROM ubuntu:22.04 AS cosima_builder
 MAINTAINER frank.baumgarten@dlr.de
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,6 +12,6 @@ COPY . /cosima/
 RUN cmake .. -DBUILD_SHARED_LIBS=false -DCMAKE_BUILD_TYPE=Release
 RUN cmake --build . --target CoSimulationManager -j 4
 
-FROM ubuntu
+FROM ubuntu:22.04
 COPY --from=cosima_builder /cosima/build/bin/CoSimulationManager .
 CMD ./CoSimulationManager SetLevelConfig.yml
