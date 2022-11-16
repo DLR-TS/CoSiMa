@@ -1,4 +1,4 @@
-FROM ubuntu AS cosima_builder
+FROM ubuntu:20.04 AS cosima_builder
 MAINTAINER frank.baumgarten@dlr.de
 
 ENV DEBIAN_FRONTEND=noninteractive
