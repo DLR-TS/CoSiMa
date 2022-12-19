@@ -58,6 +58,7 @@ struct CARLAInterfaceConfig {
 	double deltaSeconds;
 	uint32_t initializationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
+	std::string additionalParameters;
 	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
 
@@ -145,15 +146,12 @@ struct InterfaceYAMLConfig {
 };
 
 /**
-* \var std::string prefix
-* prefix used for interel saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs
 * holds the output osi messages
 */
 struct OSIInterfaceConfig {
-	std::string prefix;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
 };
@@ -161,8 +159,6 @@ struct OSIInterfaceConfig {
 /**
 * \var std::string model
 * path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
-* \var std::string prefix
-* prefix used for internal saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs
@@ -170,7 +166,6 @@ struct OSIInterfaceConfig {
 */
 struct OSMPInterfaceConfig {
 	std::string model;
-	std::string prefix;
 	std::string client_host;
 	uint16_t client_port;
 	double transactionTimeout;
@@ -307,7 +302,6 @@ namespace YAML {
 
 		static bool decode(const Node& node, OSIInterfaceConfig& osiinterface)
 		{
-			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
 			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			return true;
@@ -324,7 +318,6 @@ namespace YAML {
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
 			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
-			osiInterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
 			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
 			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
@@ -391,6 +384,7 @@ namespace YAML {
 			carlaInterface.initializationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() :
 				node["initialization_timeout"].IsDefined() ? node["initialization_timeout"].as<uint32_t>() : 60000; //1 minute timeout
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
+			carlaInterface.additionalParameters = node["additional_parameters"].IsDefined() ? node["additional_parameters"].as<std::string>() : "";
 			return true;
 		}
 	};
