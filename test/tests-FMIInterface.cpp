@@ -64,7 +64,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			baseInterface->intvalue = intvalue;
 			baseInterface->stringvalue = stringvalue;
 
-			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			simulationInterface->mapToInterfaceSystem(baseSystem);
 			REQUIRE(0 == simulationInterface->readFromInternalState());
 
 			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
@@ -92,7 +92,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 
 			REQUIRE(0 == simulationInterface->doStep(1e-5));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
-			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			simulationInterface->mapFromInterfaceSystem(baseSystem);
 
 			// Feedthrough shouldn't change the values, same for the FMU interface
 			REQUIRE(doublevalue == baseInterface->doublevalue);
@@ -122,7 +122,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			baseInterface->intvalue = intvalue;
 			baseInterface->stringvalue = stringvalue;
 
-			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			simulationInterface->mapToInterfaceSystem(baseSystem);
 			REQUIRE(0 == simulationInterface->readFromInternalState());
 
 			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
@@ -150,7 +150,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 
 			REQUIRE(0 == simulationInterface->doStep(1e-5));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
-			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			simulationInterface->mapFromInterfaceSystem(baseSystem);
 
 			// Feedthrough shouldn't change the values, same for the FMU interface
 			REQUIRE(doublevalue == baseInterface->doublevalue);
@@ -180,7 +180,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			baseInterface->intvalue = intvalue;
 			baseInterface->stringvalue = stringvalue;
 
-			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			simulationInterface->mapToInterfaceSystem(baseSystem);
 			REQUIRE(0 == simulationInterface->readFromInternalState());
 
 			REQUIRE(std::all_of(inputNames.begin(), inputNames.end(), [&baseInterface](const std::string n) {
@@ -208,7 +208,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 
 			REQUIRE(0 == simulationInterface->doStep(1e-3));
 			REQUIRE(0 == simulationInterface->writeToInternalState());
-			REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+			simulationInterface->mapFromInterfaceSystem(baseSystem);
 
 			// Feedthrough shouldn't change the values, same for the FMU interface
 			REQUIRE(doublevalue == baseInterface->doublevalue);
@@ -239,7 +239,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 		REQUIRE(0 == simulationInterface->init(1));
 
 		SECTION("Negative stepSize should fail") {
-			REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+			simulationInterface->mapToInterfaceSystem(baseSystem);
 			REQUIRE(0 != simulationInterface->doStep(-1e-3));
 		}
 		SECTION("Positive stepSize is OK") {
@@ -247,10 +247,10 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 			SECTION("Two steps of 0.8s") {
 				baseInterface->intvalue = -1;
 
-				REQUIRE(0 == simulationInterface->mapToInterfaceSystem(baseSystem));
+				simulationInterface->mapToInterfaceSystem(baseSystem);
 				REQUIRE(0 == simulationInterface->doStep(.8f));
 				REQUIRE(0 == simulationInterface->writeToInternalState());
-				REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+				simulationInterface->mapFromInterfaceSystem(baseSystem);
 
 				//output 'counter' depends on time t. At t=0: counter = 0, for t in (0,1]: counter=1, for t in (1,2]: counter=2,...
 				REQUIRE(2 == baseInterface->intvalue);//t = 1.8
@@ -258,7 +258,7 @@ TEST_CASE("FMIBridge: Read FMI simulator attributes from config and load FMU", "
 				//REQUIRE(0 == simulationInterface->mapInput(baseSystem));
 				REQUIRE(0 == simulationInterface->doStep(.8f));
 				REQUIRE(0 == simulationInterface->writeToInternalState());
-				REQUIRE(0 == simulationInterface->mapFromInterfaceSystem(baseSystem));
+				simulationInterface->mapFromInterfaceSystem(baseSystem);
 
 				REQUIRE(3 == baseInterface->intvalue);//t = 2.6
 			}

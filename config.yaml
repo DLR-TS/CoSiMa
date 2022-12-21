@@ -11,7 +11,6 @@
   model: /Path/to/FMU.fmu
 - simulator: OSMP #OSMP-Service
   model: /Path/to/FMU.fmu
-  prefix: "#test#"
   host: localhost
   port: 51426
   transaction_timeout: 5000
@@ -19,4 +18,7 @@
   input:
       - {interface_name: OSMPSensorView, base_name: OSMPSensorViewGroundTruth, default_value: ""}
   output:
-      - {interface_name: "OSMPSensorData", base_name: OSMPSensorData, default_value: ""}
+      - {interface_name: OSMPSensorData, base_name: OSMPSensorData, default_value: ""}
+  parameter: # example for address and port in https://github.com/OpenSimulationInterface/osi-sensor-model-packaging/blob/master/examples/OSMPCNetworkProxy/modelDescription.in.xml
+      - {name: address, value: localhost}
+	  - {name: port, value: 1234}

@@ -25,20 +25,19 @@ TEST_CASE("OSIBridge Test") {
 		osi3::Identifier* hostid = new osi3::Identifier();
 		hostid->set_value(hostId);
 		sensorView.set_allocated_host_vehicle_id(hostid);
-		long byteSize = sensorView.ByteSizeLong();
+		size_t byteSize = sensorView.ByteSizeLong();
 		
 		//Array and pointer
 		void* data[5];
-		bool b = sensorView.SerializeToArray(data, byteSize);
+		bool b = sensorView.SerializeToArray(data, (int)byteSize);
 		REQUIRE(b == true);
 		address address;
 		address.addr.address = (unsigned long long)data;
-		address.size = byteSize;
+		address.size = (int)byteSize;
 		address.name = "SensorView";
 
 		//YAML Config
 		OSIInterfaceConfig config;
-		config.prefix = "#";
 		OSIMessageConfig varDef;
 		varDef.base_name = "SensorViewBaseName";
 		varDef.interface_name = "SensorView";
@@ -65,13 +64,13 @@ TEST_CASE("OSIBridge Test") {
 		osi3::Identifier* hostid = new osi3::Identifier();
 		hostid->set_value(hostId);
 		sensorView.set_allocated_host_vehicle_id(hostid);
-		int byteSize = sensorView.ByteSize();
+		size_t byteSize = sensorView.ByteSizeLong();
 		
 		//Array and pointer
 		void* data = malloc(byteSize);
 		address address;
 		address.addr.address = (unsigned long long)data;
-		address.size = byteSize;
+		address.size = (int)byteSize;
 		address.name = "SensorView";
 
 		//YAML Config
