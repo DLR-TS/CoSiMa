@@ -21,6 +21,9 @@ struct cmdParameter {
 	bool verbose = false;
 };
 
+void sensorViewConfiguration(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
+
 void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
 	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
 

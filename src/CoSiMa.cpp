@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
 
+	sensorViewConfiguration(simulationInterfaces, baseSystem, runtimeParameter);
+
 	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
 
 	if (runtimeParameter.verbose) {
@@ -95,6 +97,20 @@ int main(int argc, char *argv[])
 	//base system disconnect
 	baseSystem->disconnect();
 	return 0;
+}
+
+void sensorViewConfiguration(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
+	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+
+	for (auto simInterface : simulationInterfaces) {
+		if (std::dynamic_pointer_cast<OSMPInterface>(simInterface)) {
+			std::shared_ptr<OSMPInterface> osmpinterface = std::static_pointer_cast<OSMPInterface>(simInterface);
+			std::string sensorViewConfig = osmpinterface->getSensorViewConfigurationRequest();
+			osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
+			std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
+			osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
+		}
+	}
 }
 
 void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {

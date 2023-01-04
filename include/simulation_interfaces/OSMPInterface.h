@@ -33,6 +33,10 @@ public:
 	
 	int readConfiguration(configVariants_t configVariants) override;
 
+	std::string getSensorViewConfigurationRequest();
+	void setSensorViewConfiguration(std::string& appliedsensorViewConfiguration);
+	int sensorviewindex = 0;
+
 private:
 
 	bool sendFMU();

@@ -198,6 +198,15 @@ int OSMPInterface::readFromInternalState() {
 	return 0;
 }
 
+std::string OSMPInterface::getSensorViewConfigurationRequest() {
+	//todo a
+	return "";
+}
+
+void OSMPInterface::setSensorViewConfiguration(std::string& appliedsensorviewconfiguration) {
+	//todo a
+}
+
 int OSMPInterface::disconnect() {
 	std::cout << "OSMPInterface::disconnect()" << std::endl;
 	return 0;
