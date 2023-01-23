@@ -199,12 +199,35 @@ int OSMPInterface::readFromInternalState() {
 }
 
 std::string OSMPInterface::getSensorViewConfigurationRequest() {
-	//todo a
-	return "";
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	auto string = CoSiMa::rpc::String();
+	string.set_value("OSMPSensorViewInConfigRequest");
+
+	CoSiMa::rpc::Bytes rpcValue;
+	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
+
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		std::cerr << msg << std::endl;
+		throw std::exception();
+	}
+	return rpcValue.value();
 }
 
 void OSMPInterface::setSensorViewConfiguration(std::string& appliedsensorviewconfiguration) {
-	//todo a
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	auto namedString = CoSiMa::rpc::NamedBytes();
+	namedString.set_name("OSMPSensorViewInConfig");
+	namedString.set_value(appliedsensorviewconfiguration);
+
+	CoSiMa::rpc::Int32 rpcValue;
+	auto status = stub->SetStringValue(context.get(), namedString, &rpcValue);
+
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		std::cerr << msg << std::endl;
+		throw std::exception();
+	}
 }
 
 int OSMPInterface::disconnect() {
