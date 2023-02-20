@@ -39,8 +39,6 @@ public:
 
 private:
 
-	bool sendFMU();
-
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;
 	std::unique_ptr<CoSiMa::rpc::SimulationInterface::Stub> stub;

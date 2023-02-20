@@ -26,14 +26,17 @@ int main(int argc, char *argv[])
 		std::cout << "Configuration file: " << configurationPath << std::endl;
 	}
 
+	Cosima cosima(runtimeParameter);
+	cosima.loadConfiguration(configurationPath);
+	cosima.initInterfaces();
+	cosima.sensorViewConfiguration();
+	cosima.simulationLoop();
+	return 0;
+}
+
+void Cosima::loadConfiguration(std::string& configurationPath) {
 	YAMLConfigReader reader = YAMLConfigReader(configurationPath);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
-
-	std::shared_ptr<BaseSystemInterface> baseSystem;
-	/**
-	* Vector that holds every simulation interface.
-	*/
-	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
 
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
@@ -42,7 +45,7 @@ int main(int argc, char *argv[])
 			baseSystem = std::make_shared<CARLAInterface>();
 			if (reader.setBaseSystemConfig(baseSystem, simulatorname)) {
 				std::cout << "Problem occured during interpretation of configuration file. (Base System)" << std::endl;
-				exit(5);
+				exit(1);
 			}
 			continue;
 		}
@@ -50,16 +53,18 @@ int main(int argc, char *argv[])
 		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.verbose);
 		if (newInterface == nullptr) {
 			std::cout << "Failed to create a simulator interface." << std::endl;
-			exit(1);
+			exit(2);
 		}
 		//set parameters of config
 		if (reader.setConfig(*newInterface, simulatorname)) {
 			std::cout << "Problem occured during interpretation of configuration file. (Interfaces)" << std::endl;
-			exit(2);
+			exit(3);
 		}
 		simulationInterfaces.push_back(std::move(newInterface));
 	}
+}
 
+void Cosima::initInterfaces() {
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin Initializiation \n" << std::endl;
 	}
@@ -67,40 +72,21 @@ int main(int argc, char *argv[])
 	//init interfaces
 	if (0 != baseSystem->initialize(runtimeParameter.verbose)) {
 		std::cerr << "Error in initialization of base simulation interface." << std::endl;
-		exit(6);
+		exit(4);
 	}
 	for (auto &simInterface : simulationInterfaces) {
 		if (simInterface->init() != 0) {
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
-			exit(3);
+			exit(5);
 		}
 	}
 
 	if (runtimeParameter.verbose) {
 		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
 	}
-
-	sensorViewConfiguration(simulationInterfaces, baseSystem, runtimeParameter);
-
-	simulationLoop(simulationInterfaces, baseSystem, runtimeParameter);
-
-	if (runtimeParameter.verbose) {
-		std::cout << "Begin Disconnect Phase\n " << std::endl;
-	}
-
-	//disconnect interfaces
-	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->disconnect()) {
-			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
-		}
-	}
-	//base system disconnect
-	baseSystem->disconnect();
-	return 0;
 }
 
-void sensorViewConfiguration(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
-	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+void Cosima::sensorViewConfiguration() {
 
 	for (auto simInterface : simulationInterfaces) {
 		if (std::dynamic_pointer_cast<OSMPInterface>(simInterface)) {
@@ -127,8 +113,7 @@ void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shar
 	simInterface->mapFromInterfaceSystem(baseSystem);
 }
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
-	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& runtimeParameter) {
+void Cosima::simulationLoop() {
 
 	//start simulationloop
 	bool continueSimulationLoop = true;
@@ -168,4 +153,19 @@ void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInt
 		}
 		simulationThreads.clear();
 	}
+}
+
+void Cosima::disconnect() {
+	if (runtimeParameter.verbose) {
+		std::cout << "Begin Disconnect Phase\n " << std::endl;
+	}
+
+	//disconnect interfaces
+	for (auto &simInterface : simulationInterfaces) {
+		if (simInterface->disconnect()) {
+			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
+		}
+	}
+	//base system disconnect
+	baseSystem->disconnect();
 }

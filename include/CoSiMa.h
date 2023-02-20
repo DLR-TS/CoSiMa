@@ -21,10 +21,29 @@ struct cmdParameter {
 	bool verbose = false;
 };
 
-void sensorViewConfiguration(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
-	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
+void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem);
+void doSimulationStep(std::shared_ptr<iSimulationData> simInterface, double stepsize);
+void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem);
 
-void simulationLoop(std::vector<std::shared_ptr<iSimulationData>> &simulationInterfaces,
-	std::shared_ptr <BaseSystemInterface> &baseSystem, const cmdParameter& debug);
+class Cosima
+{
+	const cmdParameter runtimeParameter;
+
+	std::shared_ptr<BaseSystemInterface> baseSystem;
+	/**
+	* Vector that holds every simulation interface.
+	*/
+	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
+
+public:
+	Cosima(cmdParameter cmdParameter) : runtimeParameter{ cmdParameter } {}
+
+	void loadConfiguration(std::string& configurationPath);
+	void initInterfaces();
+	void sensorViewConfiguration();
+	void simulationLoop();
+
+	void disconnect();
+};
 
 #endif // !COSIMA_H
