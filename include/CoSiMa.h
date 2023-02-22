@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "base_interfaces/BaseSystemInterface.h"
+#include "base_interfaces/DummyInterface.h"
 #include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "reader/YAMLConfigReader.h"
@@ -27,6 +28,7 @@ void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shar
 
 class Cosima
 {
+private:
 	const cmdParameter runtimeParameter;
 
 	std::shared_ptr<BaseSystemInterface> baseSystem;

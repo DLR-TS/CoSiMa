@@ -27,10 +27,11 @@ class Mapper;
 */
 enum eSimulatorName
 {
-	FMI, //needs to be first
+	FMI,
 	OSI,
 	OSMP,
 	CARLA,
+	DUMMY,
 	DEFAULT,
 
 	SIMULATORNAME_ERROR //needs to be last

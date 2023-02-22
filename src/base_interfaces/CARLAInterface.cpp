@@ -6,7 +6,6 @@ int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
 		return 1;
 	}
 	config = std::get<CARLAInterfaceConfig>(variant);
-
 	return 0;
 }
 

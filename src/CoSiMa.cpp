@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
 	cmdParameter runtimeParameter;
-	std::string configurationPath;
+	std::string configurationPath = "openloop.yaml";
 
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 
@@ -35,11 +35,17 @@ int main(int argc, char *argv[])
 }
 
 void Cosima::loadConfiguration(std::string& configurationPath) {
+
 	YAMLConfigReader reader = YAMLConfigReader(configurationPath);
 	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
 
 	//create objects in SimulationInterfaceFactory
 	for (SingleYAMLConfig simulatorname : simulatornames) {
+		if (simulatorname.simulator == DUMMY) {
+			baseSystem = std::make_shared<DummyInterface>();
+			reader.setBaseSystemConfig(baseSystem, simulatorname);
+			continue;
+		}
 		if (simulatorname.simulator == CARLA) {
 			std::cout << "Add CARLA module" << std::endl;
 			baseSystem = std::make_shared<CARLAInterface>();

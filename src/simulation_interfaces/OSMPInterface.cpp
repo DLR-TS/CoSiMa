@@ -53,8 +53,12 @@ int OSMPInterface::init(float starttime) {
 		rpcConfig.set_binaryfile(buffer, length);
 	}
 	else {
-		std::cout << "Could not find given file path: " << config.model
-			<< " Will try this path as a local path direct in OSMP environment." << std::endl;
+		if (config.model == "") {
+			std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+		} else {
+			std::cout << "Could not find given file path: " << config.model
+				<< " Will try this path as a local path direct in OSMP environment." << std::endl;
+		}
 	}
 	//if data could not be send the path may be a local path in OMSP environment
 	rpcConfig.set_filepath(config.model);

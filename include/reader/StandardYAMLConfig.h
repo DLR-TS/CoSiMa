@@ -34,6 +34,14 @@ struct SensorViewConfig {
 };
 
 /**
+* \var deltaSeconds
+* simulation time delta per tick
+*/
+struct DummyConfig {
+	double deltaSeconds;
+};
+
+/**
 * \var client_host
 * host name or ip of the CARLA to OSI client
 * \var client_port
@@ -41,13 +49,19 @@ struct SensorViewConfig {
 * \var carla_host
 * host name or ip of the CARLA server to which the client should connect
 * \var carla_port
-* port of the CARLA server to which the client should connect
+* host port of the CARLA server to which the client should connect
 * \var transactionTimeout
 * transaction timeout in seconds
 * \var deltaSeconds
 * simulation time delta per tick
+* \var initializationTransactionTimeout
+* timout for initial transaction
 * \var doStepTransactionTimeout
 * maximum amount of time in seconds allowed for step calculation and gRPC transaction. Unlimited if set to zero
+* \var additionalParameter
+* additional parameters for configuration of Carla OSI Service
+* \var osiSensorViewConfig
+* sensorview configs
 */
 struct CARLAInterfaceConfig {
 	std::string client_host;
@@ -383,8 +397,23 @@ namespace YAML {
 			carlaInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<uint32_t>() : 0;
 			carlaInterface.initializationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() :
 				node["initialization_timeout"].IsDefined() ? node["initialization_timeout"].as<uint32_t>() : 60000; //1 minute timeout
+
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			carlaInterface.additionalParameters = node["additional_parameters"].IsDefined() ? node["additional_parameters"].as<std::string>() : "";
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<DummyConfig> {
+		static Node encode(const DummyConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, DummyConfig& dummyInterface)
+		{
+			dummyInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			return true;
 		}
 	};
