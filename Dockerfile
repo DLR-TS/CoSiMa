@@ -14,4 +14,4 @@ RUN cmake --build . --target CoSimulationManager -j 4
 
 FROM ubuntu:22.04
 COPY --from=cosima_builder /cosima/build/bin/CoSimulationManager .
-CMD ./CoSimulationManager SetLevelConfig.yml
+CMD ./CoSimulationManager config.yml
