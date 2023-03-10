@@ -98,9 +98,11 @@ void Cosima::sensorViewConfiguration() {
 		if (std::dynamic_pointer_cast<OSMPInterface>(simInterface)) {
 			std::shared_ptr<OSMPInterface> osmpinterface = std::static_pointer_cast<OSMPInterface>(simInterface);
 			std::string sensorViewConfig = osmpinterface->getSensorViewConfigurationRequest();
-			osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
-			std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
-			osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
+      if (sensorViewConfig != "") {
+			  osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
+			  std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
+			  osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
+      }
 		}
 	}
 }
