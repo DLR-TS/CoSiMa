@@ -20,14 +20,18 @@ int CARLAInterface::initialize(bool verbose) {
 	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
 	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
+	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
+
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initializationTransactionTimeout);
-
-	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
 
 	CoSiMa::rpc::Int32 response;
 
 	auto status = configStub->SetConfig(context.get(), rpcConfig, &response);
+
+	if (verbose) {
+		std::cout << "Response: " << response.value() << " Status: " << status.ok() << std::endl;
+	}
 	//Does the context need to be released manually?
 	//context.release();
 
@@ -122,6 +126,9 @@ double CARLAInterface::getDoubleValue(std::string base_name) {
 }
 
 std::string CARLAInterface::getStringValue(std::string base_name) {
+	if (verbose) {
+		std::cout << "Get " << base_name << " from CARLA interface" << std::endl;
+	}
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 

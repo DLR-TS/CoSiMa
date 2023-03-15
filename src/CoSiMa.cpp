@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
 	cmdParameter runtimeParameter;
-	std::string configurationPath = "openloop.yaml";
+	std::string configurationPath = "asdf.yaml"; //Should be empty in commits!
 
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 
@@ -15,15 +15,6 @@ int main(int argc, char *argv[])
 		else {
 			configurationPath = currentArg;
 		}
-	}
-
-	if (configurationPath.size() == 0) {
-		std::cout << "No yaml configuration file!" << std::endl;
-		exit(0);
-	}
-
-	if (runtimeParameter.verbose) {
-		std::cout << "Configuration file: " << configurationPath << std::endl;
 	}
 
 	Cosima cosima(runtimeParameter);
@@ -72,7 +63,7 @@ void Cosima::loadConfiguration(std::string& configurationPath) {
 
 void Cosima::initInterfaces() {
 	if (runtimeParameter.verbose) {
-		std::cout << "Begin Initializiation \n" << std::endl;
+		std::cout << "Begin Initializiation" << std::endl;
 	}
 
 	//init interfaces
@@ -88,22 +79,27 @@ void Cosima::initInterfaces() {
 	}
 
 	if (runtimeParameter.verbose) {
-		std::cout << "End Initializiation \nBegin Connect Phase\n " << std::endl;
+		std::cout << "End Initializiation" << std::endl;
 	}
 }
 
 void Cosima::sensorViewConfiguration() {
-
+	if (runtimeParameter.verbose) {
+		std::cout << "Begin SensorViewConfiguration" << std::endl;
+	}
 	for (auto simInterface : simulationInterfaces) {
 		if (std::dynamic_pointer_cast<OSMPInterface>(simInterface)) {
 			std::shared_ptr<OSMPInterface> osmpinterface = std::static_pointer_cast<OSMPInterface>(simInterface);
 			std::string sensorViewConfig = osmpinterface->getSensorViewConfigurationRequest();
-      if (sensorViewConfig != "") {
-			  osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
-			  std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
-			  osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
-      }
+			if (sensorViewConfig != "") {
+				osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
+				std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
+				osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
+			}
 		}
+	}
+	if (runtimeParameter.verbose) {
+		std::cout << "End SensorViewConfiguration" << std::endl;
 	}
 }
 
@@ -132,7 +128,7 @@ void Cosima::simulationLoop() {
 	while (continueSimulationLoop) {
 
 		for (auto &simInterface : simulationInterfaces) {
-			simulationThreads.push_back(std::thread (prepareSimulationStep, simInterface, baseSystem));
+			simulationThreads.push_back(std::thread(prepareSimulationStep, simInterface, baseSystem));
 		}
 		for (auto &thread : simulationThreads) {
 			thread.join();
@@ -145,7 +141,7 @@ void Cosima::simulationLoop() {
 		}
 
 		for (auto &simInterface : simulationInterfaces) {
-			simulationThreads.push_back(std::thread (doSimulationStep, simInterface, stepsize));
+			simulationThreads.push_back(std::thread(doSimulationStep, simInterface, stepsize));
 		}
 		baseSystem->doStep(stepsize);
 		for (auto &thread : simulationThreads) {

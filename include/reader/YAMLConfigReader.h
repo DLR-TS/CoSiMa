@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 #include <algorithm>
 
 #include "yaml-cpp/yaml.h"

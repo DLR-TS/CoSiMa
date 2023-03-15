@@ -1,7 +1,15 @@
 #include "reader/YAMLConfigReader.h"
 
 YAMLConfigReader::YAMLConfigReader(std::string path) {
-	std::cout << "Load YAML file: " << path << std::endl;
+	if (path.size() == 0) {
+		std::cout << "No yaml configuration file given as a parameter!" << std::endl;
+		exit(0);
+	}
+	std::cout << "Try to load YAML file: " << path << std::endl;
+	if (!std::filesystem::exists(path)) {
+		std::cout << "YAML file does not exist! Current path is " << std::filesystem::current_path() << std::endl;
+		exit(0);
+	}
 	simulators = YAML::LoadFile(path);
 }
 
