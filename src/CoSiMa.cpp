@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
 	cmdParameter runtimeParameter;
-	std::string configurationPath = "asdf.yaml"; //Should be empty in commits!
+	std::string configurationPath = ""; //Should be empty in commits!
 
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 
