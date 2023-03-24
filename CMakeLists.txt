@@ -35,7 +35,7 @@ endif()
 #if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 # Somehow an empty conan.cmake file gets generated the first time in MSVC -> Always download the file.
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+   file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
                  "${CMAKE_BINARY_DIR}/conan.cmake")
 #endif()
 

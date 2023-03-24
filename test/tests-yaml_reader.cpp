@@ -41,27 +41,6 @@ TEST_CASE("Read correct Config 1", "[YAML Reader]") {
 	}
 }
 
-TEST_CASE("Default prefix value for OSIMapper", "[YAML Reader]") {
-
-	std::shared_ptr<iSimulationData> osibridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSIBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper()), false));
-	osibridge->getMapper()->setOwner(osibridge);
-	SingleYAMLConfig conf;
-	conf.index = 0;
-	conf.simulator = eSimulatorName::OSI;
-
-	SECTION("Prefix is set"){
-		YAMLConfigReader reader("../test/resources/testconfig2.yaml");
-		reader.setConfig(*osibridge, conf);
-		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#prefix#");
-	}
-
-	SECTION("Prefix is not set (default value used)") {
-		YAMLConfigReader reader("../test/resources/testconfig3.yaml");
-		reader.setConfig(*osibridge, conf);
-		REQUIRE(std::static_pointer_cast<OSIMapper>(osibridge->getMapper())->prefix == "#");
-	}
-}
-
 TEST_CASE("Read OSMP config") {
 	std::shared_ptr<iSimulationData> osmpbridge = std::shared_ptr<iSimulationData>((iSimulationData*) new OSMPBridge(std::shared_ptr<Mapper>((Mapper*)new OSIMapper()), false));
 	osmpbridge->getMapper()->setOwner(osmpbridge);

@@ -33,9 +33,11 @@ public:
 	
 	int readConfiguration(configVariants_t configVariants) override;
 
-private:
+	std::string getSensorViewConfigurationRequest();
+	void setSensorViewConfiguration(std::string& appliedsensorViewConfiguration);
+	int sensorviewindex = 0;
 
-	bool sendFMU();
+private:
 
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;

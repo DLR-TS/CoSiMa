@@ -36,16 +36,37 @@ int OSMPInterface::init(float starttime) {
 		parameter->set_value(param.value);
 	}
 
-	//send FMU before rest of configuration
-	if (!sendFMU()) {
-		//if FMU could not be send the path may be a local path in OMSP environment
-		rpcConfig.set_fmupath(config.model);
+	std::ifstream is(config.model, std::ios::binary);
+	if (is) {
+		// get length of file:
+		is.seekg(0, is.end);
+		auto length = is.tellg();
+		is.seekg(0, is.beg);
+
+		// allocate memory:
+		char* buffer = new char[length];
+
+		// read data as a block:
+		is.read(buffer, length);
+
+		is.close();
+		rpcConfig.set_binaryfile(buffer, length);
 	}
+	else {
+		if (config.model == "") {
+			std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+		} else {
+			std::cout << "Could not find given file path: " << config.model
+				<< " Will try this path as a local path direct in OSMP environment." << std::endl;
+		}
+	}
+	//if data could not be send the path may be a local path in OMSP environment
+	rpcConfig.set_filepath(config.model);
 
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
-	CoSiMa::rpc::Int32 response;
+	CoSiMa::rpc::Status response;
 
 	auto status = osmpStub->SetConfig(context.get(), rpcConfig, &response);
 
@@ -78,50 +99,9 @@ int OSMPInterface::init(float starttime) {
 	if (!status.ok()) {
 		auto msg = status.error_message();
 		std::cerr << msg << std::endl;
-		throw std::exception();
+		return 1;
 	}
-	return response.value();
-}
-
-bool OSMPInterface::sendFMU() {
-
-	std::ifstream is(config.model, std::ios::binary);
-	if (is) {
-		// get length of file:
-		is.seekg(0, is.end);
-		int length = is.tellg();
-		is.seekg(0, is.beg);
-
-		// allocate memory:
-		char* buffer = new char[length];
-
-		// read data as a block:
-		is.read(buffer, length);
-
-		is.close();
-
-		CoSiMa::rpc::FMU fmu;
-		fmu.set_binaryfmu(buffer, length);
-
-		// context to handle the following rpc call - cannot be reused
-		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-
-		CoSiMa::rpc::UploadStatus response;
-
-		auto status = osmpStub->UploadFMU(context.get(), fmu, &response);
-
-		if (response.code() != CoSiMa::rpc::UploadStatusCode::Ok) {
-			std::cout << "Could not send given FMU path: " << config.model
-				<< " Will try this path as a local path direct in OSMP environment." << std::endl;
-			return false;
-		}
-	} else {
-		std::cout << "Could not find given FMU path: " << config.model
-			<< " Will try this path as a local path direct in OSMP environment." << std::endl;
-		return false;
-	}
-
-	return true;
+	return 0;
 }
 
 int OSMPInterface::doStep(double stepsize)
@@ -196,6 +176,38 @@ int OSMPInterface::readFromInternalState() {
 		}
 	}
 	return 0;
+}
+
+std::string OSMPInterface::getSensorViewConfigurationRequest() {
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	auto string = CoSiMa::rpc::String();
+	string.set_value("OSMPSensorViewInConfigRequest");
+
+	CoSiMa::rpc::Bytes rpcValue;
+	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
+
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		std::cerr << msg << std::endl;
+		throw std::exception();
+	}
+	return rpcValue.value();
+}
+
+void OSMPInterface::setSensorViewConfiguration(std::string& appliedsensorviewconfiguration) {
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	auto namedString = CoSiMa::rpc::NamedBytes();
+	namedString.set_name("OSMPSensorViewInConfig");
+	namedString.set_value(appliedsensorviewconfiguration);
+
+	CoSiMa::rpc::Int32 rpcValue;
+	auto status = stub->SetStringValue(context.get(), namedString, &rpcValue);
+
+	if (!status.ok()) {
+		auto msg = status.error_message();
+		std::cerr << msg << std::endl;
+		throw std::exception();
+	}
 }
 
 int OSMPInterface::disconnect() {

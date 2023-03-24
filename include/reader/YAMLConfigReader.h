@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 #include <algorithm>
 
 #include "yaml-cpp/yaml.h"
@@ -49,6 +50,7 @@ public:
 	* Set config of simulator to given mapper.
 	* \param baseSystem BaseSystem to be configured.
 	* \param simulatorname Read simulator configuration of this name.
+	* \param genericConfig Holds the generic simulation data
 	*/
 	int setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> baseSystem, SingleYAMLConfig simulatorname);
 

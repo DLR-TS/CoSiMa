@@ -1,7 +1,15 @@
 #include "reader/YAMLConfigReader.h"
 
 YAMLConfigReader::YAMLConfigReader(std::string path) {
-	std::cout << "Load YAML file: " << path << std::endl;
+	if (path.size() == 0) {
+		std::cout << "No yaml configuration file given as a parameter!" << std::endl;
+		exit(0);
+	}
+	std::cout << "Try to load YAML file: " << path << std::endl;
+	if (!std::filesystem::exists(path)) {
+		std::cout << "YAML file does not exist! Current path is " << std::filesystem::current_path() << std::endl;
+		exit(0);
+	}
 	simulators = YAML::LoadFile(path);
 }
 
@@ -67,7 +75,10 @@ int YAMLConfigReader::setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> b
 	for (std::size_t i = 0; i < simulators.size(); i++) {
 		SimulatorName name = simulators[i].as<SimulatorName>();
 		if (nameToEnum(name.simulator) == simulatorname.simulator) {
-			if (simulatorname.simulator == CARLA) {
+			if (simulatorname.simulator == DUMMY) {
+				return baseSystem->readConfiguration(simulators[i].as<DummyConfig>());
+			}
+			else if (simulatorname.simulator == CARLA) {
 				return baseSystem->readConfiguration(simulators[i].as<CARLAInterfaceConfig>());
 			}
 		}
@@ -80,7 +91,10 @@ const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	//compare lower case 
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
-	if (simulatorName == "carla") {
+	if (simulatorName == "dummy" || simulatorName == "generic") {
+		return DUMMY;
+	}
+	else if (simulatorName == "carla") {
 		return CARLA;
 	}
 	else if (simulatorName == "fmi") {

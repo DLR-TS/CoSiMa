@@ -35,8 +35,10 @@ Open the folder in Visual Studio and use the cmake integration.
 Some dependencies are retrieved using CMake's FetchContent Module. To override their source in your local repository, create a file named 'CMake_FetchContent_Overrides.cmake' and use the FetchContent_declare() to declare your desired replacement. They will be included by the root CMakeLists.txt file. CMake_FetchContent_Overrides.cmake is ignored and thus will not be added to the global repository. 
 
 # Configure CoSiMa
-To start CoSiMa a config file (yaml) needs to be provided. Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.
-The configuration contains information about all connected simulators. For a detailed description see the [Dokumentation here](https://github.com/DLR-TS/CoSiMa/blob/master/Configuration.md). 
+To start CoSiMa a config file (yaml) needs to be provided.\
+Since our goal is a broader cosimulation platform than the context of SetLevel needs, some configuration possibilities seem unnessesary.\
+The configuration contains information about all connected simulators.\
+For a detailed description see the [Dokumentation here](https://github.com/DLR-TS/CoSiMa/blob/master/Configuration.md).
 Currently implemented are CARLA and OSMP and plain FMI.
 
 ## CARLA

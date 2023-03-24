@@ -168,10 +168,10 @@ TEST_CASE("OSMP gRPC Test","[.][Requires OSMP client]") {
 
 	//repetitive steps
 	for (int i = 0; i < 5; i++) {
-		REQUIRE(0 == osmpinterface->mapToInterfaceSystem(base));
+		osmpinterface->mapToInterfaceSystem(base);
 		REQUIRE(0 == osmpinterface->readFromInternalState());
 		REQUIRE(0 == osmpinterface->doStep());
 		REQUIRE(0 == osmpinterface->writeToInternalState());
-		REQUIRE(0 == osmpinterface->mapFromInterfaceSystem(base));
+		osmpinterface->mapFromInterfaceSystem(base);
 	}
 }

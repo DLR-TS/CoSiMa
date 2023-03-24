@@ -34,6 +34,14 @@ struct SensorViewConfig {
 };
 
 /**
+* \var deltaSeconds
+* simulation time delta per tick
+*/
+struct DummyConfig {
+	double deltaSeconds;
+};
+
+/**
 * \var client_host
 * host name or ip of the CARLA to OSI client
 * \var client_port
@@ -41,13 +49,19 @@ struct SensorViewConfig {
 * \var carla_host
 * host name or ip of the CARLA server to which the client should connect
 * \var carla_port
-* port of the CARLA server to which the client should connect
+* host port of the CARLA server to which the client should connect
 * \var transactionTimeout
 * transaction timeout in seconds
 * \var deltaSeconds
 * simulation time delta per tick
+* \var initializationTransactionTimeout
+* timout for initial transaction
 * \var doStepTransactionTimeout
 * maximum amount of time in seconds allowed for step calculation and gRPC transaction. Unlimited if set to zero
+* \var additionalParameter
+* additional parameters for configuration of Carla OSI Service
+* \var osiSensorViewConfig
+* sensorview configs
 */
 struct CARLAInterfaceConfig {
 	std::string client_host;
@@ -58,6 +72,7 @@ struct CARLAInterfaceConfig {
 	double deltaSeconds;
 	uint32_t initializationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
+	std::string additionalParameters;
 	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
 
@@ -145,15 +160,12 @@ struct InterfaceYAMLConfig {
 };
 
 /**
-* \var std::string prefix
-* prefix used for interel saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs
 * holds the output osi messages
 */
 struct OSIInterfaceConfig {
-	std::string prefix;
 	std::vector<OSIMessageConfig> inputs;
 	std::vector<OSIMessageConfig> outputs;
 };
@@ -161,8 +173,6 @@ struct OSIInterfaceConfig {
 /**
 * \var std::string model
 * path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
-* \var std::string prefix
-* prefix used for internal saving and interpretation of base interface side
 * \var std::vector<OSIMessageConfig> inputs
 * holds the input osi messages
 * \var std::vector<OSIMessageConfig> outputs
@@ -170,7 +180,6 @@ struct OSIInterfaceConfig {
 */
 struct OSMPInterfaceConfig {
 	std::string model;
-	std::string prefix;
 	std::string client_host;
 	uint16_t client_port;
 	double transactionTimeout;
@@ -307,7 +316,6 @@ namespace YAML {
 
 		static bool decode(const Node& node, OSIInterfaceConfig& osiinterface)
 		{
-			osiinterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
 			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			return true;
@@ -324,7 +332,6 @@ namespace YAML {
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
 			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
-			osiInterface.prefix = node["prefix"].IsDefined() ? node["prefix"].as<std::string>() : "";
 			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
 			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
@@ -390,7 +397,23 @@ namespace YAML {
 			carlaInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<uint32_t>() : 0;
 			carlaInterface.initializationTransactionTimeout = node["initialisation_timeout"].IsDefined() ? node["initialisation_timeout"].as<uint32_t>() :
 				node["initialization_timeout"].IsDefined() ? node["initialization_timeout"].as<uint32_t>() : 60000; //1 minute timeout
+
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
+			carlaInterface.additionalParameters = node["additional_parameters"].IsDefined() ? node["additional_parameters"].as<std::string>() : "";
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<DummyConfig> {
+		static Node encode(const DummyConfig& config) {
+			Node node;
+			return node;
+		}
+
+		static bool decode(const Node& node, DummyConfig& dummyInterface)
+		{
+			dummyInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			return true;
 		}
 	};
