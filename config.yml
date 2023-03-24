@@ -1,23 +1,21 @@
-- simulator: "CARLA"
-  carla_host: 10.34.99.240
-  carla_port: "2000"
-  client_host: 0.0.0.0
+- simulator: CARLA
+  carla_host: localhost
+  carla_port: 2000
+  client_host: localhost
   client_port: 51425
   delta: 0.03
   transaction_timeout: 30000
   do_step_timeout: 30000
-  initialisation_timeout: 600000
-- simulator: OSMP
-  model: "/setlevel/fmu/OSMPCameraSensor.fmu"
-  prefix: "#cosima#"
-  host: 0.0.0.0
-  #host: 10.34.96.70
-  port: 51427
-  transaction_timeout: 30000
-  # in seconds, may change later to ms too
-  do_step_timeout: 30000
+  initialisation_timeout: 60000
+- simulator: FMI #local fmi implementation
+  model: /Path/to/FMU.fmu
+- simulator: OSMP #OSMP-Service
+  model: /Path/to/FMU.fmu
+  host: localhost
+  port: 51426
+  transaction_timeout: 5000
+  do_step_timeout: 5000
   input:
-    - {interface_name: "OSMPSensorView", base_name: "OSMPSensorViewGroundTruth"}
+      - {interface_name: OSMPSensorView, base_name: OSMPSensorViewGroundTruth, default_value: ""}
   output:
-    - {interface_name: "OSMPSensorData", base_name: "OSMPSensorData[1]"}
-
+      - {interface_name: "OSMPSensorData", base_name: OSMPSensorData, default_value: ""}
