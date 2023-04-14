@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	cosima.initInterfaces();
 	cosima.sensorViewConfiguration();
 	cosima.simulationLoop();
-	std::cout << "Good bye from CoSiMa." << std::endl;
+	std::cout << "Goodbye from CoSiMa." << std::endl;
 	return 0;
 }
 
