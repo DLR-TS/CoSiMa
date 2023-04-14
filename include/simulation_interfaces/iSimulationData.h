@@ -114,5 +114,7 @@ public:
 	\return success status
 	*/
 	virtual int readConfiguration(configVariants_t configVariants);
+
+	virtual void stopSimulation() {};
 };
 #endif // !ISIMULATIONDATA_H

@@ -30,6 +30,7 @@ public:
 	int writeToInternalState() override;
 	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
+	void stopSimulation() override;
 	
 	int readConfiguration(configVariants_t configVariants) override;
 

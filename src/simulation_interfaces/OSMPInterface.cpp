@@ -139,9 +139,8 @@ int OSMPInterface::writeToInternalState() {
 		auto status = stub->GetStringValue(context.get(), string, &rpcValue);
 
 		if (!status.ok()) {
-			auto msg = status.error_message();
-			std::cerr << msg << std::endl;
-			throw std::exception();
+			std::cout << "End of simulation" << std::endl;
+			return 1;
 		}
 		if (verbose) {
 			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << rpcValue.value().size()
@@ -176,6 +175,13 @@ int OSMPInterface::readFromInternalState() {
 		}
 	}
 	return 0;
+}
+
+void OSMPInterface::stopSimulation() {
+	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
+	auto rpcBool = CoSiMa::rpc::Bool();
+	CoSiMa::rpc::Bool rpcValue;
+	stub->Close(context.get(), rpcBool, &rpcValue);
 }
 
 std::string OSMPInterface::getSensorViewConfigurationRequest() {

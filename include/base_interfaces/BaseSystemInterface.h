@@ -10,6 +10,8 @@
 
 class BaseSystemInterface
 {
+private:
+	std::atomic<bool> simulationStop = false;
 public:
 	/**
 	Read configuration for this base simulator interface.
@@ -47,6 +49,8 @@ public:
 	virtual int setStringValue(std::string base_name, std::string value) = 0;
 
 	virtual double getStepSize() = 0;
+	void stopSimulation() { simulationStop = true; };
+	bool simulationStopped() { return simulationStop; };
 };
 
 #endif // !BASESYSTEMINTERFACE_H

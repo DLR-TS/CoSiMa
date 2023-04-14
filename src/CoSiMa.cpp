@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	cosima.initInterfaces();
 	cosima.sensorViewConfiguration();
 	cosima.simulationLoop();
+	std::cout << "Good bye from CoSiMa." << std::endl;
 	return 0;
 }
 
@@ -113,19 +114,25 @@ void doSimulationStep(std::shared_ptr<iSimulationData> simInterface, double step
 }
 
 void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
-	simInterface->writeToInternalState();
+	int status = simInterface->writeToInternalState();
+	if (status) {
+		baseSystem->stopSimulation();
+		return;
+	}
 	simInterface->mapFromInterfaceSystem(baseSystem);
+}
+
+void stopSimulation(std::shared_ptr<iSimulationData> simInterface) {
+	simInterface->stopSimulation();
 }
 
 void Cosima::simulationLoop() {
 
-	//start simulationloop
-	bool continueSimulationLoop = true;
 	double total_time = 0;
 	double stepsize = baseSystem->getStepSize();
 	std::vector<std::thread> simulationThreads;
 
-	while (continueSimulationLoop) {
+	while (!baseSystem->simulationStopped()) {
 
 		for (auto &simInterface : simulationInterfaces) {
 			simulationThreads.push_back(std::thread(prepareSimulationStep, simInterface, baseSystem));
@@ -157,6 +164,13 @@ void Cosima::simulationLoop() {
 		}
 		simulationThreads.clear();
 	}
+	for (auto &simInterface : simulationInterfaces) {
+		simulationThreads.push_back(std::thread(stopSimulation, simInterface));
+	}
+	for (auto &thread : simulationThreads) {
+		thread.join();
+	}
+	simulationThreads.clear();
 }
 
 void Cosima::disconnect() {
