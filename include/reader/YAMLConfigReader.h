@@ -12,60 +12,36 @@
 
 #include "yaml-cpp/yaml.h"
 #include "mapper/Mapper.h"
-#include "mapper/FMIMapper.h"
+#include "base_interfaces/BaseSystemInterface.h"
+#include "base_interfaces/DummyInterface.h"
+#include "base_interfaces/CARLAInterface.h"
+#include "simulation_interfaces/OSMPInterface.h"
 #include "reader/StandardYAMLConfig.h"
 
-class SingleYAMLConfig {
-public:
-	SingleYAMLConfig() {};
-	SingleYAMLConfig(const eSimulatorName name, int index) {
-		this->index = index;
-		this->simulator = name;
-	};
-
-	int index;
-	eSimulatorName simulator;
+struct SimulationSetup {
+	std::shared_ptr<BaseSystemInterface> baseSimulator;
+	std::vector<std::shared_ptr<SimulatorInterface>> childSimulators;
+	bool valid = true;
 };
 
-class YAMLConfigReader {
-public:
-	/**
-	* Constructor of YAMLConfigReader
-	* \param path Path to yaml configuration file.
-	*/
-	YAMLConfigReader(std::string path);
-	/**
-	* Retrieve the names of all simulators.
-	* \return const vector of interfaces.
-	*/
-	const std::vector<SingleYAMLConfig> getSimulatorNames();
-	/**
-	* Set config of simulator to given mapper.
-	* \param simulator Mapper to be configured.
-	* \param simulatorname Read simulator configuration of this name.
-	*/
-	int setConfig(iSimulationData& simulator, SingleYAMLConfig simulatorname);
+/**
+* Load configuration file.
+* \param path Path to yaml configuration file.
+*/
+YAML::Node loadConfigurationFile(const std::string& path);
 
-	/**
-	* Set config of simulator to given mapper.
-	* \param baseSystem BaseSystem to be configured.
-	* \param simulatorname Read simulator configuration of this name.
-	* \param genericConfig Holds the generic simulation data
-	*/
-	int setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> baseSystem, SingleYAMLConfig simulatorname);
+/**
+* Retrieve the names of all simulators.
+* \param node YAML Node.
+* \return parsed configuration of yaml file
+*/
+SimulationSetup parseSimulationConfiguration(YAML::Node& node);
 
-private:
-	/**
-	* Representation of the YAML configuration file.
-	*/
-	YAML::Node simulators;
-
-	/**
-	* Converts simulatornames to enum values.
-	* \param simulatorName String representation of simulator name.
-	* \return Enum representation of simulator name.
-	*/
-	const eSimulatorName nameToEnum(std::string simulatorName);
-};
+/**
+* Converts simulatornames to enum values.
+* \param simulatorName string representation of simulator name.
+* \return Enum representation of simulator name.
+*/
+const eSimulatorTypes nameToEnum(std::string simulatorName);
 
 #endif // !YAMLCONFIGREADER_H

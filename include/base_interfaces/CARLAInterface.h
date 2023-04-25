@@ -32,8 +32,8 @@ class CARLAInterface : public BaseSystemInterface
 	std::unique_ptr<CoSiMa::rpc::CARLAInterface::Stub> configStub;
 
 public:
-	virtual int readConfiguration(baseConfigVariants_t config) override;
-	virtual int initialize(bool debug) override;
+	virtual void configure(YAML::detail::iterator_value& node) override;
+	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;
 	virtual int disconnect() override;
@@ -58,8 +58,6 @@ private:
 	std::map <std::string, float> floatMap{};
 	std::map <std::string, double> doubleMap{};
 	std::map <std::string, bool> boolMap{};
-
-	bool verbose = false;
 };
 
 #endif // !CARLAINTERFACE_H

@@ -53,22 +53,3 @@ input and output: list of inputs/outputs
   interface_name: name of variable in modeldescription.xml of FMU, needs to be the same as OSI message name, can contain In and Out name prefix  
   base_name: name for matching the input and output inside CoSiMa  
   default_value: could define initial message
-  
-### FMI
-
-The cosima can load FMUs directly.
-
-```
-- simulator: FMI
-  model: /Path/to/FMU.fmu
-  input:
-      - {interface_name: OutVelocityOfModel1, base_name: Velocity_Ego, default_value: ""}
-  output:
-      - {interface_name: InSpeedToModel2, base_name: Velocity_Ego, default_value: ""}
-```
-
-model: path where FMU is located
-input and output: list of inputs/outputs  
-  interface_name: name of variable in modeldescription.xml of FMU  
-  base_name: name for matching the input and output inside CoSiMa  
-  default_value: could define initial value

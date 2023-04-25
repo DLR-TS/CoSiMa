@@ -29,7 +29,7 @@ typedef std::variant<int, float, double, bool, std::string> values_t;
 /**
 * YAML configuration structs
 */
-typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig, OSIInterfaceConfig, OSMPInterfaceConfig> configVariants_t;
+typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
 
 /**
 * Basic data types enum
@@ -63,7 +63,7 @@ public:
 	std::list<NamesAndIndex> stringOutputList{};
 };
 
-class iSimulationData;
+class SimulatorInterface;
 
 /**
 Abstract base class of all Mappers.
@@ -98,14 +98,14 @@ protected:
 	1.  Mapper::readConfiguration fills MapperConfig while also reserving space in the internal state. MapperConfig holds a variable name to index mapping for variable names in both the base and simulation interface. The index indicates the respective value in the internal state.
 		Input values are copied from the base interface to the simulation interface as follows:
 
-		1.	iSimulationData::mapToInterfaceSystem(baseSystem) maps input values from the given base interface into the internal state buffer of the simulation interface.
-		2.	iSimulationData::readFromInternalState() reads input values needed by the simulation interface from the internal state, utilizing the Mapper::mapFromInternalState(interfaceName, type) function (formerly known as Mapper::MapIn), and writes them to the simulation interface.
+		1.	SimulatorInterface::mapToInterfaceSystem(baseSystem) maps input values from the given base interface into the internal state buffer of the simulation interface.
+		2.	SimulatorInterface::readFromInternalState() reads input values needed by the simulation interface from the internal state, utilizing the Mapper::mapFromInternalState(interfaceName, type) function (formerly known as Mapper::MapIn), and writes them to the simulation interface.
 
 
 	2.	Output values are copied from the simulation interface to the base interface as follows:
 
-		1.  iSimulationData::writeToInternalState() reads output values from the simulation interface and writes them to the internal state using the Mapper::mapToInternalState(value, interfaceName, type) function (formerly known as Mapper::MapTo).
-		2.	iSimulationData::mapFromInterfaceSystem(baseSystem) maps output values from the simulation interface's internal state buffer to the base interface.
+		1.  SimulatorInterface::writeToInternalState() reads output values from the simulation interface and writes them to the internal state using the Mapper::mapToInternalState(value, interfaceName, type) function (formerly known as Mapper::MapTo).
+		2.	SimulatorInterface::mapFromInterfaceSystem(baseSystem) maps output values from the simulation interface's internal state buffer to the base interface.
 	*/
 
 	/**
@@ -115,13 +115,13 @@ protected:
 	/**
 	This interface contains this mapper
 	*/
-	std::weak_ptr<iSimulationData> owner;
+	std::weak_ptr<SimulatorInterface> owner;
 public:
 	/**
 	Constructor of Mapper
 	\param owner the owner of this mapper
 	*/
-	virtual void setOwner(std::weak_ptr<iSimulationData> owner) final;
+	virtual void setOwner(std::weak_ptr<SimulatorInterface> owner) final;
 	/**
 	search input of this mapper from base system interface
 	\param simulationInterface simulation system interfaces
@@ -135,7 +135,7 @@ public:
 	/**
 	Read configuration and fill mapper configuration.
 	\param config the decoding struct
-	\return success status
+	\return valid status
 	*/
 	virtual int readConfiguration(configVariants_t config);
 	/**

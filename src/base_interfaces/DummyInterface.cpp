@@ -1,17 +1,12 @@
 #include "base_interfaces/DummyInterface.h"
 
-int DummyInterface::readConfiguration(baseConfigVariants_t variant) {
-	if (std::get_if<DummyConfig>(&variant) == nullptr) {
-		std::cerr << "Called with wrong configuration variant!" << std::endl;
-		return 1;
-	}
-	stepsize = std::get<DummyConfig>(variant).deltaSeconds;
-	return 0;
+void DummyInterface::configure(YAML::detail::iterator_value& node) {
+	config = node.as<DummyInterfaceConfig>();
 }
 
-int DummyInterface::initialize(bool debug) { return 0; }
+int DummyInterface::init(bool verbose) { return 0; }
 double DummyInterface::doStep(double stepSize) { return 0; }
-double DummyInterface::getStepSize() { return stepsize; }
+double DummyInterface::getStepSize() { return config.deltaSeconds; }
 int DummyInterface::disconnect() { return 0; }
 
 int DummyInterface::getIntValue(std::string base_name) { return 0; }

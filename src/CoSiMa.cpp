@@ -1,64 +1,35 @@
 ﻿#include "CoSiMa.h"
 
-int main(int argc, char *argv[])
-{
-	cmdParameter runtimeParameter;
-	std::string configurationPath = ""; //Should be empty in commits!
-
-	std::cout << "Welcome to CoSiMa.\n" << std::endl;
-
+CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
+	CmdParameter runtimeParameter;
 	for (int i = 1; i < argc; i++) {
-		std::string currentArg = argv[i];
+		std::string currentArg(argv[i]);
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
 		else {
-			configurationPath = currentArg;
+			runtimeParameter.configurationPath = currentArg;
 		}
 	}
-
-	Cosima cosima(runtimeParameter);
-	cosima.loadConfiguration(configurationPath);
-	cosima.initInterfaces();
-	cosima.sensorViewConfiguration();
-	cosima.simulationLoop();
-	std::cout << "Goodbye from CoSiMa." << std::endl;
-	return 0;
+	return runtimeParameter;
 }
 
-void Cosima::loadConfiguration(std::string& configurationPath) {
+void Cosima::setRuntimeParameter(CmdParameter& runtimeParameter) {
+	this->runtimeParameter = runtimeParameter;
+}
 
-	YAMLConfigReader reader = YAMLConfigReader(configurationPath);
-	const std::vector<SingleYAMLConfig> simulatornames = reader.getSimulatorNames();
+void Cosima::loadConfiguration() {
 
-	//create objects in SimulationInterfaceFactory
-	for (SingleYAMLConfig simulatorname : simulatornames) {
-		if (simulatorname.simulator == DUMMY) {
-			baseSystem = std::make_shared<DummyInterface>();
-			reader.setBaseSystemConfig(baseSystem, simulatorname);
-			continue;
-		}
-		if (simulatorname.simulator == CARLA) {
-			std::cout << "Add CARLA module" << std::endl;
-			baseSystem = std::make_shared<CARLAInterface>();
-			if (reader.setBaseSystemConfig(baseSystem, simulatorname)) {
-				std::cout << "Problem occured during interpretation of configuration file. (Base System)" << std::endl;
-				exit(1);
-			}
-			continue;
-		}
-
-		std::shared_ptr<iSimulationData> newInterface = SimulationInterfaceFactory::makeInterface(simulatorname.simulator, runtimeParameter.verbose);
-		if (newInterface == nullptr) {
-			std::cout << "Failed to create a simulator interface." << std::endl;
-			exit(2);
-		}
-		//set parameters of config
-		if (reader.setConfig(*newInterface, simulatorname)) {
-			std::cout << "Problem occured during interpretation of configuration file. (Interfaces)" << std::endl;
-			exit(3);
-		}
-		simulationInterfaces.push_back(std::move(newInterface));
+	YAML::Node node = loadConfigurationFile(runtimeParameter.configurationPath);
+	if (node.IsNull()) {
+		std::cout << "Error loading configuration with cpp-yaml" << std::endl;
+		exit(0);
+	}
+	setup = parseSimulationConfiguration(node);
+	if (!setup.valid)
+	{
+		std::cout << "Error parsing configuration" << std::endl;
+		exit(0);
 	}
 }
 
@@ -68,14 +39,14 @@ void Cosima::initInterfaces() {
 	}
 
 	//init interfaces
-	if (0 != baseSystem->initialize(runtimeParameter.verbose)) {
-		std::cerr << "Error in initialization of base simulation interface." << std::endl;
-		exit(4);
+	if (setup.baseSimulator->init(runtimeParameter.verbose)) {
+		std::cout << "Error in initialization of base simulation interface." << std::endl;
+		exit(0);
 	}
-	for (auto &simInterface : simulationInterfaces) {
-		if (simInterface->init() != 0) {
+	for (auto& simInterface : setup.childSimulators) {
+		if (simInterface->init(runtimeParameter.verbose)) {
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
-			exit(5);
+			exit(0);
 		}
 	}
 
@@ -88,13 +59,13 @@ void Cosima::sensorViewConfiguration() {
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin SensorViewConfiguration" << std::endl;
 	}
-	for (auto simInterface : simulationInterfaces) {
+	for (auto simInterface : setup.childSimulators) {
 		if (std::dynamic_pointer_cast<OSMPInterface>(simInterface)) {
 			std::shared_ptr<OSMPInterface> osmpinterface = std::static_pointer_cast<OSMPInterface>(simInterface);
 			std::string sensorViewConfig = osmpinterface->getSensorViewConfigurationRequest();
 			if (sensorViewConfig != "") {
-				osmpinterface->sensorviewindex = baseSystem->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
-				std::string appliedSensorViewConfig = baseSystem->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
+				osmpinterface->sensorviewindex = setup.baseSimulator->setStringValue("OSMPSensorViewConfigurationRequest", sensorViewConfig);
+				std::string appliedSensorViewConfig = setup.baseSimulator->getStringValue("OSMPSensorViewConfiguration" + osmpinterface->sensorviewindex);
 				osmpinterface->setSensorViewConfiguration(appliedSensorViewConfig);
 			}
 		}
@@ -104,38 +75,37 @@ void Cosima::sensorViewConfiguration() {
 	}
 }
 
-void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
-	simInterface->mapToInterfaceSystem(baseSystem);
+void Cosima::prepareSimulationStep(std::shared_ptr<SimulatorInterface> simInterface) {
+	simInterface->mapToInterfaceSystem(setup.baseSimulator);
 	simInterface->readFromInternalState();
 }
 
-void doSimulationStep(std::shared_ptr<iSimulationData> simInterface, double stepsize) {
-	simInterface->doStep(stepsize);
+void Cosima::doSimulationStep(std::shared_ptr<SimulatorInterface> simInterface) {
+	simInterface->doStep(setup.baseSimulator->getStepSize());
 }
 
-void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem) {
+void Cosima::postSimulationStep(std::shared_ptr<SimulatorInterface> simInterface) {
 	int status = simInterface->writeToInternalState();
 	if (status) {
-		baseSystem->stopSimulation();
+		setup.baseSimulator->stopSimulation();
 		return;
 	}
-	simInterface->mapFromInterfaceSystem(baseSystem);
+	simInterface->mapFromInterfaceSystem(setup.baseSimulator);
 }
 
-void stopSimulation(std::shared_ptr<iSimulationData> simInterface) {
+void Cosima::stopSimulation(std::shared_ptr<SimulatorInterface> simInterface) {
 	simInterface->stopSimulation();
 }
 
 void Cosima::simulationLoop() {
 
 	double total_time = 0;
-	double stepsize = baseSystem->getStepSize();
 	std::vector<std::thread> simulationThreads;
 
-	while (!baseSystem->simulationStopped()) {
+	while (!setup.baseSimulator->simulationStopped()) {
 
-		for (auto &simInterface : simulationInterfaces) {
-			simulationThreads.push_back(std::thread(prepareSimulationStep, simInterface, baseSystem));
+		for (auto &simInterface : setup.childSimulators) {
+			simulationThreads.push_back(std::thread(&Cosima::prepareSimulationStep, this, simInterface));
 		}
 		for (auto &thread : simulationThreads) {
 			thread.join();
@@ -143,29 +113,29 @@ void Cosima::simulationLoop() {
 		simulationThreads.clear();
 
 		if (runtimeParameter.verbose) {
-			std::cout << "Modules DoStep with stepsize: " << stepsize << " Simulation Time: " << total_time << std::endl;
-			total_time += stepsize;
+			std::cout << "Modules DoStep with stepsize: " << setup.baseSimulator->getStepSize() << " Simulation Time: " << total_time << std::endl;
+			total_time += setup.baseSimulator->getStepSize();
 		}
 
-		for (auto &simInterface : simulationInterfaces) {
-			simulationThreads.push_back(std::thread(doSimulationStep, simInterface, stepsize));
+		for (auto &simInterface : setup.childSimulators) {
+			simulationThreads.push_back(std::thread(&Cosima::doSimulationStep, this, simInterface));
 		}
-		baseSystem->doStep(stepsize);
+		setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
 		for (auto &thread : simulationThreads) {
 			thread.join();
 		}
 		simulationThreads.clear();
 
-		for (auto &simInterface : simulationInterfaces) {
-			simulationThreads.push_back(std::thread(postSimulationStep, simInterface, baseSystem));
+		for (auto &simInterface : setup.childSimulators) {
+			simulationThreads.push_back(std::thread(&Cosima::postSimulationStep, this, simInterface));
 		}
 		for (auto &thread : simulationThreads) {
 			thread.join();
 		}
 		simulationThreads.clear();
 	}
-	for (auto &simInterface : simulationInterfaces) {
-		simulationThreads.push_back(std::thread(stopSimulation, simInterface));
+	for (auto &simInterface : setup.childSimulators) {
+		simulationThreads.push_back(std::thread(&Cosima::stopSimulation, this, simInterface));
 	}
 	for (auto &thread : simulationThreads) {
 		thread.join();
@@ -179,11 +149,11 @@ void Cosima::disconnect() {
 	}
 
 	//disconnect interfaces
-	for (auto &simInterface : simulationInterfaces) {
+	for (auto &simInterface : setup.childSimulators) {
 		if (simInterface->disconnect()) {
 			std::cout << "Error in disconnect of simulation interfaces." << std::endl;
 		}
 	}
 	//base system disconnect
-	baseSystem->disconnect();
+	setup.baseSimulator->disconnect();
 }

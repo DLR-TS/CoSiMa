@@ -67,11 +67,10 @@ public:
 		return 0;
 	};
 
-	virtual int readConfiguration(baseConfigVariants_t config) override {
-		return 0;
+	virtual void configure(YAML::detail::iterator_value& node) override {
 	};
 
-	virtual int initialize(bool verbose) override {
+	virtual int init(bool verbose) override {
 		return 0;
 	};
 

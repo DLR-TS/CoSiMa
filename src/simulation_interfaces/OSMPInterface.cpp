@@ -1,17 +1,12 @@
 #include "simulation_interfaces/OSMPInterface.h"
 
-int OSMPInterface::readConfiguration(configVariants_t variant) {
-	if (std::get_if<OSMPInterfaceConfig>(&variant) == nullptr) {
-		std::cerr << "Called with wrong configuration variant!" << std::endl;
-		return 1;
-	}
-	config = std::get<OSMPInterfaceConfig>(variant);
-
-	return 0;
+void OSMPInterface::configure(YAML::detail::iterator_value& node) {
+	config = node.as<OSMPInterfaceConfig>();
+	configureMapper();
 }
 
-int OSMPInterface::init(float starttime) {
-
+int OSMPInterface::init(bool verbose) {
+	this->verbose = verbose;
 	if (verbose) {
 		std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
 	}
@@ -88,7 +83,7 @@ int OSMPInterface::init(float starttime) {
 		if (retry_counter < retries) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			std::cout << "Retry" << std::endl;
-			return init(starttime);
+			return init(verbose);
 		}
 		return -502;
 	case GRPC_CHANNEL_SHUTDOWN:

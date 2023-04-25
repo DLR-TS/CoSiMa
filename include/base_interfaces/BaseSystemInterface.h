@@ -12,18 +12,21 @@ class BaseSystemInterface
 {
 private:
 	std::atomic<bool> simulationStop = false;
+protected:
+	bool verbose = false;
 public:
 	/**
 	Read configuration for this base simulator interface.
-	\param config the decoding struct
-	\return success status
+	\param node yaml confguration node
+	\return valid status
 	*/
-	virtual int readConfiguration(baseConfigVariants_t config) = 0;
+	virtual void configure(YAML::detail::iterator_value& node) = 0;
 	/**
 	Connect grpc with host/port information from corresponding fields
-	\return Success status.
+	\verbose enable verbose output
+	\return success status
 	*/
-	virtual int initialize(bool verbose) = 0;
+	virtual int init(bool verbose) = 0;
 	/**
 	Perform a simulation step
 	\return Time in seconds advanced during step

@@ -1,93 +1,53 @@
 #include "reader/YAMLConfigReader.h"
 
-YAMLConfigReader::YAMLConfigReader(std::string path) {
+YAML::Node loadConfigurationFile(const std::string& path) {
+	YAML::Node node;
 	if (path.size() == 0) {
 		std::cout << "No yaml configuration file given as a parameter!" << std::endl;
-		exit(0);
+		return node;
 	}
 	std::cout << "Try to load YAML file: " << path << std::endl;
 	if (!std::filesystem::exists(path)) {
 		std::cout << "YAML file does not exist! Current path is " << std::filesystem::current_path() << std::endl;
-		exit(0);
+		return node;
 	}
-	simulators = YAML::LoadFile(path);
+	return YAML::LoadFile(path);
 }
 
-const std::vector<SingleYAMLConfig> YAMLConfigReader::getSimulatorNames() {
-	std::vector<SingleYAMLConfig> names;
-	//counter for later tracking the amount of same interfaces with different configurations
-	std::map<eSimulatorName, int> counter;
-	for (int i = FMI; i != SIMULATORNAME_ERROR; i++)
-	{
-		eSimulatorName name = static_cast<eSimulatorName>(i);
-		counter.emplace(name, 0);
-	}
-
-	for (std::size_t i = 0; i < simulators.size(); i++) {
-		SimulatorName conf = simulators[i].as<SimulatorName>();
-		const eSimulatorName simName = nameToEnum(conf.simulator);
-		if (simName == SIMULATORNAME_ERROR) {
-			std::cout << "Not supported simulator name in yaml configration file: " << conf.simulator << std::endl;
-			exit(1);
+SimulationSetup parseSimulationConfiguration(YAML::Node& node) {
+	SimulationSetup config;
+	for (auto& nodechild : node) {
+		SimulatorName name = nodechild.as<SimulatorName>();
+		const eSimulatorTypes simName = nameToEnum(name.simulator);
+		switch (simName) {
+		case CARLA:
+			config.baseSimulator = std::make_shared<CARLAInterface>();
+			config.baseSimulator->configure(nodechild);
+			break;
+		case DUMMY:
+			config.baseSimulator = std::make_shared<DummyInterface>();
+			config.baseSimulator->configure(nodechild);
+			break;
+		case OSMP:
+		{
+			std::shared_ptr<OSMPInterface> osmp = std::make_shared<OSMPInterface>();
+			osmp->configure(nodechild);
+			config.childSimulators.push_back(osmp);
 		}
-		std::map<eSimulatorName, int>::iterator countIter = counter.find(simName);
-		names.push_back(SingleYAMLConfig(simName, countIter->second));
-		countIter->second++;
-	}
-	std::cout << "Connecting " << names.size() << " modules." << std::endl;
-	return names;
-}
-
-int YAMLConfigReader::setConfig(iSimulationData& simulator, SingleYAMLConfig simulatorname) {
-	int index = 0;
-	for (std::size_t i = 0; i < simulators.size(); i++) {
-		SimulatorName name = simulators[i].as<SimulatorName>();
-		if (nameToEnum(name.simulator) == simulatorname.simulator) {
-			if (index == simulatorname.index) {
-				switch (simulatorname.simulator) {
-				case DEFAULT:
-					std::cout << "Add DEFAULT module" << std::endl;
-					return simulator.getMapper()->readConfiguration(simulators[i].as<InterfaceYAMLConfig>());
-				case FMI:
-					std::cout << "Add FMI module" << std::endl;
-					simulator.readConfiguration(simulators[i].as<FMIInterfaceConfig>());
-					return simulator.getMapper()->readConfiguration(simulators[i].as<FMIInterfaceConfig>());
-				case OSI:
-					std::cout << "Add OSI module" << std::endl;
-					simulator.readConfiguration(simulators[i].as<OSIInterfaceConfig>());
-					return simulator.getMapper()->readConfiguration(simulators[i].as<OSIInterfaceConfig>());
-				case OSMP:
-					std::cout << "Add OSMP module" << std::endl;
-					simulator.readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
-					return simulator.getMapper()->readConfiguration(simulators[i].as<OSMPInterfaceConfig>());
-				}
-			}
-			else {
-				index++;
-			}
+		break;
+		case SIMULATORNAME_ERROR:
+			config.valid = false;
+			break;
 		}
 	}
-	std::cout << "Error no node found with name: " << simulatorname.simulator << std::endl;
-	return 1;
-}
-
-int YAMLConfigReader::setBaseSystemConfig(std::shared_ptr<BaseSystemInterface> baseSystem, SingleYAMLConfig simulatorname) {
-	for (std::size_t i = 0; i < simulators.size(); i++) {
-		SimulatorName name = simulators[i].as<SimulatorName>();
-		if (nameToEnum(name.simulator) == simulatorname.simulator) {
-			if (simulatorname.simulator == DUMMY) {
-				return baseSystem->readConfiguration(simulators[i].as<DummyConfig>());
-			}
-			else if (simulatorname.simulator == CARLA) {
-				return baseSystem->readConfiguration(simulators[i].as<CARLAInterfaceConfig>());
-			}
-		}
+	if (!config.baseSimulator) {
+		std::cout << "No base simulator in config defined. Examples are CARLA, DUMMY" << std::endl;
+		config.valid = false;
 	}
-	std::cout << "Error no node found with name: " << simulatorname.simulator << std::endl;
-	return 1;
+	return config;
 }
 
-const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
+const eSimulatorTypes nameToEnum(std::string simulatorName) {
 	//compare lower case 
 	std::transform(simulatorName.begin(), simulatorName.end(), simulatorName.begin(),
 		[](unsigned char c) { return std::tolower(c); });
@@ -97,19 +57,11 @@ const eSimulatorName YAMLConfigReader::nameToEnum(std::string simulatorName) {
 	else if (simulatorName == "carla") {
 		return CARLA;
 	}
-	else if (simulatorName == "fmi") {
-		return FMI;
-	}
-	else if (simulatorName == "default") {
-		return DEFAULT;
-	}
-	else if (simulatorName == "osi") {
-		return OSI;
-	}
 	else if (simulatorName == "osmp") {
 		return OSMP;
 	}
 	else {
+		std::cout << "Error parsing name: " << simulatorName << std::endl;
 		return SIMULATORNAME_ERROR;
 	}
 }

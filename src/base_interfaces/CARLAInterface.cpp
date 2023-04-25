@@ -1,15 +1,10 @@
 #include "base_interfaces/CARLAInterface.h"
 
-int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
-	if (std::get_if<CARLAInterfaceConfig>(&variant) == nullptr) {
-		std::cerr << "Called with wrong configuration variant!" << std::endl;
-		return 1;
-	}
-	config = std::get<CARLAInterfaceConfig>(variant);
-	return 0;
+void CARLAInterface::configure(YAML::detail::iterator_value& node) {
+	config = node.as<CARLAInterfaceConfig>();
 }
 
-int CARLAInterface::initialize(bool verbose) {
+int CARLAInterface::init(bool verbose) {
 	this->verbose = verbose;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;

@@ -11,8 +11,8 @@
 class DummyInterface : public BaseSystemInterface
 {
 public:
-	virtual int readConfiguration(baseConfigVariants_t config) override;
-	virtual int initialize(bool debug) override;
+	virtual void configure(YAML::detail::iterator_value& node) override;
+	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;
 	virtual int disconnect() override;
@@ -29,7 +29,7 @@ public:
 	virtual int setDoubleValue(std::string base_name, double value) override;
 	virtual int setStringValue(std::string base_name, std::string value) override;
 
-	double stepsize;
+	DummyInterfaceConfig config;
 private:
 	std::map<std::string, std::string> varName2MessageMap;
 };

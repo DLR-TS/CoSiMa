@@ -37,7 +37,7 @@ struct SensorViewConfig {
 * \var deltaSeconds
 * simulation time delta per tick
 */
-struct DummyConfig {
+struct DummyInterfaceConfig {
 	double deltaSeconds;
 };
 
@@ -115,19 +115,6 @@ struct FMIParameter {
 	std::string value;
 };
 
-/**
-* \var std::string simulator
-* name of simulator type
-* \var std::string model
-* path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
-
-*/
-struct FMIInterfaceConfig {
-	std::string simulator;
-	std::string model;
-	std::vector<FMIParameter> parameter;
-};
-
 
 /**
 * \var std::string interface_name
@@ -157,17 +144,6 @@ struct InterfaceYAMLConfig {
 	std::vector<VariableDefinition> inputs;
 	std::vector<VariableDefinition> outputs;
 	std::vector<FMIParameter> parameter;
-};
-
-/**
-* \var std::vector<OSIMessageConfig> inputs
-* holds the input osi messages
-* \var std::vector<OSIMessageConfig> outputs
-* holds the output osi messages
-*/
-struct OSIInterfaceConfig {
-	std::vector<OSIMessageConfig> inputs;
-	std::vector<OSIMessageConfig> outputs;
 };
 
 /**
@@ -275,21 +251,6 @@ namespace YAML {
 		}
 	};
 
-	template<>
-	struct convert<FMIInterfaceConfig> {
-		static Node encode(const FMIInterfaceConfig& config) {
-			Node node;
-			return node;
-		}
-
-		static bool decode(const Node& node, FMIInterfaceConfig& fmiInterface)
-		{
-			fmiInterface.simulator = node["simulator"].as<std::string>();
-			fmiInterface.model = node["model"].as<std::string>();
-			fmiInterface.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
-			return true;
-		}
-	};
 
 	template<>
 	struct convert<OSIMessageConfig> {
@@ -303,21 +264,6 @@ namespace YAML {
 			osiMessage.interface_name = node["interface_name"].as<std::string>();
 			osiMessage.base_name = node["base_name"].as<std::string>();
 			osiMessage.default_value = node["default_value"].IsDefined() ? node["default_value"].as<std::string>() : "";
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<OSIInterfaceConfig> {
-		static Node encode(const OSIInterfaceConfig& config) {
-			Node node;
-			return node;
-		}
-
-		static bool decode(const Node& node, OSIInterfaceConfig& osiinterface)
-		{
-			osiinterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
-			osiinterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
 			return true;
 		}
 	};
@@ -405,13 +351,13 @@ namespace YAML {
 	};
 
 	template<>
-	struct convert<DummyConfig> {
-		static Node encode(const DummyConfig& config) {
+	struct convert<DummyInterfaceConfig> {
+		static Node encode(const DummyInterfaceConfig& config) {
 			Node node;
 			return node;
 		}
 
-		static bool decode(const Node& node, DummyConfig& dummyInterface)
+		static bool decode(const Node& node, DummyInterfaceConfig& dummyInterface)
 		{
 			dummyInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			return true;
