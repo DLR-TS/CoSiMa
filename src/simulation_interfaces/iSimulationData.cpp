@@ -9,7 +9,7 @@ void SimulatorInterface::mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterf
 	mapper->writeOutput(baseInterface);
 }
 
-void SimulatorInterface::configureMapper() {
+void SimulatorInterface::configureMapperOwner() {
 	mapper->setOwner(shared_from_this());
 }
 

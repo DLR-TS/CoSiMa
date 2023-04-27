@@ -94,7 +94,7 @@ public:
 	/**
 	Configure mapper weak pointer
 	*/
-	void configureMapper();
+	void configureMapperOwner();
 
 	/**
 	Stop the simulation run gracefully.

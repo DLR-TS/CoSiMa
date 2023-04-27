@@ -2,7 +2,8 @@
 
 void OSMPInterface::configure(YAML::Node node) {
 	config = node.as<OSMPInterfaceConfig>();
-	configureMapper();
+	configureMapperOwner();
+	mapper->readConfiguration(config);
 }
 
 int OSMPInterface::init(bool verbose) {

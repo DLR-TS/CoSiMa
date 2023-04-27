@@ -16,8 +16,8 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 			data.messageInputList.push_back(convertToAnnotatedMessage(input));
 		}
 		//fill output vectors and internalState for temporary storage
-		for (auto& definition : interfaceConfig.outputs) {
-			data.messageOutputList.push_back(convertToAnnotatedMessage(definition));
+		for (auto& output : interfaceConfig.outputs) {
+			data.messageOutputList.push_back(convertToAnnotatedMessage(output));
 		}
 		return 0;
 	}
