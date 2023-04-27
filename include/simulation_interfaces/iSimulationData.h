@@ -10,14 +10,13 @@
 #include <memory>
 #include "base_interfaces/BaseSystemInterface.h"
 #include "mapper/Mapper.h"
-#include "internalState.h"
 #include "reader/StandardYAMLConfig.h"
 
 //forward declarations
 /**
 * Basic value types
 */
-typedef std::variant<int, float, double, bool, std::string> values_t;
+//typedef std::variant<int, float, double, bool, std::string> values_t;
 typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
 class BaseSystemInterface;
 class Mapper;
@@ -40,10 +39,6 @@ Abstract class for all simulation interfaces.
 class SimulatorInterface : public std::enable_shared_from_this<SimulatorInterface>
 {
 protected:
-	/**
-	Holds a copy of the simulator interface variables.
-	*/
-	std::shared_ptr<internalState> state;
 	/**
 	Specific mapper of this interface.
 	*/
@@ -86,13 +81,13 @@ public:
 	*/
 	virtual int doStep(double stepSize = 1) = 0;
 	/**
-	update outputs of the interface in the internal state
+	update outputs of the interface in the internal messageCache
 	uses the Mapper::mapToInternalState method to write outputs
 	*/
 	virtual int writeToInternalState() = 0;
 
 	/**
-	Reads the internal state into the simulation interface.
+	Reads the internal messageCache into the simulation interface.
 	*/
 	virtual int readFromInternalState() = 0;
 

@@ -6,7 +6,6 @@
 #define CARLAINTERFACE_H
 
 #include <string>
-#include <map>
 
 #include "BaseSystemInterface.h"
 #include "reader/BaseConfigVariants.h"
@@ -38,26 +37,13 @@ public:
 	virtual double getStepSize() override;
 	virtual int disconnect() override;
 
-	virtual int getIntValue(std::string base_name) override;
-	virtual bool getBoolValue(std::string base_name) override;
-	virtual float getFloatValue(std::string base_name) override;
-	virtual double getDoubleValue(std::string base_name) override;
-	virtual std::string getStringValue(std::string base_name) override;
+	virtual std::string getOSIMessage(const std::string& base_name) override;
 
-	virtual int setIntValue(std::string base_name, int value) override;
-	virtual int setBoolValue(std::string base_name, bool value) override;
-	virtual int setFloatValue(std::string base_name, float value) override;
-	virtual int setDoubleValue(std::string base_name, double value) override;
-	virtual int setStringValue(std::string base_name, std::string value) override;
+	virtual int setOSIMessage(const std::string& base_name, const std::string& value) override;
 
 private:
 	CoSiMa::rpc::CarlaConfig parseConfigToGRPC();
 	void copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition* rpcMountingPosition);
-
-	std::map <std::string, int> integerMap{};
-	std::map <std::string, float> floatMap{};
-	std::map <std::string, double> doubleMap{};
-	std::map <std::string, bool> boolMap{};
 };
 
 #endif // !CARLAINTERFACE_H

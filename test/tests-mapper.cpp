@@ -78,8 +78,8 @@ TEST_CASE("Mapping the outputs of interfaces to the internalstate") {
 	interface_simulator->getMapper()->mapToInternalState(value1, "MUCHINTERFACE", eDataType::STRINGCOSIMA);
 	interface_simulator->getMapper()->mapToInternalState(value2, "MUCHINTERFACE2", eDataType::INTEGERCOSIMA);
 
-	REQUIRE(interface_simulator->getMapper()->getInternalState()->strings.at(0) == "CRAZYVALUE");
-	REQUIRE(interface_simulator->getMapper()->getInternalState()->integers.at(0) == 1289);*/
+	REQUIRE(interface_simulator->getMapper()->getMessageCache()->strings.at(0) == "CRAZYVALUE");
+	REQUIRE(interface_simulator->getMapper()->getMessageCache()->integers.at(0) == 1289);*/
 }
 
 TEST_CASE() {
@@ -198,31 +198,31 @@ TEST_CASE("Read a YAML-config into internal state and back") {
 
 	/*interface_simulator->getMapper()->setOwner(interface_simulator);
 	interface_simulator->getMapper()->readConfiguration(config);
-	auto state = interface_simulator->getMapper()->getInternalState();
+	auto messageCache = interface_simulator->getMapper()->getMessageCache();
 
 	// one input and output in each vector
-	REQUIRE(2 == state->strings.size());
-	REQUIRE(2 == state->bools.size());
-	REQUIRE(2 == state->integers.size());
-	REQUIRE(2 == state->floats.size());
-	REQUIRE(2 == state->doubles.size());
+	REQUIRE(2 == messageCache->strings.size());
+	REQUIRE(2 == messageCache->bools.size());
+	REQUIRE(2 == messageCache->integers.size());
+	REQUIRE(2 == messageCache->floats.size());
+	REQUIRE(2 == messageCache->doubles.size());
 
 	// variable space in vectors is initialized using the type's default
-	REQUIRE(std::all_of(state->strings.begin(), state->strings.end(), [](std::string s) {return s.empty(); }));
-	REQUIRE(std::all_of(state->bools.begin(), state->bools.end(), [](bool b) {return bool() == b; }));
-	REQUIRE(std::all_of(state->integers.begin(), state->integers.end(), [](int i) {return int() == i; }));
-	REQUIRE(std::all_of(state->floats.begin(), state->floats.end(), [](float f) {return float() == f; }));
-	REQUIRE(std::all_of(state->doubles.begin(), state->doubles.end(), [](double d) {return double() == d; }));
+	REQUIRE(std::all_of(messageCache->strings.begin(), messageCache->strings.end(), [](std::string s) {return s.empty(); }));
+	REQUIRE(std::all_of(messageCache->bools.begin(), messageCache->bools.end(), [](bool b) {return bool() == b; }));
+	REQUIRE(std::all_of(messageCache->integers.begin(), messageCache->integers.end(), [](int i) {return int() == i; }));
+	REQUIRE(std::all_of(messageCache->floats.begin(), messageCache->floats.end(), [](float f) {return float() == f; }));
+	REQUIRE(std::all_of(messageCache->doubles.begin(), messageCache->doubles.end(), [](double d) {return double() == d; }));
 
-	// Update input values in internal state
+	// Update input values in internal messageCache
 	mapper->searchInput(base_simulator_ptr);
 
 	// still one input and output in each vector
-	REQUIRE(2 == state->strings.size());
-	REQUIRE(2 == state->bools.size());
-	REQUIRE(2 == state->integers.size());
-	REQUIRE(2 == state->floats.size());
-	REQUIRE(2 == state->doubles.size());
+	REQUIRE(2 == messageCache->strings.size());
+	REQUIRE(2 == messageCache->bools.size());
+	REQUIRE(2 == messageCache->integers.size());
+	REQUIRE(2 == messageCache->floats.size());
+	REQUIRE(2 == messageCache->doubles.size());
 	
 	// All 5 inputs should have been requested from the base system
 	REQUIRE(5 == basesimulator->requestedVariables.size());

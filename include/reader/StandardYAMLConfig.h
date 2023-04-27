@@ -77,31 +77,14 @@ struct CARLAInterfaceConfig {
 };
 
 /**
- *\paragraph Naming definitions
- * Within the CoSiMa we are using the following definitions for our host and the system we are interfacing with:
-
-  @startuml
-  node base_system
-
-  node interface_system_1
-  node interface_system_2
-
-  base_system <-- interface_system_1
-  base_system <-- interface_system_2
-  @enduml
-
- *
- * \var std::string interface_name
- * holds name of the variable in the interface system
- * \var std::string base_name
- * holds name of the variable in the base system
- * \var std::string type
- * holds type name of the variable
- */
-struct VariableDefinition {
+* \var std::string interface_name
+* holds name of the variable in the interface system
+* \var std::string base_name
+* holds name of the variable in the base system
+*/
+struct ConfigParameter {
 	std::string interface_name;
 	std::string base_name;
-	std::string type;
 };
 
 /**
@@ -113,19 +96,6 @@ struct VariableDefinition {
 struct FMIParameter {
 	std::string name;
 	std::string value;
-};
-
-
-/**
-* \var std::string interface_name
-* holds name of the variable in the interface system
-* \var std::string base_name
-* holds name of the variable in the base system
-*/
-struct OSIMessageConfig {
-	std::string interface_name;
-	std::string base_name;
-	std::string default_value;
 };
 
 /**
@@ -141,17 +111,17 @@ struct InterfaceYAMLConfig {
 	std::string simulator;
 	std::string ip;
 	int port;
-	std::vector<VariableDefinition> inputs;
-	std::vector<VariableDefinition> outputs;
+	std::vector<ConfigParameter> inputs;
+	std::vector<ConfigParameter> outputs;
 	std::vector<FMIParameter> parameter;
 };
 
 /**
 * \var std::string model
 * path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
-* \var std::vector<OSIMessageConfig> inputs
+* \var std::vector<ConfigParameter> inputs
 * holds the input osi messages
-* \var std::vector<OSIMessageConfig> outputs
+* \var std::vector<ConfigParameter> outputs
 * holds the output osi messages
 */
 struct OSMPInterfaceConfig {
@@ -160,8 +130,8 @@ struct OSMPInterfaceConfig {
 	uint16_t client_port;
 	double transactionTimeout;
 	double doStepTransactionTimeout;
-	std::vector<OSIMessageConfig> inputs;
-	std::vector<OSIMessageConfig> outputs;
+	std::vector<ConfigParameter> inputs;
+	std::vector<ConfigParameter> outputs;
 	std::vector<FMIParameter> parameter;
 };
 
@@ -213,8 +183,8 @@ namespace YAML {
 				std::cout << "No port for " << config.simulator << " is set. Default value 0 is used. May not be a problem since not every interface needs a defined port.";
 				config.port = 0;
 			}
-			config.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
-			config.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<VariableDefinition>>() : std::vector<VariableDefinition>();
+			config.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();
+			config.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();
 			config.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
 			return true;
 		}
@@ -236,34 +206,16 @@ namespace YAML {
 	};
 
 	template<>
-	struct convert<VariableDefinition> {
-		static Node encode(const VariableDefinition& config) {
+	struct convert<ConfigParameter> {
+		static Node encode(const ConfigParameter& config) {
 			Node node;
 			return node;
 		}
 
-		static bool decode(const Node& node, VariableDefinition& variableMap)
-		{
-			variableMap.interface_name = node["interface_name"].as<std::string>();
-			variableMap.base_name = node["base_name"].as<std::string>();
-			variableMap.type = node["type"].as<std::string>();
-			return true;
-		}
-	};
-
-
-	template<>
-	struct convert<OSIMessageConfig> {
-		static Node encode(const OSIMessageConfig& config) {
-			Node node;
-			return node;
-		}
-
-		static bool decode(const Node& node, OSIMessageConfig& osiMessage)
+		static bool decode(const Node& node, ConfigParameter& osiMessage)
 		{
 			osiMessage.interface_name = node["interface_name"].as<std::string>();
 			osiMessage.base_name = node["base_name"].as<std::string>();
-			osiMessage.default_value = node["default_value"].IsDefined() ? node["default_value"].as<std::string>() : "";
 			return true;
 		}
 	};
@@ -282,8 +234,8 @@ namespace YAML {
 			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
 			osiInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
-			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
-			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<OSIMessageConfig>>() : std::vector<OSIMessageConfig>();
+			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();
+			osiInterface.outputs = node["output"].IsDefined() ? node["output"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();
 			osiInterface.parameter = node["parameter"].IsDefined() ? node["parameter"].as<std::vector<FMIParameter>>() : std::vector<FMIParameter>();
 			return true;
 		}

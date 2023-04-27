@@ -6,7 +6,6 @@
 #define BASECONFIGVARIANTS_H
 
 #include <variant>
-#include <string>
 #include "reader/StandardYAMLConfig.h"
 
 typedef std::variant<CARLAInterfaceConfig, DummyInterfaceConfig> baseConfigVariants_t;

@@ -76,51 +76,7 @@ double CARLAInterface::doStep(double stepSize)
 	return rpcValue.value();
 }
 
-int CARLAInterface::getIntValue(std::string base_name) {
-	auto entry = integerMap.find(base_name);
-	if (integerMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getIntValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-bool CARLAInterface::getBoolValue(std::string base_name) {
-	auto entry = boolMap.find(base_name);
-	if (boolMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getBoolValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-float CARLAInterface::getFloatValue(std::string base_name) {
-	auto entry = floatMap.find(base_name);
-	if (floatMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getFloatValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-double CARLAInterface::getDoubleValue(std::string base_name) {
-	auto entry = doubleMap.find(base_name);
-	if (doubleMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getDoubleValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-std::string CARLAInterface::getStringValue(std::string base_name) {
+std::string CARLAInterface::getOSIMessage(const std::string& base_name) {
 	if (verbose) {
 		std::cout << "Get " << base_name << " from CARLA interface" << std::endl;
 	}
@@ -142,39 +98,7 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	return rpcValue.value();
 }
 
-int CARLAInterface::setIntValue(std::string base_name, int value) {
-	integerMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
-	}
-	return 0;
-}
-
-int CARLAInterface::setBoolValue(std::string base_name, bool value) {
-	boolMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
-	}
-	return 0;
-}
-
-int CARLAInterface::setFloatValue(std::string base_name, float value) {
-	floatMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
-	}
-	return 0;
-}
-
-int CARLAInterface::setDoubleValue(std::string base_name, double value) {
-	doubleMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setDoubleValue() to " << value << "\n";
-	}
-	return 0;
-};
-
-int CARLAInterface::setStringValue(std::string base_name, std::string value) {
+int CARLAInterface::setOSIMessage(const std::string& base_name, const std::string& value) {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 

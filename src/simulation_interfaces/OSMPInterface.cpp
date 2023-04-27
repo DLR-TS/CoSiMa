@@ -141,7 +141,8 @@ int OSMPInterface::writeToInternalState() {
 			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << rpcValue.value().size()
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
-		mapper->mapToInternalState(rpcValue.value(), output.interface_name, STRINGCOSIMA);
+		std::string value = rpcValue.value();
+		mapper->mapToInternalState(value, output.base_name);
 	}
 	return 0;
 }
@@ -153,13 +154,13 @@ int OSMPInterface::readFromInternalState() {
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		auto namedValue = CoSiMa::rpc::NamedBytes();
 		namedValue.set_name(input.interface_name);
-		values_t value = mapper->mapFromInternalState(input.interface_name, STRINGCOSIMA);
-		namedValue.set_value(std::get<std::string>(value));
+		std::string value = mapper->mapFromInternalState(input.interface_name);
+		namedValue.set_value(value);
 
 		CoSiMa::rpc::Int32 rpcRetVal;
 		if (verbose) {
-			std::cout << "OSMPInterface: write " << input.interface_name << ", Size: " << std::get<std::string>(value).size()
-				<< ", Hash: " << std::hash<std::string>{}(std::get<std::string>(value)) << std::endl;
+			std::cout << "OSMPInterface: write " << input.interface_name << ", Size: " << value.size()
+				<< ", Hash: " << std::hash<std::string>{}(value) << std::endl;
 		}
 		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
 

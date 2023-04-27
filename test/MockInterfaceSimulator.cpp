@@ -36,7 +36,7 @@ public:
 		return 0;
 	}
 
-	std::shared_ptr<internalState> getInternalState() {
-		return getInternalState();
+	std::shared_ptr<internalState> getMessageCache() {
+		return getMessageCache();
 	}
 };

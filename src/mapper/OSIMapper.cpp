@@ -9,21 +9,17 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 		return 1;
 	}
 
-	if (auto tmp_owner = owner.lock()) {
-		//tmp_owner->configure(configVariants);
-	}
-
 	if (std::get_if<OSMPInterfaceConfig>(&configVariants) != nullptr) {
 		OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
+		//fill input vectors
 		for (auto& input : interfaceConfig.inputs) {
-			config.stringInputList.push_back(NamesAndIndex(input.base_name, input.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string(input.default_value));
+			data.messageInputList.push_back(convertToAnnotatedMessage(input));
 		}
-		int inputsize = (int)state->strings.size();
-		for (auto& output : interfaceConfig.outputs) {
-			config.stringOutputList.push_back(NamesAndIndex(output.base_name, output.interface_name, (int)state->strings.size() - inputsize));
-			state->strings.push_back(std::string(output.default_value));
+		//fill output vectors and internalState for temporary storage
+		for (auto& definition : interfaceConfig.outputs) {
+			data.messageOutputList.push_back(convertToAnnotatedMessage(definition));
 		}
+		return 0;
 	}
-	return 0;
+	return -1;
 }

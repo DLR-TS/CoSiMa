@@ -37,7 +37,7 @@ public:
 		return doublevalue;
 	};
 
-	std::string getStringValue(std::string base_name) {
+	std::string getOSIMessage(std::string base_name) {
 		requestedVariables.push_back(base_name);
 		return stringvalue;
 	};
@@ -62,7 +62,7 @@ public:
 		return 0;
 	};
 
-	int setStringValue(std::string base_name, std::string value) {
+	int setOSIMessage(std::string base_name, std::string value) {
 		stringvalue = value;
 		return 0;
 	};
