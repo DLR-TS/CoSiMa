@@ -16,22 +16,22 @@ YAML::Node loadConfigurationFile(const std::string& path) {
 
 SimulationSetup parseSimulationConfiguration(YAML::Node& node) {
 	SimulationSetup config;
-	for (auto& nodechild : node) {
-		SimulatorName name = nodechild.as<SimulatorName>();
+	for (std::size_t i = 0; i < node.size(); i++) {
+		SimulatorName name = node[i].as<SimulatorName>();
 		const eSimulatorTypes simName = nameToEnum(name.simulator);
 		switch (simName) {
 		case CARLA:
 			config.baseSimulator = std::make_shared<CARLAInterface>();
-			config.baseSimulator->configure(nodechild);
+			config.baseSimulator->configure(node[i]);
 			break;
 		case DUMMY:
 			config.baseSimulator = std::make_shared<DummyInterface>();
-			config.baseSimulator->configure(nodechild);
+			config.baseSimulator->configure(node[i]);
 			break;
 		case OSMP:
 		{
 			std::shared_ptr<OSMPInterface> osmp = std::make_shared<OSMPInterface>();
-			osmp->configure(nodechild);
+			osmp->configure(node[i]);
 			config.childSimulators.push_back(osmp);
 		}
 		break;

@@ -20,7 +20,7 @@ public:
 	\param node yaml confguration node
 	\return valid status
 	*/
-	virtual void configure(YAML::detail::iterator_value& node) = 0;
+	virtual void configure(YAML::Node& node) = 0;
 	/**
 	Connect grpc with host/port information from corresponding fields
 	\verbose enable verbose output

@@ -54,7 +54,7 @@ public:
 	\param node yaml node
 	\return valid status
 	*/
-	virtual void configure(YAML::detail::iterator_value& node);
+	virtual void configure(YAML::Node& node);
 	/**
 	Initialize the interface.
 	\param verbose enable verbose output
