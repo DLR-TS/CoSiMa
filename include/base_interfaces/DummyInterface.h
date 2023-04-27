@@ -10,7 +10,7 @@
 class DummyInterface : public BaseSystemInterface
 {
 public:
-	virtual void configure(YAML::Node &node) override;
+	virtual void configure(YAML::Node node) override;
 	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;
