@@ -35,7 +35,6 @@ initialisation_timeout: timeout for gRPC call for initialisation of Carla OSI Se
 ```
 - simulator: OSMP
   model: /Path/to/FMU.fmu
-  prefix: "#test#"
   host: localhost
   port: 51426
   transaction_timeout: 5000
@@ -47,11 +46,10 @@ initialisation_timeout: timeout for gRPC call for initialisation of Carla OSI Se
 ```
 
 model: path where FMU is located, if not found by CoSiMa the OSMP Service will try to load the file directly. It can also be an OSI trace file as an input. 
-prefix: prefix for OSI messages to distinguish it from other strings  
 host and port: host and port of OSMP Service  
 transaction_timout: timeout for gRPC getter and setter calls  
 do_step_timeout: timeout for gRPC Do_Step calls  
 input and output: list of inputs/outputs  
-  interface_name: name of variable in modeldescription.xml of FMU, needs to be the same as OSI message name, can contain In and Out name prefix  
+  interface_name: name of variable in modeldescription.xml of FMU, needs to be the same as OSI message name, can contain In and Out as a prefix 
   base_name: name for matching the input and output inside CoSiMa  
   default_value: could define initial message
