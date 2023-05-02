@@ -29,7 +29,7 @@ int Mapper::readConfiguration(configVariants_t configVariants) {
 	InterfaceYAMLConfig yamlconfig = std::get<InterfaceYAMLConfig>(configVariants);
 	//fill input vectors
 	for (ConfigParameter& input : yamlconfig.inputs) {
-		data.messageInputList.push_back(convertToAnnotatedMessage(definition));
+		data.messageInputList.push_back(convertToAnnotatedMessage(input));
 	}
 	//fill output vectors and internalState for temporary storage
 	for (ConfigParameter& output : yamlconfig.outputs) {

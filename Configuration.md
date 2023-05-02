@@ -4,7 +4,9 @@ In general the simulation configuration consists of a base simulator and several
 
 ## Base simulator
 
-At the moment there is only one base simulator implemented. The base simulator will be contacted, if an input of a model is not filled by an output of an other model.
+At the moment there is one base simulator (CARLA) as well as a dummy implemented.\
+The base simulator will be contacted, if an input of a model is not filled by an output of an other model.
+The dummy can be used to run a simulation without CARLA.
 
 ### Carla OSI Service Configuration
 ```
@@ -44,7 +46,7 @@ initialisation_timeout: timeout for gRPC call for initialisation of Carla OSI Se
       - {interface_name: OSMPSensorData, base_name: OSMPSensorData, default_value: ""}
 ```
 
-model: path where FMU is located, if not found by CoSiMa the OSMP Service will try to load the file directly  
+model: path where FMU is located, if not found by CoSiMa the OSMP Service will try to load the file directly. It can also be an OSI trace file as an input. 
 prefix: prefix for OSI messages to distinguish it from other strings  
 host and port: host and port of OSMP Service  
 transaction_timout: timeout for gRPC getter and setter calls  
