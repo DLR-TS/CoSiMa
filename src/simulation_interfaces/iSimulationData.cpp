@@ -1,20 +1,18 @@
 #include "simulation_interfaces/iSimulationData.h"
+#include <memory.h>
 
-void iSimulationData::mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface) {
+void SimulatorInterface::mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	mapper->searchInput(baseInterface);
 }
 
-void iSimulationData::mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface) {
+void SimulatorInterface::mapFromInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	mapper->writeOutput(baseInterface);
 }
 
-std::shared_ptr<Mapper> iSimulationData::getMapper() {
-	return mapper;
+void SimulatorInterface::configureMapperOwner() {
+	mapper->setOwner(shared_from_this());
 }
 
-int iSimulationData::readConfiguration(configVariants_t configVariants) {
-	std::cout << "Calling the read configuration method, which is not implemented by selected interface: " <<
-	std::get_if<InterfaceYAMLConfig>(&configVariants)->simulator << std::endl;
-	throw 1;
-	return 0;
+void SimulatorInterface::configure(YAML::Node node) {
+	std::cout << "Calling the read configuration method, which is not implemented by selected interface: " << std::endl;
 }

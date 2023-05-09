@@ -16,34 +16,31 @@
 #include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
 #include "reader/YAMLConfigReader.h"
-#include "SimulationInterfaceFactory.h"
 
-struct cmdParameter {
+struct CmdParameter {
 	bool verbose = false;
+	std::string configurationPath;
 };
 
-void prepareSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem);
-void doSimulationStep(std::shared_ptr<iSimulationData> simInterface, double stepsize);
-void postSimulationStep(std::shared_ptr<iSimulationData> simInterface, std::shared_ptr<BaseSystemInterface> baseSystem);
+CmdParameter parseRuntimeParameter(int argc, char *argv[]);
 
-class Cosima
-{
+class Cosima {
 private:
-	const cmdParameter runtimeParameter;
 
-	std::shared_ptr<BaseSystemInterface> baseSystem;
-	/**
-	* Vector that holds every simulation interface.
-	*/
-	std::vector<std::shared_ptr<iSimulationData>> simulationInterfaces;
+	CmdParameter runtimeParameter;
+	SimulationSetup setup;
 
 public:
-	Cosima(cmdParameter cmdParameter) : runtimeParameter{ cmdParameter } {}
-
-	void loadConfiguration(std::string& configurationPath);
+	void setRuntimeParameter(CmdParameter& runtimeParameter);
+	void loadConfiguration();
 	void initInterfaces();
 	void sensorViewConfiguration();
 	void simulationLoop();
+
+	void prepareSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
+	void doSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
+	void postSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
+	void stopSimulation(std::shared_ptr<SimulatorInterface> simInterface);
 
 	void disconnect();
 };

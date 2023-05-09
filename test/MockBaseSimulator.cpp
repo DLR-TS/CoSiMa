@@ -37,7 +37,7 @@ public:
 		return doublevalue;
 	};
 
-	std::string getStringValue(std::string base_name) {
+	std::string getOSIMessage(std::string base_name) {
 		requestedVariables.push_back(base_name);
 		return stringvalue;
 	};
@@ -62,16 +62,15 @@ public:
 		return 0;
 	};
 
-	int setStringValue(std::string base_name, std::string value) {
+	int setOSIMessage(std::string base_name, std::string value) {
 		stringvalue = value;
 		return 0;
 	};
 
-	virtual int readConfiguration(baseConfigVariants_t config) override {
-		return 0;
+	virtual void configure(YAML::detail::iterator_value& node) override {
 	};
 
-	virtual int initialize(bool verbose) override {
+	virtual int init(bool verbose) override {
 		return 0;
 	};
 

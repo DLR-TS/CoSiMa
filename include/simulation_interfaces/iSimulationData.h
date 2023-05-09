@@ -10,29 +10,25 @@
 #include <memory>
 #include "base_interfaces/BaseSystemInterface.h"
 #include "mapper/Mapper.h"
-#include "internalState.h"
 #include "reader/StandardYAMLConfig.h"
 
 //forward declarations
 /**
 * Basic value types
 */
-typedef std::variant<int, float, double, bool, std::string> values_t;
-typedef std::variant<InterfaceYAMLConfig, FMIInterfaceConfig, OSIInterfaceConfig, OSMPInterfaceConfig> configVariants_t;
+//typedef std::variant<int, float, double, bool, std::string> values_t;
+typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
 class BaseSystemInterface;
 class Mapper;
 
 /**
 * Enum containing all supported interfaces and error for parsing failures.
 */
-enum eSimulatorName
+enum eSimulatorTypes
 {
-	FMI,
-	OSI,
-	OSMP,
 	CARLA,
+	OSMP,
 	DUMMY,
-	DEFAULT,
 
 	SIMULATORNAME_ERROR //needs to be last
 };
@@ -40,24 +36,9 @@ enum eSimulatorName
 /**
 Abstract class for all simulation interfaces.
 */
-class iSimulationData
+class SimulatorInterface : public std::enable_shared_from_this<SimulatorInterface>
 {
-public:
-	/**
-	Constructor of iSimulationData.
-	\param mapper Mapper to be set.
-	*/
-	iSimulationData(std::shared_ptr<Mapper> mapper, bool verbose)
-	{
-		this->mapper = mapper;
-		this->verbose = verbose;
-	}
-
 protected:
-	/**
-	Holds a copy of the simulator interface variables.
-	*/
-	std::shared_ptr<internalState> state;
 	/**
 	Specific mapper of this interface.
 	*/
@@ -69,14 +50,20 @@ protected:
 
 public:
 	/**
-	Initialize the interface.
-	\param starttime Time of start.
-	\return Success status.
+	Read configuration and fill simulation configuration.
+	\param node yaml node
+	\return valid status
 	*/
-	virtual int init(float starttime = 0.0) = 0;
+	virtual void configure(YAML::Node node);
+	/**
+	Initialize the interface.
+	\param verbose enable verbose output
+	\return success status.
+	*/
+	virtual int init(bool verbose) = 0;
 	/**
 	Disconnect from interface.
-	\return Success status.
+	\return success status
 	*/
 	virtual int disconnect() = 0;
 	/**
@@ -94,27 +81,24 @@ public:
 	*/
 	virtual int doStep(double stepSize = 1) = 0;
 	/**
-	update outputs of the interface in the internal state
+	update outputs of the interface in the internal messageCache
 	uses the Mapper::mapToInternalState method to write outputs
 	*/
 	virtual int writeToInternalState() = 0;
-	/**
-	\return Mapper of this interface.
-	*/
-	std::shared_ptr<Mapper> getMapper();
 
 	/**
-	Reads the internal state into the simulation interface.
+	Reads the internal messageCache into the simulation interface.
 	*/
 	virtual int readFromInternalState() = 0;
 
 	/**
-	Read configuration and fill simulation configuration.
-	\param config the decoding struct
-	\return success status
+	Configure mapper weak pointer
 	*/
-	virtual int readConfiguration(configVariants_t configVariants);
+	void configureMapperOwner();
 
+	/**
+	Stop the simulation run gracefully.
+	*/
 	virtual void stopSimulation() {};
 };
 #endif // !ISIMULATIONDATA_H
