@@ -19,6 +19,7 @@
 
 struct CmdParameter {
 	bool verbose = false;
+	bool parallel = false;
 	std::string configurationPath;
 };
 
@@ -36,6 +37,7 @@ public:
 	void initInterfaces();
 	void sensorViewConfiguration();
 	void simulationLoop();
+	void simulationLoopParallel();
 
 	void prepareSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
 	void doSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
