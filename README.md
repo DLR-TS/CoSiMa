@@ -37,7 +37,7 @@ Some dependencies are retrieved using CMake's FetchContent Module. To override t
 # Configure CoSiMa
 To start CoSiMa a config file (yaml) needs to be provided.\
 The configuration contains information about all connected simulators.\
-For a detailed description see the [Dokumentation here](https://github.com/DLR-TS/CoSiMa/blob/master/Configuration.md).
+For a detailed description see the [documentation here](https://github.com/DLR-TS/CoSiMa/blob/master/Configuration.md).
 Currently implemented are connectors to CARLA and to OSMP, as well as a Dummy to run without CARLA.
 
 ## CARLA
@@ -66,6 +66,7 @@ Additional information: [YAML Configuration](https://github.com/DLR-TS/CoSiMa/bl
 | Parameter | Description |
 | ------ | ------ |
 | -v | Verbose outputs. |
+| -p | Parallel model execution. |
 | PATH.yaml | Path to Configuration file. |
 
 ## Used Libraries
