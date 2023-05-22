@@ -7,6 +7,9 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
+		if (currentArg == "-p") {
+			runtimeParameter.parallel = true;
+		}
 		else {
 			runtimeParameter.configurationPath = currentArg;
 		}
@@ -97,7 +100,7 @@ void Cosima::stopSimulation(std::shared_ptr<SimulatorInterface> simInterface) {
 	simInterface->stopSimulation();
 }
 
-void Cosima::simulationLoop() {
+void Cosima::simulationLoopParallel() {
 
 	double total_time = 0;
 	std::vector<std::thread> simulationThreads;
@@ -142,6 +145,32 @@ void Cosima::simulationLoop() {
 	}
 	simulationThreads.clear();
 }
+
+void Cosima::simulationLoop() {
+
+	if (runtimeParameter.parallel) {
+		simulationLoopParallel();
+		return;
+	}
+
+	double total_time = 0;
+
+	while (!setup.baseSimulator->simulationStopped()) {
+
+		if (runtimeParameter.verbose) {
+			std::cout << "Modules DoStep with stepsize: " << setup.baseSimulator->getStepSize() << " Simulation Time: " << total_time << std::endl;
+			total_time += setup.baseSimulator->getStepSize();
+		}
+
+		for (auto &simInterface : setup.childSimulators) {
+			prepareSimulationStep(simInterface);
+			doSimulationStep(simInterface);
+			postSimulationStep(simInterface);
+		}
+		setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
+	}
+}
+
 
 void Cosima::disconnect() {
 	if (runtimeParameter.verbose) {
