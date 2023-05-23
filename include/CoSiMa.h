@@ -20,6 +20,7 @@
 struct CmdParameter {
 	bool verbose = false;
 	bool parallel = false;
+	bool sensorviewconfiguration = false;
 	std::string configurationPath;
 };
 

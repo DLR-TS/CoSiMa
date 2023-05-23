@@ -14,7 +14,9 @@ int main(int argc, char *argv[])
 	cosima.setRuntimeParameter(runtimeParameter);
 	cosima.loadConfiguration();
 	cosima.initInterfaces();
-	cosima.sensorViewConfiguration();
+	if (runtimeParameter.sensorviewconfiguration) {
+		cosima.sensorViewConfiguration();
+	}
 	cosima.simulationLoop();
 
 	std::cout << "Goodbye from CoSiMa." << std::endl;
