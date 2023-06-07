@@ -143,7 +143,7 @@ int OSMPInterface::writeToInternalState() {
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
 		std::string value = rpcValue.value();
-		mapper->mapToInternalState(value, output.base_name);
+		mapper->mapToInternalState(value, output.interface_name);
 	}
 	return 0;
 }

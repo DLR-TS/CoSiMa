@@ -28,6 +28,7 @@ enum eSimulatorTypes
 {
 	CARLA,
 	OSMP,
+	PROXY,
 	DUMMY,
 
 	SIMULATORNAME_ERROR //needs to be last
