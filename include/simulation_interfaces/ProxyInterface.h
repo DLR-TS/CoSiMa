@@ -9,6 +9,9 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 #elif _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>

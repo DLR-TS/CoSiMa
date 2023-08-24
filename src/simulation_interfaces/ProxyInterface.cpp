@@ -59,7 +59,7 @@ void ProxyInterface::stopSimulation() {
 
 int ProxyInterface::disconnect() {
 #ifdef __linux__
-	close(socket);
+	close(sockfd);
 #elif _WIN32
 	closesocket(clientSocket);
 	WSACleanup();
@@ -73,23 +73,23 @@ void ProxyInterface::readFromProxy(std::string& interfacename) {
 	int messageSize = 0;
 	int readableLength = 0;
 #ifdef __linux__
-	ioctl(socket, FIONREAD, &readableLength);
+	ioctl(sockfd, FIONREAD, &readableLength);
 	if (readableLength < 4) {//4 bytes for message length
 		std::cout << "No size from proxy" << std::endl;
 	}
-	int bytesRead = read(socket, &messageSize, sizeof(int));
+	int bytesRead = read(sockfd, &messageSize, sizeof(int));
 	if (messageSize != 0) {
 		char** message = new char*[messageSize + 1];
 		bool allReceived = false;
 		int bytesReceived = 0;
 		while (!allReceived) {
-			ioctl(socket, FIONREAD, &readableLength);
+			ioctl(sockfd, FIONREAD, &readableLength);
 			if (readableLength != 0) {
 				if (readableLength > messageSize) {
 					readableLength = messageSize - bytesReceived;
 				}
 				char** messagePart = new char*[readableLength];
-				bytesRead = read(socket, &messagePart, readableLength);
+				bytesRead = read(sockfd, &messagePart, readableLength);
 				std::memcpy((void*)(message + bytesReceived), messagePart, bytesRead);
 				bytesReceived += bytesRead;
 				if (bytesReceived == messageSize) {
@@ -103,8 +103,6 @@ void ProxyInterface::readFromProxy(std::string& interfacename) {
 	char** message = new char*[messageSize + 1];
 #endif
 	
-
-
 		std::string value;
 		switch (getMessageType(interfacename)) {
 		case SensorViewMessage:
@@ -234,8 +232,8 @@ void ProxyInterface::sendToProxy(std::string& interfacename) {
 		break;
 	}
 #ifdef __linux__
-	send(socket, &address.size, sizeof(address.size), 0);
-	send(socket, (void*)address.addr.address, address.size, 0);
+	send(sockfd, &address.size, sizeof(address.size), 0);
+	send(sockfd, (void*)address.addr.address, address.size, 0);
 #elif _WIN32
 	send(clientSocket, (char*)&address.size, sizeof(address.size), 0);
 	send(clientSocket, (char*)&address.addr.address, address.size, 0);
