@@ -34,6 +34,7 @@ SimulationSetup parseSimulationConfiguration(YAML::Node& node) {
 			osmp->configure(node[i]);
 			config.childSimulators.push_back(osmp);
 		}
+		break;
 		case PROXY:
 		{
 			std::shared_ptr<ProxyInterface> proxy = std::make_shared<ProxyInterface>();
