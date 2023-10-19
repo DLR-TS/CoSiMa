@@ -37,15 +37,15 @@ int ProxyInterface::init(bool verbose) {
 }
 
 int ProxyInterface::writeToInternalState() {
-	for (auto output : config.outputs) {
-		sendToProxy(output.interface_name);
+	for (auto& input : config.outputs) {
+		readFromProxy(input.interface_name);
 	}
 	return 0;
 }
 
 int ProxyInterface::readFromInternalState() {
-	for (auto& input : config.inputs) {
-		readFromProxy(input.interface_name);
+	for (auto output : config.inputs) {
+		sendToProxy(output.interface_name);
 	}
 	return 0;
 }
@@ -71,12 +71,16 @@ int ProxyInterface::disconnect() {
 void ProxyInterface::readFromProxy(std::string& interfacename) {
 
 	int messageSize = 0;
-	int readableLength = 0;
+	long readableLength = 0;
 #ifdef __linux__
-	ioctl(sockfd, FIONREAD, &readableLength);
-	if (readableLength < 4) {//4 bytes for message length
-		std::cout << "No size from proxy" << std::endl;
+	while(true) {
+		ioctl(sockfd, FIONREAD, &readableLength);
+		if (readableLength < 4) {//4 bytes for message length
+			continue;
+		}
+		break;
 	}
+
 	int bytesRead = read(sockfd, &messageSize, sizeof(int));
 	if (messageSize != 0) {
 		char** message = new char*[messageSize + 1];
@@ -88,21 +92,20 @@ void ProxyInterface::readFromProxy(std::string& interfacename) {
 				if (readableLength > messageSize) {
 					readableLength = messageSize - bytesReceived;
 				}
-				char** messagePart = new char*[readableLength];
+				char messagePart[readableLength];
 				bytesRead = read(sockfd, &messagePart, readableLength);
+
 				std::memcpy((void*)(message + bytesReceived), messagePart, bytesRead);
 				bytesReceived += bytesRead;
 				if (bytesReceived == messageSize) {
 					allReceived = true;
 				}
-				delete *messagePart;
 			}
 		}
 #elif _WIN32
 	//(server,);
 	char** message = new char*[messageSize + 1];
 #endif
-	
 		std::string value;
 		switch (getMessageType(interfacename)) {
 		case SensorViewMessage:
@@ -161,14 +164,14 @@ void ProxyInterface::readFromProxy(std::string& interfacename) {
 			break;
 		}
 		mapper->mapToInternalState(value, interfacename);
-		delete *message;
+
 #ifdef __linux__
 	}
 	else {
 		std::cout << "No data to read" << std::endl;
 	}
 #elif _WIN32
-		
+
 #endif
 }
 
