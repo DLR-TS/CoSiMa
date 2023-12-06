@@ -6,7 +6,7 @@ void ProxyInterface::configure(YAML::Node node) {
 	mapper->readConfiguration(config);
 }
 
-int ProxyInterface::init(bool verbose) {
+int ProxyInterface::init(bool verbose, std::string configurationPath) {
 	this->verbose = verbose;
 
 #ifdef __linux__

@@ -26,7 +26,7 @@ public:
 		mapper = std::make_shared<OSIMapper>();
 	};
 
-	int init(bool verbose) override;
+	int init(bool verbose, std::string configurationPath) override;
 	int disconnect() override;
 
 	int writeToInternalState() override;

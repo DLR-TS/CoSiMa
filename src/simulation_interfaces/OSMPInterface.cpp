@@ -6,7 +6,7 @@ void OSMPInterface::configure(YAML::Node node) {
 	mapper->readConfiguration(config);
 }
 
-int OSMPInterface::init(bool verbose) {
+int OSMPInterface::init(bool verbose, std::string configurationPath) {
 	this->verbose = verbose;
 	if (verbose) {
 		std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
@@ -33,6 +33,9 @@ int OSMPInterface::init(bool verbose) {
 	}
 
 	std::ifstream is(config.model, std::ios::binary);
+	if (!is) {//check if model is located next to configuration file
+		is = std::ifstream(configurationPath + config.model, std::ios::binary);
+	}
 	if (is) {
 		// get length of file:
 		is.seekg(0, is.end);
@@ -84,7 +87,7 @@ int OSMPInterface::init(bool verbose) {
 		if (retry_counter < retries) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			std::cout << "Retry" << std::endl;
-			return init(verbose);
+			return init(verbose, configurationPath);
 		}
 		return -502;
 	case GRPC_CHANNEL_SHUTDOWN:
