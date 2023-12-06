@@ -29,7 +29,6 @@ class CARLAInterface : public BaseSystemInterface
 	std::shared_ptr<grpc::Channel> channel;
 	std::unique_ptr<CoSiMa::rpc::BaseInterface::Stub> stub;
 	std::unique_ptr<CoSiMa::rpc::CARLAInterface::Stub> configStub;
-	std::string save = "";
 
 public:
 	virtual void configure(YAML::Node node) override;
