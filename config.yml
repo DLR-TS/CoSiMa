@@ -7,8 +7,6 @@
   transaction_timeout: 30000
   do_step_timeout: 30000
   initialisation_timeout: 60000
-- simulator: FMI #local fmi implementation
-  model: /Path/to/FMU.fmu
 - simulator: OSMP #OSMP-Service
   model: /Path/to/FMU.fmu
   host: localhost
@@ -16,6 +14,6 @@
   transaction_timeout: 5000
   do_step_timeout: 5000
   input:
-      - {interface_name: OSMPSensorView, base_name: OSMPSensorViewGroundTruth, default_value: ""}
+      - {interface_name: OSMPSensorView, base_name: OSMPSensorViewGroundTruth}
   output:
-      - {interface_name: "OSMPSensorData", base_name: OSMPSensorData, default_value: ""}
+      - {interface_name: "OSMPSensorData", base_name: OSMPSensorData}
