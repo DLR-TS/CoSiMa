@@ -50,6 +50,7 @@ int OSMPInterface::init(bool verbose, std::string configurationPath) {
 
 		is.close();
 		rpcConfig.set_binaryfile(buffer, length);
+		delete[] buffer;
 	}
 	else {
 		if (config.model == "") {

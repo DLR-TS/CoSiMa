@@ -45,7 +45,6 @@ void Cosima::initInterfaces() {
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin Initializiation" << std::endl;
 	}
-
 	//init interfaces
 	if (setup.baseSimulator->init(runtimeParameter.verbose)) {
 		std::cout << "Error in initialization of base simulation interface." << std::endl;
@@ -57,7 +56,6 @@ void Cosima::initInterfaces() {
 			exit(0);
 		}
 	}
-
 	if (runtimeParameter.verbose) {
 		std::cout << "End Initializiation" << std::endl;
 	}
@@ -152,7 +150,6 @@ void Cosima::simulationLoopParallel() {
 }
 
 void Cosima::simulationLoop() {
-
 	if (runtimeParameter.parallel) {
 		simulationLoopParallel();
 		return;
