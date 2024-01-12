@@ -31,30 +31,27 @@ int OSMPInterface::init(bool verbose, std::string configurationPath) {
 		parameter->set_name(param.name);
 		parameter->set_value(param.value);
 	}
+	if (config.model == "") {
+		std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+	} else {
+		std::ifstream is(config.model, std::ios::binary);
+		if (!is) {//check if model is located next to configuration file
+			is = std::ifstream(configurationPath + "/" + config.model, std::ios::binary);
+		}
+		if (is) {
+			// get length of file:
+			is.seekg(0, is.end);
+			auto length = is.tellg();
+			is.seekg(0, is.beg);
 
-	std::ifstream is(config.model, std::ios::binary);
-	if (!is) {//check if model is located next to configuration file
-		is = std::ifstream(configurationPath + config.model, std::ios::binary);
-	}
-	if (is) {
-		// get length of file:
-		is.seekg(0, is.end);
-		auto length = is.tellg();
-		is.seekg(0, is.beg);
+			// allocate memory:
+			char* buffer = new char[length];
 
-		// allocate memory:
-		char* buffer = new char[length];
-
-		// read data as a block:
-		is.read(buffer, length);
-
-		is.close();
-		rpcConfig.set_binaryfile(buffer, length);
-		delete[] buffer;
-	}
-	else {
-		if (config.model == "") {
-			std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+			// read data as a block:
+			is.read(buffer, length);
+			is.close();
+			rpcConfig.set_binaryfile(buffer, length);
+			delete[] buffer;
 		} else {
 			std::cout << "Could not find given file path: " << config.model
 				<< " Will try this path as a local path direct in OSMP environment." << std::endl;

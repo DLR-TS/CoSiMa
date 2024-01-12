@@ -230,6 +230,9 @@ namespace YAML {
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
 			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
+			if (osiInterface.model == "null") {
+				osiInterface.model = "";
+			}
 			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
 			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
