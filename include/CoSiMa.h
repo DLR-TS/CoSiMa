@@ -22,7 +22,7 @@ struct CmdParameter {
 	bool parallel = false;
 	bool sensorviewconfiguration = false;
 	std::string configurationPath;
-	std::string configurationName;
+	std::string configurationName = "config.yml";
 };
 
 CmdParameter parseRuntimeParameter(int argc, char *argv[]);

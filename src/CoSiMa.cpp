@@ -28,7 +28,8 @@ void Cosima::setRuntimeParameter(CmdParameter& runtimeParameter) {
 
 void Cosima::loadConfiguration() {
 
-	YAML::Node node = loadConfigurationFile(runtimeParameter.configurationPath + "/" + runtimeParameter.configurationName);
+	YAML::Node node = loadConfigurationFile(runtimeParameter.configurationPath
+		+ (runtimeParameter.configurationPath.size() ? "/" : "") + runtimeParameter.configurationName);
 	if (node.IsNull()) {
 		std::cout << "Error loading configuration with cpp-yaml" << std::endl;
 		exit(0);
