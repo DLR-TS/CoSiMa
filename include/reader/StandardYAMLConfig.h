@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+@authors German Aerospace Center: BjÃ¶rn Bahn, Nils Wendorff, Danny Behnecke
 */
 
 #ifndef STANDARDYAMLCONGIF_H
@@ -230,7 +230,10 @@ namespace YAML {
 		static bool decode(const Node& node, OSMPInterfaceConfig& osiInterface)
 		{
 			osiInterface.model = node["model"].IsDefined() ? node["model"].as<std::string>() : "";
-			if (osiInterface.model == "null") {
+			if (osiInterface.model == "null") {//Bugfix for entry of "model: " in configuration. This could happen easily if a recording OSMP is created.
+				std::cout << "Model read as null. Will be interpreted as emptpy string. "
+					<<" Remove line model: in the configuration file to remove this hint."
+					<< std::endl;
 				osiInterface.model = "";
 			}
 			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
