@@ -20,8 +20,7 @@ The dummy can be used to run a simulation without CARLA.
   do_step_timeout: 30000
   initialisation_timeout: 60000
   sensor_view_config:
-  - sensorOne:sensorOne
-    prefixed_fmu_variable_name: OSMPSensorViewExample
+  - prefixed_fmu_variable_name: OSMPSensorViewExample
     camera_sensor_mounting_position: {x: 0, y: 0, z: 0, roll: 0, pitch: 0, yaw: 0}
 ```
 
