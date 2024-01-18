@@ -6,7 +6,7 @@ void OSMPInterface::configure(YAML::Node node) {
 	mapper->readConfiguration(config);
 }
 
-int OSMPInterface::init(bool verbose) {
+int OSMPInterface::init(bool verbose, std::string configurationPath) {
 	this->verbose = verbose;
 	if (verbose) {
 		std::cout << "Try to connect to " << config.client_host << ":" << config.client_port << std::endl;
@@ -31,26 +31,27 @@ int OSMPInterface::init(bool verbose) {
 		parameter->set_name(param.name);
 		parameter->set_value(param.value);
 	}
+	if (config.model == "") {
+		std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+	} else {
+		std::ifstream is(config.model, std::ios::binary);
+		if (!is) {//check if model is located next to configuration file
+			is = std::ifstream(configurationPath + "/" + config.model, std::ios::binary);
+		}
+		if (is) {
+			// get length of file:
+			is.seekg(0, is.end);
+			auto length = is.tellg();
+			is.seekg(0, is.beg);
 
-	std::ifstream is(config.model, std::ios::binary);
-	if (is) {
-		// get length of file:
-		is.seekg(0, is.end);
-		auto length = is.tellg();
-		is.seekg(0, is.beg);
+			// allocate memory:
+			char* buffer = new char[length];
 
-		// allocate memory:
-		char* buffer = new char[length];
-
-		// read data as a block:
-		is.read(buffer, length);
-
-		is.close();
-		rpcConfig.set_binaryfile(buffer, length);
-	}
-	else {
-		if (config.model == "") {
-			std::cout << "OSMP Service will run as a recoder since no file is given as input." << std::endl;
+			// read data as a block:
+			is.read(buffer, length);
+			is.close();
+			rpcConfig.set_binaryfile(buffer, length);
+			delete[] buffer;
 		} else {
 			std::cout << "Could not find given file path: " << config.model
 				<< " Will try this path as a local path direct in OSMP environment." << std::endl;
@@ -84,7 +85,7 @@ int OSMPInterface::init(bool verbose) {
 		if (retry_counter < retries) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			std::cout << "Retry" << std::endl;
-			return init(verbose);
+			return init(verbose, configurationPath);
 		}
 		return -502;
 	case GRPC_CHANNEL_SHUTDOWN:
@@ -143,7 +144,7 @@ int OSMPInterface::writeToInternalState() {
 				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
 		}
 		std::string value = rpcValue.value();
-		mapper->mapToInternalState(value, output.base_name);
+		mapper->mapToInternalState(value, output.interface_name);
 	}
 	return 0;
 }

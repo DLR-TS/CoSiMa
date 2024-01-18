@@ -35,6 +35,13 @@ SimulationSetup parseSimulationConfiguration(YAML::Node& node) {
 			config.childSimulators.push_back(osmp);
 		}
 		break;
+		case PROXY:
+		{
+			std::shared_ptr<ProxyInterface> proxy = std::make_shared<ProxyInterface>();
+			proxy->configure(node[i]);
+			config.childSimulators.push_back(proxy);
+		}
+		break;
 		case SIMULATORNAME_ERROR:
 			config.valid = false;
 			break;
@@ -59,6 +66,9 @@ const eSimulatorTypes nameToEnum(std::string simulatorName) {
 	}
 	else if (simulatorName == "osmp") {
 		return OSMP;
+	}
+	else if (simulatorName == "proxy") {
+		return PROXY;
 	}
 	else {
 		std::cout << "Error parsing name: " << simulatorName << std::endl;

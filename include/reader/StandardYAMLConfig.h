@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+@authors German Aerospace Center: BjÃ¶rn Bahn, Nils Wendorff, Danny Behnecke
 */
 
 #ifndef STANDARDYAMLCONGIF_H

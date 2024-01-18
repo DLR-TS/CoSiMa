@@ -28,6 +28,7 @@ enum eSimulatorTypes
 {
 	CARLA,
 	OSMP,
+	PROXY,
 	DUMMY,
 
 	SIMULATORNAME_ERROR //needs to be last
@@ -60,7 +61,7 @@ public:
 	\param verbose enable verbose output
 	\return success status.
 	*/
-	virtual int init(bool verbose) = 0;
+	virtual int init(bool verbose, std::string configurationPath) = 0;
 	/**
 	Disconnect from interface.
 	\return success status

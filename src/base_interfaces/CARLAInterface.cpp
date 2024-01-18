@@ -80,6 +80,7 @@ std::string CARLAInterface::getOSIMessage(const std::string& base_name) {
 	if (verbose) {
 		std::cout << "Get " << base_name << " from CARLA interface" << std::endl;
 	}
+
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
@@ -99,6 +100,7 @@ std::string CARLAInterface::getOSIMessage(const std::string& base_name) {
 }
 
 int CARLAInterface::setOSIMessage(const std::string& base_name, const std::string& value) {
+
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 

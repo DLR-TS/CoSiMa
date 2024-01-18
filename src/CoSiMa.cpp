@@ -14,7 +14,9 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 			runtimeParameter.sensorviewconfiguration = true;
 		}
 		else {
-			runtimeParameter.configurationPath = currentArg;
+			std::filesystem::path path(currentArg);
+			runtimeParameter.configurationPath = path.parent_path().string();
+			runtimeParameter.configurationName = path.filename().string();
 		}
 	}
 	return runtimeParameter;
@@ -26,7 +28,7 @@ void Cosima::setRuntimeParameter(CmdParameter& runtimeParameter) {
 
 void Cosima::loadConfiguration() {
 
-	YAML::Node node = loadConfigurationFile(runtimeParameter.configurationPath);
+	YAML::Node node = loadConfigurationFile(runtimeParameter.configurationPath + "/" + runtimeParameter.configurationName);
 	if (node.IsNull()) {
 		std::cout << "Error loading configuration with cpp-yaml" << std::endl;
 		exit(0);
@@ -43,19 +45,17 @@ void Cosima::initInterfaces() {
 	if (runtimeParameter.verbose) {
 		std::cout << "Begin Initializiation" << std::endl;
 	}
-
 	//init interfaces
 	if (setup.baseSimulator->init(runtimeParameter.verbose)) {
 		std::cout << "Error in initialization of base simulation interface." << std::endl;
 		exit(0);
 	}
 	for (auto& simInterface : setup.childSimulators) {
-		if (simInterface->init(runtimeParameter.verbose)) {
+		if (simInterface->init(runtimeParameter.verbose, runtimeParameter.configurationPath)) {
 			std::cout << "Error in initialization of simulation interfaces." << std::endl;
 			exit(0);
 		}
 	}
-
 	if (runtimeParameter.verbose) {
 		std::cout << "End Initializiation" << std::endl;
 	}
@@ -150,7 +150,6 @@ void Cosima::simulationLoopParallel() {
 }
 
 void Cosima::simulationLoop() {
-
 	if (runtimeParameter.parallel) {
 		simulationLoopParallel();
 		return;

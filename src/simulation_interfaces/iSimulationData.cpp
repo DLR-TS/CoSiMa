@@ -1,5 +1,4 @@
 #include "simulation_interfaces/iSimulationData.h"
-#include <memory.h>
 
 void SimulatorInterface::mapToInterfaceSystem(std::shared_ptr<BaseSystemInterface> baseInterface) {
 	mapper->searchInput(baseInterface);
