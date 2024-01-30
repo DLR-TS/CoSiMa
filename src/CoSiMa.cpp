@@ -14,7 +14,7 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 			runtimeParameter.sensorviewconfiguration = true;
 		}
 		else {
-			std::filesystem::path path(currentArg);
+			fs::path path(currentArg);
 			runtimeParameter.configurationPath = path.parent_path().string();
 			runtimeParameter.configurationName = path.filename().string();
 		}

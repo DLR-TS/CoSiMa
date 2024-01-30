@@ -7,8 +7,8 @@ YAML::Node loadConfigurationFile(const std::string& path) {
 		return node;
 	}
 	std::cout << "Try to load YAML file: " << path << std::endl;
-	if (!std::filesystem::exists(path)) {
-		std::cout << "YAML file does not exist! Current path is " << std::filesystem::current_path() << std::endl;
+	if (!fs::exists(path)) {
+		std::cout << "YAML file does not exist! Current path is " << fs::current_path() << std::endl;
 		return node;
 	}
 	return YAML::LoadFile(path);
