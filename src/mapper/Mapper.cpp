@@ -22,9 +22,9 @@ void Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 
 int Mapper::readConfiguration(configVariants_t configVariants) {
 
-#if __has_include(<variant>)
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
 	InterfaceYAMLConfig yamlconfig = std::get<InterfaceYAMLConfig>(configVariants);
-#elif __has_include("boost/variant.hpp")
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
 	InterfaceYAMLConfig yamlconfig = boost::get<InterfaceYAMLConfig>(configVariants);
 #endif
 

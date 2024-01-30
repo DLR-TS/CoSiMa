@@ -5,12 +5,10 @@
 #ifndef BASECONFIGVARIANTS_H
 #define BASECONFIGVARIANTS_H
 
-#if __has_include(<variant>)
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
 	#include <variant>
-#elif __has_include("boost/variant.hpp")
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
 	#include "boost/variant.hpp"
-#else
-	error "Missing the <variant> header."
 #endif
 #include "reader/StandardYAMLConfig.h"
 

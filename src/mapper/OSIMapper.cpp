@@ -4,9 +4,9 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 
 	std::cout << "Read Configuration of OSI Mapper" << std::endl;
 
-#if __has_include(<variant>)
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
 	OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
-#elif __has_include("boost/variant.hpp")
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
 	OSMPInterfaceConfig interfaceConfig = boost::get<OSMPInterfaceConfig>(configVariants);
 #endif
 	//fill input vectors
