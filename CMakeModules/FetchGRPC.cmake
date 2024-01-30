@@ -5,7 +5,7 @@ FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
   GIT_TAG        v1.29.1
-  GIT_SHALLOW FALSE
+  GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
   LOG_CONFIGURE TRUE
   LOG_BUILD TRUE
@@ -29,7 +29,12 @@ FetchContent_GetProperties(gRPC)
 if(NOT grpc_POPULATED)
 	FetchContent_Populate(gRPC)
 
-	OPTION(FORCE_STATIC_GRPC "gRPC has problems linking some of its libraries when build as dll, as it is searching for static libs instead. Use this option to force building grpc as static libs" ON)
+	if(TARGET zlib OR TARGET CONAN_PKG::zlib)
+		message(VERBOSE "Using existing zlib provider")
+		set(gRPC_ZLIB_PROVIDER "package" CACHE STRING "Provider of zlib library")
+	else()
+		set(gRPC_ZLIB_PROVIDER "module" CACHE STRING "Provider of zlib library")
+	endif()
 
 	if(TARGET protobuf::protoc OR TARGET CONAN_PKG::protobuf)
 		message(VERBOSE "Using existing protobuf provider")
