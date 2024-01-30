@@ -8,13 +8,12 @@
 #include <cctype>
 #include <string>
 
-#if __has_include(<variant>)
-	#include <variant>
-#elif __has_include("boost/variant.hpp")
-	#include "boost/variant.hpp"
-#else
-error "Missing the <variant> header."
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
+#include <variant>
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
+#include "boost/variant.hpp"
 #endif
+
 #include <iostream>
 #include <algorithm>
 
@@ -28,9 +27,9 @@ class BaseSystemInterface;
 /**
 * YAML configuration structs
 */
-#if __has_include(<variant>)
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
 	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
-#elif __has_include("boost/variant.hpp")
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
 	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
 #endif
 

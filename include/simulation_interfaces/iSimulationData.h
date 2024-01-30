@@ -16,9 +16,9 @@
 /**
 * Basic value types
 */
-#if __has_include(<variant>)
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
 	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
-#elif __has_include("boost/variant.hpp")
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
 	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
 #endif
 class BaseSystemInterface;
