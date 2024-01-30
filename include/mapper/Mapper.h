@@ -7,7 +7,14 @@
 
 #include <cctype>
 #include <string>
-#include <variant>
+
+#if __has_include(<variant>)
+	#include <variant>
+#elif __has_include("boost/variant.hpp")
+	#include "boost/variant.hpp"
+#else
+error "Missing the <variant> header."
+#endif
 #include <iostream>
 #include <algorithm>
 
@@ -21,7 +28,11 @@ class BaseSystemInterface;
 /**
 * YAML configuration structs
 */
-typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#if __has_include(<variant>)
+	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#elif __has_include("boost/variant.hpp")
+	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#endif
 
 struct AnnotatedMessage {
 	std::string message;

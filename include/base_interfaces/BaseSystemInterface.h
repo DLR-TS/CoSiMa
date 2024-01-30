@@ -11,7 +11,7 @@
 class BaseSystemInterface
 {
 private:
-	std::atomic<bool> simulationStop = false;
+	std::atomic<bool> simulationStop = { false };
 protected:
 	bool verbose = false;
 public:

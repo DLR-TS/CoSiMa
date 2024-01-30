@@ -22,11 +22,12 @@ void Mapper::writeOutput(std::shared_ptr<BaseSystemInterface> baseInterface) {
 
 int Mapper::readConfiguration(configVariants_t configVariants) {
 
-	if (std::get_if<InterfaceYAMLConfig>(&configVariants) == nullptr) {
-		std::cout << "Wrong Configuration! Implement specific readConfiguration method for this interface." << std::endl;
-		return 1;
-	}
+#if __has_include(<variant>)
 	InterfaceYAMLConfig yamlconfig = std::get<InterfaceYAMLConfig>(configVariants);
+#elif __has_include("boost/variant.hpp")
+	InterfaceYAMLConfig yamlconfig = boost::get<InterfaceYAMLConfig>(configVariants);
+#endif
+
 	//fill input vectors
 	for (ConfigParameter& input : yamlconfig.inputs) {
 		data.messageInputList.push_back(convertToAnnotatedMessage(input));

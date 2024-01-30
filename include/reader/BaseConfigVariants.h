@@ -5,9 +5,19 @@
 #ifndef BASECONFIGVARIANTS_H
 #define BASECONFIGVARIANTS_H
 
-#include <variant>
+#if __has_include(<variant>)
+	#include <variant>
+#elif __has_include("boost/variant.hpp")
+	#include "boost/variant.hpp"
+#else
+	error "Missing the <variant> header."
+#endif
 #include "reader/StandardYAMLConfig.h"
 
-typedef std::variant<CARLAInterfaceConfig, DummyInterfaceConfig> baseConfigVariants_t;
+#if __has_include(<variant>)
+	typedef std::variant<CARLAInterfaceConfig, DummyInterfaceConfig> baseConfigVariants_t;
+#elif __has_include("boost/variant.hpp")
+	typedef boost::variant<CARLAInterfaceConfig, DummyInterfaceConfig> baseConfigVariants_t;
+#endif
 
 #endif //!BASECONFIGVARIANTS_H

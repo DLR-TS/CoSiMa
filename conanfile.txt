@@ -5,14 +5,13 @@ nasm/2.15.05
 yaml-cpp/0.7.0
 catch2/2.13.9
 fakeit/2.3.0
+# only for support for C++ 11
+boost/1.80.0
 
 [generators]
 cmake
 cmake_paths
 cmake_find_package
-
-[options]
-boost:shared=True
 
 [imports]
 bin, *.dll -> ./bin

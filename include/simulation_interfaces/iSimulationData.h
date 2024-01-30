@@ -16,8 +16,11 @@
 /**
 * Basic value types
 */
-//typedef std::variant<int, float, double, bool, std::string> values_t;
-typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#if __has_include(<variant>)
+	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#elif __has_include("boost/variant.hpp")
+	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+#endif
 class BaseSystemInterface;
 class Mapper;
 
