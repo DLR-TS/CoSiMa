@@ -145,5 +145,5 @@ include(Catch)
 catch_discover_tests(test_CoSiMa)
 
 add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/Main.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/Main.h")
-target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs)
 target_include_directories(CoSimulationManager PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
