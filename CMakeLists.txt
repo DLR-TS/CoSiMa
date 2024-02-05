@@ -3,7 +3,9 @@ project ("CoSimulationManager" CXX)
 
 message("Running with CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 
-set(CMAKE_CXX_STANDARD 17)
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+	set(CMAKE_CXX_STANDARD 17)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -146,8 +148,8 @@ catch_discover_tests(test_CoSiMa)
 
 add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/Main.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/Main.h")
 if (${CMAKE_CXX_STANDARD} LESS 17)
-target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs)
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs)
 else()
-target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
 endif()
 target_include_directories(CoSimulationManager PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
