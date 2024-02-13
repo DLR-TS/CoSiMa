@@ -143,7 +143,7 @@ CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 
 	for (auto& sensorViewExtra : config.osiSensorViewConfig) {
 		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
-		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
+		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.baseName);
 
 		if (sensorViewExtra.cameraSensorMountingPosition.size()) {
 			if (verbose) {

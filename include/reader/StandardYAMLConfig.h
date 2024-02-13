@@ -25,7 +25,7 @@ struct OSIMountingPosition {
 };
 
 struct SensorViewConfig {
-	std::string prefixedFmuVariableName;
+	std::string baseName;
 	std::vector<OSIMountingPosition> genericSensorMountingPosition;
 	std::vector<OSIMountingPosition> radarSensorMountingPosition;
 	std::vector<OSIMountingPosition> lidarSensorMountingPosition;
@@ -273,7 +273,7 @@ namespace YAML {
 
 		static bool decode(const Node& node, SensorViewConfig& config)
 		{
-			config.prefixedFmuVariableName = nodeOrDefault<std::string>(node["prefixed_fmu_variable_name"]);
+			config.baseName = nodeOrDefault<std::string>(node["base_name"]);
 			config.cameraSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["camera_sensor_mounting_position"]);
 			config.radarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["radar_sensor_mounting_position"]);
 			config.lidarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["lidar_sensor_mounting_position"]);
