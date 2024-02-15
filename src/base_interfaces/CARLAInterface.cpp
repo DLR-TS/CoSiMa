@@ -145,58 +145,68 @@ CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
 		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.baseName);
 
-		if (sensorViewExtra.cameraSensorMountingPosition.size()) {
+		switch (sensorViewExtra.sensorType) {
+		case CAMERA:
 			if (verbose) {
-				std::cout << "Set CameraSensorMountingPositon\n";
+				std::cout << "Set camera sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
-		}
-		if (sensorViewExtra.radarSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("camera");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_number_of_pixels_horizontal(sensorViewExtra.number_of_pixels_horizontal);
+			rpcSensorViewExtra->set_number_of_pixels_vertical(sensorViewExtra.number_of_pixels_vertical);
+			break;
+		case LIDAR:
 			if (verbose) {
-				std::cout << "Set RadarSensorMountingPosition\n";
+				std::cout << "Set lidar sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
-		}
-		if (sensorViewExtra.lidarSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("lidar");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_field_of_view_vertical(sensorViewExtra.field_of_view_vertical);
+			rpcSensorViewExtra->set_emitter_frequency(sensorViewExtra.emitter_frequency);
+			break;
+		case RADAR:
 			if (verbose) {
-				std::cout << "Set LidarSensorMountingPosition\n";
+				std::cout << "Set radar sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
-		}
-		if (sensorViewExtra.ultrasonicSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("radar");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_field_of_view_vertical(sensorViewExtra.field_of_view_vertical);
+			rpcSensorViewExtra->set_emitter_frequency(sensorViewExtra.emitter_frequency);
+			break;
+		case ULTRASONIC:
 			if (verbose) {
-				std::cout << "Set UltrasonicSensorMountingPosition\n";
+				std::cout << "Set ultrasonic sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
-		}
-		if (sensorViewExtra.genericSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("ultrasonic");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			break;
+		case GENERIC:
 			if (verbose) {
-				std::cout << "Set GenericSensorMountingPosition\n";
+				std::cout << "Set generic sensor co\n";
 			}
-			copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+			rpcSensorViewExtra->set_sensor_type("generic");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			break;
 		}
 	}
 
 	return rpcConfig;
 }
 
-void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition * rpcMountingPosition)
+void CARLAInterface::copyMountingPositions(const SensorViewConfig& sensorViewConfig, osi3::MountingPosition* rpcMountingPosition)
 {
-	for (auto mountingPosition : mountingPositions) {
-		auto position = rpcMountingPosition->mutable_position();
-		position->set_x(mountingPosition.x);
-		position->set_y(mountingPosition.y);
-		position->set_z(mountingPosition.z);
-		auto orientation = rpcMountingPosition->mutable_orientation();
-		orientation->set_pitch(mountingPosition.pitch);
-		orientation->set_yaw(mountingPosition.yaw);
-		orientation->set_roll(mountingPosition.roll);
-	}
+	OSIMountingPosition mountingPosition = sensorViewConfig.sensorMountingPosition;
+	auto position = rpcMountingPosition->mutable_position();
+	position->set_x(mountingPosition.x);
+	position->set_y(mountingPosition.y);
+	position->set_z(mountingPosition.z);
+	auto orientation = rpcMountingPosition->mutable_orientation();
+	orientation->set_pitch(mountingPosition.pitch * (M_PI / 180));
+	orientation->set_yaw(mountingPosition.yaw * (M_PI / 180));
+	orientation->set_roll(mountingPosition.roll * (M_PI / 180));
 }
 
 double CARLAInterface::getStepSize() {

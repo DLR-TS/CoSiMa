@@ -6,6 +6,15 @@
 #define STANDARDYAMLCONGIF_H
 #include "yaml-cpp/yaml.h"
 #include <iostream>
+#include <cctype>
+
+enum SensorType {
+	CAMERA,
+	RADAR,
+	LIDAR,
+	ULTRASONIC,
+	GENERIC
+};
 
 /**
  * \var std::string simulator
@@ -26,11 +35,18 @@ struct OSIMountingPosition {
 
 struct SensorViewConfig {
 	std::string baseName;
-	std::vector<OSIMountingPosition> genericSensorMountingPosition;
-	std::vector<OSIMountingPosition> radarSensorMountingPosition;
-	std::vector<OSIMountingPosition> lidarSensorMountingPosition;
-	std::vector<OSIMountingPosition> cameraSensorMountingPosition;
-	std::vector<OSIMountingPosition> ultrasonicSensorMountingPosition;
+	SensorType sensorType = SensorType::GENERIC;
+	OSIMountingPosition sensorMountingPosition;
+	//Camera, Radar, Lidar
+	double field_of_view_horizontal;
+	//Radar, Lidar
+	double field_of_view_vertical;
+	//Camera
+	uint32_t number_of_pixels_horizontal;
+	//Camera
+	uint32_t number_of_pixels_vertical;
+	//Radar, Lidar
+	double emitter_frequency;
 };
 
 /**
@@ -137,8 +153,6 @@ struct OSMPInterfaceConfig {
 
 /**
  * YAML-cpp converter for the above defined structs. Designed according to yaml-cpp tutorial: https://github.com/jbeder/yaml-cpp/wiki/Tutorial
-
- *
  */
 
 namespace YAML {
@@ -274,11 +288,35 @@ namespace YAML {
 		static bool decode(const Node& node, SensorViewConfig& config)
 		{
 			config.baseName = nodeOrDefault<std::string>(node["base_name"]);
-			config.cameraSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["camera_sensor_mounting_position"]);
-			config.radarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["radar_sensor_mounting_position"]);
-			config.lidarSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["lidar_sensor_mounting_position"]);
-			config.genericSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["generic_sensor_mounting_position"]);
-			config.ultrasonicSensorMountingPosition = nodeOrDefault<std::vector<OSIMountingPosition>>(node["ultrasonic_sensor_mounting_position"]);
+			std::string typeName = nodeOrDefault<std::string>(node["sensor_type"]);
+			//compare lower case 
+			std::transform(typeName.begin(), typeName.end(), typeName.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+			if (typeName == "camera") {
+				config.sensorType = SensorType::CAMERA;
+			}
+			else if (typeName == "lidar") {
+				config.sensorType = SensorType::LIDAR;
+			}
+			else if (typeName == "radar") {
+				config.sensorType = SensorType::RADAR;
+			}
+			else if (typeName == "ultrasonic") {
+				config.sensorType = SensorType::ULTRASONIC;
+			}
+			else if (typeName == "generic") {
+				config.sensorType = SensorType::GENERIC;
+			}
+			else {
+				std::cout << "Error parsing sensor_type: " << typeName << std::endl;
+				exit(0);
+			}
+			config.sensorMountingPosition = nodeOrDefault<OSIMountingPosition>(node["sensor_mounting_position"]);
+			config.field_of_view_horizontal = nodeOrDefault<double>(node["field_of_view_horizontal"]);
+			config.field_of_view_vertical = nodeOrDefault<double>(node["field_of_view_vertical"]);
+			config.number_of_pixels_horizontal = nodeOrDefault<uint32_t>(node["number_of_pixels_horizontal"]);
+			config.number_of_pixels_vertical = nodeOrDefault<uint32_t>(node["number_of_pixels_vertical"]);
+			config.emitter_frequency = nodeOrDefault<double>(node["emitter_frequency"]);
 			return true;
 		}
 	};
