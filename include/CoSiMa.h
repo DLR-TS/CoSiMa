@@ -29,7 +29,6 @@ error "Missing the <filesystem> header."
 struct CmdParameter {
 	bool verbose = false;
 	bool parallel = false;
-	bool sensorviewconfiguration = false;
 	std::string configurationPath;
 	std::string configurationName = "config.yml";
 };

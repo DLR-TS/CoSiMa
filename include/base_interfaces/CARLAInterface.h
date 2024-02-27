@@ -5,6 +5,8 @@
 #ifndef CARLAINTERFACE_H
 #define CARLAINTERFACE_H
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <string>
 
 #include "BaseSystemInterface.h"
@@ -43,7 +45,7 @@ public:
 
 private:
 	CoSiMa::rpc::CarlaConfig parseConfigToGRPC();
-	void copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition* rpcMountingPosition);
+	void copyMountingPositions(const SensorViewConfig& sensorViewConfig, osi3::MountingPosition* rpcMountingPosition);
 };
 
 #endif // !CARLAINTERFACE_H

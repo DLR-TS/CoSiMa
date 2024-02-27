@@ -10,9 +10,6 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 		if (currentArg == "-p") {
 			runtimeParameter.parallel = true;
 		}
-		if (currentArg == "-svc") {
-			runtimeParameter.sensorviewconfiguration = true;
-		}
 		else {
 			fs::path path(currentArg);
 			runtimeParameter.configurationPath = path.parent_path().string();
