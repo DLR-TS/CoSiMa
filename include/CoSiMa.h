@@ -30,7 +30,7 @@ error "Missing the <filesystem> header."
 struct CmdParameter {
 	bool verbose = false;
 	bool parallel = false;
-	bool scnearioRunner = false;
+	bool scenarioRunner = false;
 	std::string configurationPath;
 	std::string configurationName = "config.yml";
 };
