@@ -132,6 +132,7 @@ double ScenarioRunnerAdapter::waitForTick() {
 }
 
  int ScenarioRunnerAdapter::sendTickDone(double timestamp) {
+	 std::cout << "Try to send tick to scenario runner back " << timestamp << std::endl;
 #if defined(_WIN32)
 	int iResult = send(ClientSocket, reinterpret_cast<char*>(&timestamp), sizeof(double), 0);
 	if (iResult == SOCKET_ERROR) {
@@ -145,7 +146,7 @@ double ScenarioRunnerAdapter::waitForTick() {
 #endif
 #if defined(__linux__)
 
-	if (send(clientSocket, &timestamp, sizeof(timestamp), 0) == -1) {
+	if (send(clientSocket, &timestamp, sizeof(double), 0) == -1) {
 		perror("Error sending data");
 		close(clientSocket);
 		close(serverSocket);
