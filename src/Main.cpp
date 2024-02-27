@@ -8,11 +8,10 @@ int main(int argc, char *argv[])
 {
 	std::cout << "Welcome to CoSiMa.\n" << std::endl;
 
-	CmdParameter runtimeParameter = parseRuntimeParameter(argc, argv);
-
 	Cosima cosima;
-	cosima.setRuntimeParameter(runtimeParameter);
+	cosima.parseRuntimeParameter(argc, argv);
 	cosima.loadConfiguration();
+	cosima.waitForActiveScenarioRunner();
 	cosima.initInterfaces();
 	cosima.sensorViewConfiguration();
 	cosima.simulationLoop();

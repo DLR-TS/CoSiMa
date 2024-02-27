@@ -20,6 +20,7 @@ error "Missing the <filesystem> header."
 #include <fstream>
 #include <iostream>
 
+#include "ScenarioRunnerAdapter.h"
 #include "base_interfaces/BaseSystemInterface.h"
 #include "base_interfaces/DummyInterface.h"
 #include "base_interfaces/CARLAInterface.h"
@@ -29,21 +30,22 @@ error "Missing the <filesystem> header."
 struct CmdParameter {
 	bool verbose = false;
 	bool parallel = false;
+	bool scnearioRunner = false;
 	std::string configurationPath;
 	std::string configurationName = "config.yml";
 };
-
-CmdParameter parseRuntimeParameter(int argc, char *argv[]);
 
 class Cosima {
 private:
 
 	CmdParameter runtimeParameter;
 	SimulationSetup setup;
+	ScenarioRunnerAdapter srAdapter;
 
 public:
-	void setRuntimeParameter(CmdParameter& runtimeParameter);
+	void parseRuntimeParameter(int argc, char *argv[]);
 	void loadConfiguration();
+	void waitForActiveScenarioRunner();
 	void initInterfaces();
 	void sensorViewConfiguration();
 	void simulationLoop();

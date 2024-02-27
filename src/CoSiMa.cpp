@@ -1,7 +1,7 @@
 ﻿#include "CoSiMa.h"
 
-CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
-	CmdParameter runtimeParameter;
+void Cosima::parseRuntimeParameter(int argc, char *argv[]) {
+
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg(argv[i]);
 		if (currentArg == "-d" || currentArg == "-v") {
@@ -10,17 +10,15 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 		if (currentArg == "-p") {
 			runtimeParameter.parallel = true;
 		}
+		if (currentArg == "-sr") {
+			runtimeParameter.scnearioRunner = true;
+		}
 		else {
 			fs::path path(currentArg);
 			runtimeParameter.configurationPath = path.parent_path().string();
 			runtimeParameter.configurationName = path.filename().string();
 		}
 	}
-	return runtimeParameter;
-}
-
-void Cosima::setRuntimeParameter(CmdParameter& runtimeParameter) {
-	this->runtimeParameter = runtimeParameter;
 }
 
 void Cosima::loadConfiguration() {
@@ -36,6 +34,13 @@ void Cosima::loadConfiguration() {
 	{
 		std::cout << "Error parsing configuration" << std::endl;
 		exit(0);
+	}
+}
+
+void Cosima::waitForActiveScenarioRunner() {
+	if (runtimeParameter.scnearioRunner) {
+		srAdapter.init();
+		srAdapter.waitForTick();
 	}
 }
 
@@ -167,7 +172,12 @@ void Cosima::simulationLoop() {
 			doSimulationStep(simInterface);
 			postSimulationStep(simInterface);
 		}
-		setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
+		if (!runtimeParameter.scnearioRunner) {
+			setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
+		} else {
+			srAdapter.sendTickDone(setup.baseSimulator->getStepSize());
+			std::cout << "TimeStamp from SRunner: " << srAdapter.waitForTick() << std::endl;
+		}
 	}
 }
 
