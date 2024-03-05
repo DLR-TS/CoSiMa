@@ -34,7 +34,7 @@ public:
 	int doStep(double stepSize = 1) override;
 	void stopSimulation() override;
 
-	void configure(YAML::Node node) override;
+	void configure(YAML::Node& node) override;
 private:
 	bool verbose = false;
 	OSMPInterfaceConfig config;

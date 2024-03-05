@@ -1,6 +1,6 @@
 #include "simulation_interfaces/ProxyInterface.h"
 
-void ProxyInterface::configure(YAML::Node node) {
+void ProxyInterface::configure(YAML::Node& node) {
 	config = node.as<OSMPInterfaceConfig>();
 	configureMapperOwner();
 	mapper->readConfiguration(config);

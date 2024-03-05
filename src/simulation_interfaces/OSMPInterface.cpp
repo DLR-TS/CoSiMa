@@ -1,6 +1,6 @@
 #include "simulation_interfaces/OSMPInterface.h"
 
-void OSMPInterface::configure(YAML::Node node) {
+void OSMPInterface::configure(YAML::Node& node) {
 	config = node.as<OSMPInterfaceConfig>();
 	configureMapperOwner();
 	mapper->readConfiguration(config);
