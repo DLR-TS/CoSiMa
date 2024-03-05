@@ -43,7 +43,7 @@ private:
 	ScenarioRunnerAdapter srAdapter;
 
 public:
-	void parseRuntimeParameter(int argc, char *argv[]);
+	CmdParameter parseRuntimeParameter(int argc, char *argv[]);
 	void loadConfiguration();
 	void waitForActiveScenarioRunner();
 	void initInterfaces();

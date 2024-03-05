@@ -33,7 +33,7 @@ class CARLAInterface : public BaseSystemInterface
 	std::unique_ptr<CoSiMa::rpc::CARLAInterface::Stub> configStub;
 
 public:
-	virtual void configure(YAML::Node node) override;
+	virtual void configure(YAML::Node& node) override;
 	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;

@@ -36,7 +36,7 @@ public:
 		return 0;
 	}
 
-	std::shared_ptr<internalState> getMessageCache() {
-		return getMessageCache();
+	virtual int init(bool verbose, std::string configurationPath) {
+		return 0;
 	}
 };

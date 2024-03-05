@@ -18,7 +18,7 @@ TEST_CASE("Load yaml configuration file") {
 	}
 
 	SECTION("Config does exist") {
-		REQUIRE(loadConfigurationFile("../test/resources/testconfig-fmi-dummy-sensor.yaml").IsNull() == false);
+		REQUIRE(loadConfigurationFile("../test/resources/testconfig-dummy.yaml").IsNull() == false);
 	}
 }
 

@@ -61,7 +61,6 @@ class Mapper {
 
 public:
 	Mapper() {
-		//this->messageCache = std::make_shared<MessageCache>();
 	}
 
 protected:

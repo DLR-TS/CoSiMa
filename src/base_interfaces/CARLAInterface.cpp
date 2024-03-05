@@ -1,6 +1,6 @@
 #include "base_interfaces/CARLAInterface.h"
 
-void CARLAInterface::configure(YAML::Node node) {
+void CARLAInterface::configure(YAML::Node& node) {
 	config = node.as<CARLAInterfaceConfig>();
 }
 
@@ -144,6 +144,7 @@ CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 	for (auto& sensorViewExtra : config.osiSensorViewConfig) {
 		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
 		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.baseName);
+		rpcSensorViewExtra->set_parent_name(sensorViewExtra.parentName);
 
 		switch (sensorViewExtra.sensorType) {
 		case CAMERA:

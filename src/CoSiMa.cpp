@@ -1,16 +1,16 @@
 ﻿#include "CoSiMa.h"
 
-void Cosima::parseRuntimeParameter(int argc, char *argv[]) {
+CmdParameter Cosima::parseRuntimeParameter(int argc, char *argv[]) {
 
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg(argv[i]);
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
-		if (currentArg == "-p") {
+		else if (currentArg == "-p") {
 			runtimeParameter.parallel = true;
 		}
-		if (currentArg == "-sr") {
+		else if (currentArg == "-sr") {
 			runtimeParameter.scenarioRunner = true;
 		}
 		else {
@@ -19,6 +19,7 @@ void Cosima::parseRuntimeParameter(int argc, char *argv[]) {
 			runtimeParameter.configurationName = path.filename().string();
 		}
 	}
+	return runtimeParameter;
 }
 
 void Cosima::loadConfiguration() {
