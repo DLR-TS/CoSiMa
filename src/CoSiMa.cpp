@@ -1,14 +1,17 @@
 ﻿#include "CoSiMa.h"
 
-CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
-	CmdParameter runtimeParameter;
+CmdParameter Cosima::parseRuntimeParameter(int argc, char *argv[]) {
+
 	for (int i = 1; i < argc; i++) {
 		std::string currentArg(argv[i]);
 		if (currentArg == "-d" || currentArg == "-v") {
 			runtimeParameter.verbose = true;
 		}
-		if (currentArg == "-p") {
+		else if (currentArg == "-p") {
 			runtimeParameter.parallel = true;
+		}
+		else if (currentArg == "-sr") {
+			runtimeParameter.scenarioRunner = true;
 		}
 		else {
 			fs::path path(currentArg);
@@ -17,10 +20,6 @@ CmdParameter parseRuntimeParameter(int argc, char *argv[]) {
 		}
 	}
 	return runtimeParameter;
-}
-
-void Cosima::setRuntimeParameter(CmdParameter& runtimeParameter) {
-	this->runtimeParameter = runtimeParameter;
 }
 
 void Cosima::loadConfiguration() {
@@ -36,6 +35,13 @@ void Cosima::loadConfiguration() {
 	{
 		std::cout << "Error parsing configuration" << std::endl;
 		exit(0);
+	}
+}
+
+void Cosima::waitForActiveScenarioRunner() {
+	if (runtimeParameter.scenarioRunner) {
+		srAdapter.init();
+		srAdapter.waitForTick();
 	}
 }
 
@@ -156,10 +162,12 @@ void Cosima::simulationLoop() {
 	double total_time = 0;
 
 	while (!setup.baseSimulator->simulationStopped()) {
-
-		if (runtimeParameter.verbose) {
-			std::cout << "Modules DoStep with stepsize: " << setup.baseSimulator->getStepSize() << " Simulation Time: " << total_time << std::endl;
-			total_time += setup.baseSimulator->getStepSize();
+		//stepsize can change, so get it on every simulation step
+		double stepSize = setup.baseSimulator->getStepSize();
+		if (runtimeParameter.verbose && !runtimeParameter.scenarioRunner) {
+			//total_time is wrong, if active scenario runner sets the timesteps
+			std::cout << "Modules DoStep with stepsize: " << stepSize << " Simulation Time: " << total_time << std::endl;
+			total_time += stepSize;
 		}
 
 		for (auto &simInterface : setup.childSimulators) {
@@ -167,10 +175,25 @@ void Cosima::simulationLoop() {
 			doSimulationStep(simInterface);
 			postSimulationStep(simInterface);
 		}
-		setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
+
+		if (runtimeParameter.scenarioRunner) {
+			//even if scenario runner does tick, this call to the base simulator must be made to update sensors etc.
+			setup.baseSimulator->doStep(0);
+			srAdapter.sendTickDone(stepSize);
+			double tick = srAdapter.waitForTick();
+			if (runtimeParameter.verbose) {
+				std::cout << "Tick from scenario runner: " << tick << std::endl;
+			}
+			if (stepSize != tick) {
+				std::cout << "Stepsize changed from " << stepSize << " to " << tick << std::endl;
+			}
+			setup.baseSimulator->setStepSize(tick);
+		}
+		else {
+			setup.baseSimulator->doStep(stepSize);
+		}
 	}
 }
-
 
 void Cosima::disconnect() {
 	if (runtimeParameter.verbose) {

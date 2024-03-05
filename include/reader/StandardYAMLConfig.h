@@ -35,6 +35,8 @@ struct OSIMountingPosition {
 
 struct SensorViewConfig {
 	std::string baseName;
+	//Parent name is set to vehcile name or world
+	std::string parentName;
 	SensorType sensorType = SensorType::GENERIC;
 	OSIMountingPosition sensorMountingPosition;
 	//Camera, Radar, Lidar
@@ -288,6 +290,8 @@ namespace YAML {
 		static bool decode(const Node& node, SensorViewConfig& config)
 		{
 			config.baseName = nodeOrDefault<std::string>(node["base_name"]);
+			//default empty string leads to configured name in additional parameters flag of Carla-OSI-Service
+			config.parentName = nodeOrDefault<std::string>(node["parent_name"]);
 			std::string typeName = nodeOrDefault<std::string>(node["sensor_type"]);
 			//compare lower case 
 			std::transform(typeName.begin(), typeName.end(), typeName.begin(),

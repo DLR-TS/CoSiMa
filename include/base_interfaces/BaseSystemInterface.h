@@ -20,7 +20,7 @@ public:
 	\param node yaml confguration node
 	\return valid status
 	*/
-	virtual void configure(YAML::Node node) = 0;
+	virtual void configure(YAML::Node& node) = 0;
 	/**
 	Connect grpc with host/port information from corresponding fields
 	\verbose enable verbose output
@@ -44,6 +44,7 @@ public:
 	virtual int setOSIMessage(const std::string& base_name, const std::string& value) = 0;
 
 	virtual double getStepSize() = 0;
+	virtual void setStepSize(double stepSize) = 0;
 	void stopSimulation() { simulationStop = true; };
 	bool simulationStopped() { return simulationStop; };
 };
