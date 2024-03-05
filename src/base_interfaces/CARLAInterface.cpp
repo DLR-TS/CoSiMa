@@ -213,6 +213,10 @@ double CARLAInterface::getStepSize() {
 	return config.deltaSeconds;
 }
 
+void CARLAInterface::setStepSize(double stepSize) {
+	config.deltaSeconds = stepSize;
+}
+
 int CARLAInterface::disconnect() {
 	return 0;
 }

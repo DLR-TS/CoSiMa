@@ -161,11 +161,12 @@ void Cosima::simulationLoop() {
 	double total_time = 0;
 
 	while (!setup.baseSimulator->simulationStopped()) {
-
+		//stepsize can change, so get it on every simulation step
+		double stepSize = setup.baseSimulator->getStepSize();
 		if (runtimeParameter.verbose && !runtimeParameter.scenarioRunner) {
 			//total_time is wrong, if active scenario runner sets the timesteps
-			std::cout << "Modules DoStep with stepsize: " << setup.baseSimulator->getStepSize() << " Simulation Time: " << total_time << std::endl;
-			total_time += setup.baseSimulator->getStepSize();
+			std::cout << "Modules DoStep with stepsize: " << stepSize << " Simulation Time: " << total_time << std::endl;
+			total_time += stepSize;
 		}
 
 		for (auto &simInterface : setup.childSimulators) {
@@ -173,11 +174,22 @@ void Cosima::simulationLoop() {
 			doSimulationStep(simInterface);
 			postSimulationStep(simInterface);
 		}
-		//even if scenario runner does tick, this call to the base simulator must be made to update sensors etc.
-		setup.baseSimulator->doStep(setup.baseSimulator->getStepSize());
+
 		if (runtimeParameter.scenarioRunner) {
-			srAdapter.sendTickDone(setup.baseSimulator->getStepSize());
-			std::cout << "Tick from scenario runner: " << srAdapter.waitForTick() << std::endl;
+			//even if scenario runner does tick, this call to the base simulator must be made to update sensors etc.
+			setup.baseSimulator->doStep(0);
+			srAdapter.sendTickDone(stepSize);
+			double tick = srAdapter.waitForTick();
+			if (runtimeParameter.verbose) {
+				std::cout << "Tick from scenario runner: " << tick << std::endl;
+			}
+			if (stepSize != tick) {
+				std::cout << "Stepsize changed from " << stepSize << " to " << tick << std::endl;
+			}
+			setup.baseSimulator->setStepSize(tick);
+		}
+		else {
+			setup.baseSimulator->doStep(stepSize);
 		}
 	}
 }

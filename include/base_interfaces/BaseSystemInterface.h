@@ -44,6 +44,7 @@ public:
 	virtual int setOSIMessage(const std::string& base_name, const std::string& value) = 0;
 
 	virtual double getStepSize() = 0;
+	virtual void setStepSize(double stepSize) = 0;
 	void stopSimulation() { simulationStop = true; };
 	bool simulationStopped() { return simulationStop; };
 };

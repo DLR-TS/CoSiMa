@@ -14,6 +14,7 @@ public:
 	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;
+	virtual void setStepSize(double stepSize) override;
 	virtual int disconnect() override;
 
 	virtual std::string getOSIMessage(const std::string& base_name) override;
