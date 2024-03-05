@@ -17,7 +17,7 @@ public:
 
 	std::vector<std::string> requestedVariables;
 
-	virtual void configure(YAML::Node& node) override {
+	virtual void configure(const YAML::Node& node) override {
 	}
 
 	virtual int init(bool verbose) override {

@@ -58,7 +58,7 @@ public:
 	\param node yaml node
 	\return valid status
 	*/
-	virtual void configure(YAML::Node& node);
+	virtual void configure(const YAML::Node& node);
 	/**
 	Initialize the interface.
 	\param verbose enable verbose output

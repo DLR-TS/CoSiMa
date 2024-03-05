@@ -45,7 +45,7 @@ YAML::Node loadConfigurationFile(const std::string& path);
 * \param node YAML Node.
 * \return parsed configuration of yaml file
 */
-SimulationSetup parseSimulationConfiguration(YAML::Node& node);
+SimulationSetup parseSimulationConfiguration(const YAML::Node& node);
 
 /**
 * Converts simulatornames to enum values.

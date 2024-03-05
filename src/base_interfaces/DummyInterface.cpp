@@ -1,6 +1,6 @@
 #include "base_interfaces/DummyInterface.h"
 
-void DummyInterface::configure(YAML::Node& node) {
+void DummyInterface::configure(const YAML::Node& node) {
 	config = node.as<DummyInterfaceConfig>();
 }
 

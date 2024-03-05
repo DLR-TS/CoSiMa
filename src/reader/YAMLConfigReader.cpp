@@ -14,7 +14,7 @@ YAML::Node loadConfigurationFile(const std::string& path) {
 	return YAML::LoadFile(path);
 }
 
-SimulationSetup parseSimulationConfiguration(YAML::Node& node) {
+SimulationSetup parseSimulationConfiguration(const YAML::Node& node) {
 	SimulationSetup config;
 	for (std::size_t i = 0; i < node.size(); i++) {
 		SimulatorName name = node[i].as<SimulatorName>();

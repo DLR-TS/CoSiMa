@@ -1,6 +1,6 @@
 #include "base_interfaces/CARLAInterface.h"
 
-void CARLAInterface::configure(YAML::Node& node) {
+void CARLAInterface::configure(const YAML::Node& node) {
 	config = node.as<CARLAInterfaceConfig>();
 }
 
