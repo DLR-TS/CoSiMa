@@ -252,8 +252,8 @@ namespace YAML {
 					<< std::endl;
 				osiInterface.model = "";
 			}
-			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "";
-			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
+			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "localhost";
+			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 51426;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
 			osiInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
 			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();
@@ -334,10 +334,10 @@ namespace YAML {
 
 		static bool decode(const Node& node, CARLAInterfaceConfig& carlaInterface)
 		{
-			carlaInterface.carla_host = node["carla_host"].IsDefined() ? node["carla_host"].as<std::string>() : "";
-			carlaInterface.carla_port = node["carla_port"].IsDefined() ? node["carla_port"].as<int>() : 0;
-			carlaInterface.client_host = node["client_host"].IsDefined() ? node["client_host"].as<std::string>() : "";
-			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 0;
+			carlaInterface.carla_host = node["carla_host"].IsDefined() ? node["carla_host"].as<std::string>() : "localhost";
+			carlaInterface.carla_port = node["carla_port"].IsDefined() ? node["carla_port"].as<int>() : 51425;
+			carlaInterface.client_host = node["client_host"].IsDefined() ? node["client_host"].as<std::string>() : "localhost";
+			carlaInterface.client_port = node["client_port"].IsDefined() ? node["client_port"].as<int>() : 2000;
 			carlaInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
 			carlaInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0;
 			carlaInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<uint32_t>() : 0;
