@@ -1,0 +1,14 @@
+FROM ostar:core_builder AS cosima_builder
+LABEL maintainer="bjoern.bahn@dlr.de"
+#build image ostar:core_builder with Dockerfile4OstarCore
+
+RUN mkdir cosima && mkdir cosima/build
+WORKDIR /cosima/build
+COPY . /cosima/
+
+RUN cmake .. -DCMAKE_CXX_STANDARD=14 -DBUILD_SHARED_LIBS=false -DCMAKE_BUILD_TYPE=Release
+RUN cmake --build . --target CoSimulationManager
+
+FROM ubuntu:18.04
+COPY --from=cosima_builder /cosima/build/bin/CoSimulationManager .
+CMD ./CoSimulationManager -v config.yml

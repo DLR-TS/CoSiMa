@@ -8,8 +8,6 @@
 
 class MockMapper : public Mapper {
 
-	void mapTo(values_t value, std::string interfaceName, eDataType type) {
-
-	}
+	void mapToInternalState(std::string& value, std::string& interfaceName) {};
 
 };

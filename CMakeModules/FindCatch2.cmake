@@ -1,4 +1,4 @@
-find_path(Catch2_INCLUDE_DIR NAMES "catch2/catch.hpp" "catch2/catch_reporter_automake.hpp" "catch2/catch_reporter_sonarqube.hpp" "catch2/catch_reporter_tap.hpp" "catch2/catch_reporter_teamcity.hpp" PATHS ${CONAN_INCLUDE_DIRS_Catch2})
+find_path(Catch2_INCLUDE_DIR NAMES "catch2/catch-all.hpp" "catch2/catch_reporter_automake.hpp" "catch2/catch_reporter_sonarqube.hpp" "catch2/catch_reporter_tap.hpp" "catch2/catch_reporter_teamcity.hpp" PATHS ${CONAN_INCLUDE_DIRS_Catch2})
 # Catch2 is a header only solution
 #find_library(Catch2_LIBRARY NAMES ${CONAN_LIBS_Catch2} PATHS ${CONAN_LIB_DIRS_Catch2})
 

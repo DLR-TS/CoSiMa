@@ -1,0 +1,5 @@
+- simulator: CARLA
+- simulator: OSMP
+  model: ../test/resources/OSMPDummySensor.fmu
+- simulator: OSMP
+  model: ../test/resources/OSMPDummySensor.fmu

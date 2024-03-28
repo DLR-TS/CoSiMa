@@ -1,41 +1,27 @@
-﻿# CMakeList.txt: CMake-Projektdatei der obersten Ebene.
-#
-cmake_minimum_required (VERSION 3.8)
-message("Running with CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
-
+﻿cmake_minimum_required (VERSION 3.8)
 project ("CoSimulationManager" CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+message("Running with CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
+
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+	set(CMAKE_CXX_STANDARD 17)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
- option(DONT_FORCE_STATIC_LIBS "Building dynamic libraries fails for some targets because of incompatabilities in dependencies (protobuf, see FetchGRPC.cmake) and thus static lib's are enforced. Enable this option to abide CMAKE's BUILD_SHARED_LIBS variable" OFF)
- if(NOT DONT_FORCE_STATIC_LIBS)
- set(BUILD_SHARED_LIBS false)
- message("Forcing the use of static libraries as building dynamic libraries fails for some targets using MSVC because of incompatabilities in some dependencies. Enable DONT_FORCE_STATIC_LIBS to unforce this behaviour")
- endif(NOT DONT_FORCE_STATIC_LIBS)
+	option(DONT_FORCE_STATIC_LIBS "Building dynamic libraries fails for some targets because of incompatabilities in dependencies (protobuf, see FetchGRPC.cmake) and thus static lib's are enforced. Enable this option to abide CMAKE's BUILD_SHARED_LIBS variable" OFF)
+	if(NOT DONT_FORCE_STATIC_LIBS)
+		set(BUILD_SHARED_LIBS false)
+		message("Forcing the use of static libraries as building dynamic libraries fails for some targets using MSVC because of incompatabilities in some dependencies. Enable DONT_FORCE_STATIC_LIBS to unforce this behaviour")
+	endif(NOT DONT_FORCE_STATIC_LIBS)
 endif(MSVC)
-
-option(GIT_SUBMODULE "Check submodules during build" ON)
-if(GIT_SUBMODULE)
-	find_package(Git QUIET)
-	if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-		message(STATUS "Updating submodules")
-		execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-						WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-						RESULT_VARIABLE GIT_SUBMODULE_RESULT)
-		if(NOT GIT_SUBMODULE_RESULT EQUAL "0")
-			message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMODULE_RESULT}")
-		endif()
-	endif()
-endif()
 
 # Download automatically, you can also just copy the conan.cmake file
 #if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 # Somehow an empty conan.cmake file gets generated the first time in MSVC -> Always download the file.
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+   file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
                  "${CMAKE_BINARY_DIR}/conan.cmake")
 #endif()
 
@@ -75,11 +61,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMake_FetchContent_Overrides.cmake OPTIONAL)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
 include(FetchGRPC)
 
-# FMI4cpp is not distributed as conan package, but still can use conan for dependency management.
-# Still, we aren't using FMI4cpp's conanfile.txt and instead merge its conent into our conanfile.txt to have control of the used conan packages.
-# This allows us to unify package versions and remove unneeded options. (libzip:with_openssl introduces dependency on openssl, which collides with gRPC's boringssl)
-add_subdirectory(lib/FMI4cpp/ EXCLUDE_FROM_ALL)
-
 # OSI is not distributed as conan package, but we already took care of installig its dependency (protobuf), so we can just fetch it
 include(FetchOpenSimulationInterface)
 
@@ -96,9 +77,6 @@ set_property(TARGET CoSimulationManagerLib PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS O
 target_include_directories(CoSimulationManagerLib PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 # link conan managed dependencies
 target_link_libraries(CoSimulationManagerLib PUBLIC CONAN_PKG::yaml-cpp)
-# FMI4cpp is not managed by conan, thus it is added here
-target_include_directories(CoSimulationManagerLib PUBLIC fmi4cpp)
-target_link_libraries(CoSimulationManagerLib PUBLIC fmi4cpp)
 
 # OSI is not managed by conan, thus it is added here
 target_include_directories(CoSimulationManagerLib PUBLIC open_simulation_interface_obj)#shared base of both static and shared OSI lib targets
@@ -149,11 +127,12 @@ add_custom_command(TARGET test_CoSiMa PRE_BUILD
 add_custom_command(TARGET test_CoSiMa PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
                          copy_if_different
-						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig1.yaml
-						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig2.yaml
-						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig3.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig-carla.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig-dummy.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig-osmp.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig-combined.yaml
+						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig-wrong.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/testconfig4.yaml
-						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/carlaConfig.yaml
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_cs.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Feedthrough_me.fmu
 						 ${CMAKE_CURRENT_LIST_DIR}/test/resources/Stair.fmu
@@ -167,6 +146,10 @@ include(CTest)
 include(Catch)
 catch_discover_tests(test_CoSiMa)
 
-add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/CoSiMa.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/CoSiMa.h")
-target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/Main.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/Main.h")
+if (${CMAKE_CXX_STANDARD} LESS 17)
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs)
+else()
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+endif()
 target_include_directories(CoSimulationManager PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
