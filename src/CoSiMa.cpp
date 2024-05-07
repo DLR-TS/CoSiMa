@@ -38,6 +38,16 @@ void Cosima::loadConfiguration() {
 	}
 }
 
+void Cosima::spawnLocalOSMPServices() {
+	uint16_t autoPort = 51430;
+	for (auto& baseSimulator : setup.childSimulators) {
+		if (baseSimulator->isAutostart()) {
+
+			baseSimulator->setPort(autoPort++);
+		}
+	}
+}
+
 void Cosima::waitForActiveScenarioRunner() {
 	if (runtimeParameter.scenarioRunner) {
 		srAdapter.init();

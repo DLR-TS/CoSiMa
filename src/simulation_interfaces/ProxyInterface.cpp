@@ -262,3 +262,11 @@ eOSIMessage ProxyInterface::getMessageType(const std::string& messageType) {
 		throw - 1;
 	}
 }
+
+bool ProxyInterface::isAutostart() {
+	return false; 
+}
+
+void ProxyInterface::setPort(uint16_t port) {
+	config.client_port = port;
+}

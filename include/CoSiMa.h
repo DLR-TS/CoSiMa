@@ -45,6 +45,7 @@ private:
 public:
 	CmdParameter parseRuntimeParameter(int argc, char *argv[]);
 	void loadConfiguration();
+	void spawnLocalOSMPServices();
 	void waitForActiveScenarioRunner();
 	void initInterfaces();
 	void sensorViewConfiguration();

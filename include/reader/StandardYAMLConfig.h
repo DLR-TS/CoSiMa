@@ -135,14 +135,19 @@ struct InterfaceYAMLConfig {
 };
 
 /**
+* \var bool autostart
+* automatically starts an OSMP Service for this model
 * \var std::string model
-* path to FMU (file) //TODO should later point to Specification of System Structure and Parameterization (*.ssp file)
+* path to FMU (file)
 * \var std::vector<ConfigParameter> inputs
 * holds the input osi messages
 * \var std::vector<ConfigParameter> outputs
 * holds the output osi messages
+* \var std::vector<ConfigParameter> parameter
+* parameters of the model to be set
 */
 struct OSMPInterfaceConfig {
+	bool autostart;
 	std::string model;
 	std::string client_host;
 	uint16_t client_port;
@@ -252,8 +257,9 @@ namespace YAML {
 					<< std::endl;
 				osiInterface.model = "";
 			}
+			osiInterface.autostart = node["autostart"].IsDefined() || !node["port"].IsDefined();
 			osiInterface.client_host = node["host"].IsDefined() ? node["host"].as<std::string>() : "localhost";
-			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 51426;
+			osiInterface.client_port = node["port"].IsDefined() ? node["port"].as<int>() : 0;
 			osiInterface.transactionTimeout = node["transaction_timeout"].IsDefined() ? node["transaction_timeout"].as<double>() : 0.5;
 			osiInterface.doStepTransactionTimeout = node["do_step_timeout"].IsDefined() ? node["do_step_timeout"].as<double>() : 1;
 			osiInterface.inputs = node["input"].IsDefined() ? node["input"].as<std::vector<ConfigParameter>>() : std::vector<ConfigParameter>();

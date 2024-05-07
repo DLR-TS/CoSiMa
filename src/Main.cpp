@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 	Cosima cosima;
 	cosima.parseRuntimeParameter(argc, argv);
 	cosima.loadConfiguration();
+	cosima.spawnLocalOSMPServices();
 	cosima.waitForActiveScenarioRunner();
 	cosima.initInterfaces();
 	cosima.sensorViewConfiguration();
