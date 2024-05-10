@@ -214,7 +214,8 @@ void OSMPInterface::setSensorViewConfiguration(std::string& appliedsensorviewcon
 	}
 }
 
-bool OSMPInterface::isAutostart() {
+bool OSMPInterface::isAutostart(uint16_t& port) {
+	port = config.client_port;
 	return config.autostart;
 }
 

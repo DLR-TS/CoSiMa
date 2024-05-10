@@ -21,6 +21,7 @@ error "Missing the <filesystem> header."
 #include <iostream>
 
 #include "ScenarioRunnerAdapter.h"
+#include "SubProcessController.h"
 #include "base_interfaces/BaseSystemInterface.h"
 #include "base_interfaces/DummyInterface.h"
 #include "base_interfaces/CARLAInterface.h"
@@ -40,17 +41,19 @@ private:
 
 	CmdParameter runtimeParameter;
 	SimulationSetup setup;
+	SubProcessController subProcessController;
 	ScenarioRunnerAdapter srAdapter;
 
 public:
 	CmdParameter parseRuntimeParameter(int argc, char *argv[]);
 	void loadConfiguration();
-	void spawnLocalOSMPServices();
+	void spawnLocalServices();
 	void waitForActiveScenarioRunner();
 	void initInterfaces();
 	void sensorViewConfiguration();
 	void simulationLoop();
 	void simulationLoopParallel();
+	void stopLocalServices();
 
 	void prepareSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);
 	void doSimulationStep(std::shared_ptr<SimulatorInterface> simInterface);

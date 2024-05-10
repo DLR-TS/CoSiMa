@@ -27,7 +27,7 @@ public:
 	};
 
 	int init(bool verbose, std::string configurationPath) override;
-	bool isAutostart() override;
+	bool isAutostart(uint16_t& port) override;
 	void setPort(uint16_t port) override;
 	int disconnect() override;
 

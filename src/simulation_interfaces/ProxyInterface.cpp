@@ -263,7 +263,7 @@ eOSIMessage ProxyInterface::getMessageType(const std::string& messageType) {
 	}
 }
 
-bool ProxyInterface::isAutostart() {
+bool ProxyInterface::isAutostart(uint16_t& port) {
 	return false; 
 }
 

@@ -38,14 +38,27 @@ void Cosima::loadConfiguration() {
 	}
 }
 
-void Cosima::spawnLocalOSMPServices() {
+void Cosima::spawnLocalServices() {
+	uint16_t port;
+	if (setup.baseSimulator->isAutostart(port)) {
+		subProcessController.spawnProcess(SPC_EXECUTABLE::CarlaOSISerivce, port);
+	}
+
 	uint16_t autoPort = 51430;
 	for (auto& baseSimulator : setup.childSimulators) {
-		if (baseSimulator->isAutostart()) {
-
-			baseSimulator->setPort(autoPort++);
+		if (baseSimulator->isAutostart(port)) {
+			if (port == 0) {
+				baseSimulator->setPort(autoPort);
+				port = autoPort++;
+			}
+			baseSimulator->setPort(port);
+			subProcessController.spawnProcess(SPC_EXECUTABLE::OSMPService, port);
 		}
 	}
+}
+
+void Cosima::stopLocalServices() {
+	subProcessController.shutdownProcesses();
 }
 
 void Cosima::waitForActiveScenarioRunner() {

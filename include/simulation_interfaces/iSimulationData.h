@@ -66,10 +66,11 @@ public:
 	*/
 	virtual int init(bool verbose, std::string configurationPath) = 0;
 	/**
-	Simulator needs a selft spawned server to connect to e.g. OSMP Service
+	Simulator needs a self spawned server to connect to e.g. OSMP Service
+	\param port returns the port to which the base system will try to connect
 	\return autostart
 	*/
-	virtual bool isAutostart() = 0;
+	virtual bool isAutostart(uint16_t& port) = 0;
 	/**
 	Sets port. Needed for autostart feature
 	*/
