@@ -9,6 +9,13 @@
 #include <vector>
 #include <iostream>
 
+#if defined(__linux__)
+	#include <signal.h>
+	#include <stdlib.h>
+	#include <unistd.h>
+	#include <sys/wait.h>
+#endif
+
 #if defined(_WIN32)
 	#include <Windows.h>
 	#include <processthreadsapi.h>

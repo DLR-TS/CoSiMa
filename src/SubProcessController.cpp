@@ -1,10 +1,10 @@
 #include "SubProcessController.h"
 
 void SubProcessController::spawnProcess(SPC_EXECUTABLE executable, const uint16_t& port) {
-	
+
 #if defined(__linux__)
 	std::vector<std::string> args;
-	args.emplace_back("OSMPService");
+	args.emplace_back("./OSMPService");
 	args.emplace_back(std::to_string(port));
 	runningProcesses.push_back(spawn(args));
 #endif
@@ -35,24 +35,25 @@ void SubProcessController::shutdownProcesses() {
 pid_t SubProcessController::spawn(const std::vector<std::string>& args) {
 	pid_t pid = fork();
 	if (pid == -1) {
+		std::cerr << "Fork failed" << std::endl;
 		// Fork failed
 		return -1;
 	}
 	else if (pid == 0) {
+	std::vector<char*> argv;
+	for (const auto& arg : args) {
+		argv.push_back(const_cast<char*>(arg.c_str()));
+	}
+	argv.push_back(nullptr); // Null-terminate the array
 		// Child process
-		std::vector<char*> argv;
-		for (const auto& arg : args) {
-			argv.push_back(const_cast<char*>(arg.c_str()));
-		}
-		argv.push_back(nullptr); // Null-terminate the array
 		execvp(argv[0], argv.data());
-		// If execvp returns, it must have failed
-		exit(EXIT_FAILURE);
+		exit(0);
 	}
 	else {
-		// Parent process
-		return pid;
+	//std::cout << "Child PID" << pid << std::endl;
+	// Parent process
 	}
+	return pid;
 }
 #endif
 
