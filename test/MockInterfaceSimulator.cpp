@@ -12,9 +12,14 @@ public:
 	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) {};
 
 	int init() {
-
 		return 0;
 	}
+
+	virtual bool isAutostart(uint16_t& port) {
+		return false;
+	};
+
+	virtual void setPort(uint16_t port) {};
 
 	int connect(std::string) {
 		return 0;

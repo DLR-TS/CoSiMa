@@ -5,6 +5,7 @@ void DummyInterface::configure(const YAML::Node& node) {
 }
 
 int DummyInterface::init(bool verbose) { return 0; }
+bool DummyInterface::isAutostart(uint16_t& port) { return false; }
 double DummyInterface::doStep(double stepSize) { return 0; }
 double DummyInterface::getStepSize() { return config.deltaSeconds; }
 void DummyInterface::setStepSize(double stepSize) { config.deltaSeconds = stepSize; }
