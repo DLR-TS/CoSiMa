@@ -15,6 +15,7 @@ The dummy can be used to run a simulation without CARLA.
   carla_port: 2000
   client_host: localhost
   client_port: 51425
+  autostart: false
   delta: 0.03
   transaction_timeout: 30000
   do_step_timeout: 30000
@@ -31,6 +32,7 @@ The dummy can be used to run a simulation without CARLA.
 
 carla_host and carla_port: host and port of CARLA instance\
 client_host and client_port: host and port of Carla OSI Service\
+autostart: start Carla OSI Service on system, executable needs to be at same location as CoSiMa\
 delta: simulation stepsize in seconds\
 transaction_timeout: timeout for gRPC getter and setter calls\
 do_step_timeout: timeout for gRPC Do_Step calls\
@@ -62,6 +64,7 @@ delta: simulation stepsize in seconds
   model: /Path/to/FMU.fmu
   host: localhost
   port: 51426
+  autostart: true
   transaction_timeout: 5000
   do_step_timeout: 5000
   input:
@@ -74,6 +77,7 @@ delta: simulation stepsize in seconds
 
 model: path where FMU is located, if not found by CoSiMa the OSMP Service will try to load the file directly. It can also be an OSI trace file as an input.\ 
 host and port: host and port of OSMP Service\
+autostart: start Carla OSI Service on system, executable needs to be at same location as CoSiMa\
 transaction_timout: timeout for gRPC getter and setter calls\
 do_step_timeout: timeout for gRPC Do_Step calls\
 input and output: list of inputs/outputs\

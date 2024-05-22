@@ -22,6 +22,11 @@ public:
 	*/
 	virtual void configure(const YAML::Node& node) = 0;
 	/**
+	Check if BaseSystem needs to be started by CoSiMa or is already started from somewhere else
+	\param port returns the port to which the base system will try to connect
+	*/
+	virtual bool isAutostart(uint16_t& port) = 0;
+	/**
 	Connect grpc with host/port information from corresponding fields
 	\verbose enable verbose output
 	\return success status

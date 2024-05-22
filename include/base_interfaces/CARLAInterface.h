@@ -34,6 +34,7 @@ class CARLAInterface : public BaseSystemInterface
 
 public:
 	virtual void configure(const YAML::Node& node) override;
+	virtual bool isAutostart(uint16_t& port) override;
 	virtual int init(bool debug) override;
 	virtual double doStep(double stepSize = 1) override;
 	virtual double getStepSize() override;

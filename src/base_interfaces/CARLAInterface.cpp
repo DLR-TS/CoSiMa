@@ -58,6 +58,11 @@ int CARLAInterface::init(bool verbose) {
 	return response.value();
 }
 
+bool CARLAInterface::isAutostart(uint16_t& port) {
+	port = config.client_port;
+	return config.autostart;
+};
+
 double CARLAInterface::doStep(double stepSize)
 {
 	// context to handle the following rpc call - cannot be reused
