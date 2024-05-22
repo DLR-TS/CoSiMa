@@ -5,7 +5,6 @@
 #ifndef OSIMESSAGES_H
 #define OSIMESSAGES_H
 
-#include <variant>
 #include "osi_groundtruth.pb.h"
 #include "osi_sensorview.pb.h"
 #include "osi_sensorviewconfiguration.pb.h"

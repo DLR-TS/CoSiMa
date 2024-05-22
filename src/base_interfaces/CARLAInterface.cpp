@@ -1,16 +1,10 @@
 #include "base_interfaces/CARLAInterface.h"
 
-int CARLAInterface::readConfiguration(baseConfigVariants_t variant) {
-	if (std::get_if<CARLAInterfaceConfig>(&variant) == nullptr) {
-		std::cerr << "Called with wrong configuration variant!" << std::endl;
-		return 1;
-	}
-	config = std::get<CARLAInterfaceConfig>(variant);
-
-	return 0;
+void CARLAInterface::configure(const YAML::Node& node) {
+	config = node.as<CARLAInterfaceConfig>();
 }
 
-int CARLAInterface::initialize(bool verbose) {
+int CARLAInterface::init(bool verbose) {
 	this->verbose = verbose;
 	std::ostringstream sstr;
 	sstr << config.client_host << ':' << config.client_port;
@@ -21,14 +15,18 @@ int CARLAInterface::initialize(bool verbose) {
 	stub = CoSiMa::rpc::BaseInterface::NewStub(channel);
 	configStub = CoSiMa::rpc::CARLAInterface::NewStub(channel);
 
+	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
+
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.initializationTransactionTimeout);
-
-	CoSiMa::rpc::CarlaConfig rpcConfig = parseConfigToGRPC();
 
 	CoSiMa::rpc::Int32 response;
 
 	auto status = configStub->SetConfig(context.get(), rpcConfig, &response);
+
+	if (verbose) {
+		std::cout << "Response: " << response.value() << " Status: " << status.ok() << std::endl;
+	}
 	//Does the context need to be released manually?
 	//context.release();
 
@@ -78,51 +76,11 @@ double CARLAInterface::doStep(double stepSize)
 	return rpcValue.value();
 }
 
-int CARLAInterface::getIntValue(std::string base_name) {
-	auto entry = integerMap.find(base_name);
-	if (integerMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getIntValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
+std::string CARLAInterface::getOSIMessage(const std::string& base_name) {
+	if (verbose) {
+		std::cout << "Get " << base_name << " from CARLA interface" << std::endl;
 	}
-	return entry->second;
-}
 
-bool CARLAInterface::getBoolValue(std::string base_name) {
-	auto entry = boolMap.find(base_name);
-	if (boolMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getBoolValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-float CARLAInterface::getFloatValue(std::string base_name) {
-	auto entry = floatMap.find(base_name);
-	if (floatMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getFloatValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-double CARLAInterface::getDoubleValue(std::string base_name) {
-	auto entry = doubleMap.find(base_name);
-	if (doubleMap.end() == entry) {
-		if (verbose) {
-			std::cout << "CarlaInterface: getDoubleValue(" << base_name << ") No variable found.\n";
-		}
-		return 0;
-	}
-	return entry->second;
-}
-
-std::string CARLAInterface::getStringValue(std::string base_name) {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
@@ -141,39 +99,8 @@ std::string CARLAInterface::getStringValue(std::string base_name) {
 	return rpcValue.value();
 }
 
-int CARLAInterface::setIntValue(std::string base_name, int value) {
-	integerMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setIntValue() to " << value << "\n";
-	}
-	return 0;
-}
+int CARLAInterface::setOSIMessage(const std::string& base_name, const std::string& value) {
 
-int CARLAInterface::setBoolValue(std::string base_name, bool value) {
-	boolMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setBoolValue() to " << value << "\n";
-	}
-	return 0;
-}
-
-int CARLAInterface::setFloatValue(std::string base_name, float value) {
-	floatMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setFloatValue() to " << value << "\n";
-	}
-	return 0;
-}
-
-int CARLAInterface::setDoubleValue(std::string base_name, double value) {
-	doubleMap[base_name] = value;
-	if (verbose) {
-		std::cout << "CarlaInterface: setDoubleValue() to " << value << "\n";
-	}
-	return 0;
-};
-
-int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 	// context to handle the following rpc call - cannot be reused
 	std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 
@@ -196,71 +123,99 @@ int CARLAInterface::setStringValue(std::string base_name, std::string value) {
 CoSiMa::rpc::CarlaConfig CARLAInterface::parseConfigToGRPC()
 {
 	CoSiMa::rpc::CarlaConfig rpcConfig;
-	rpcConfig.set_carla_host(config.carla_host);
-	rpcConfig.set_carla_port(config.carla_port);
-	rpcConfig.set_transaction_timeout(config.transactionTimeout);
-	rpcConfig.set_delta_seconds(config.deltaSeconds);
+	rpcConfig.add_runtimeparameter("--carlahost");
+	rpcConfig.add_runtimeparameter(config.carla_host);
+	rpcConfig.add_runtimeparameter("--carlaport");
+	rpcConfig.add_runtimeparameter(std::to_string(config.carla_port));
+	rpcConfig.add_runtimeparameter("--transactiontimeout");
+	rpcConfig.add_runtimeparameter(std::to_string(config.transactionTimeout));
+	rpcConfig.add_runtimeparameter("--deltaseconds");
+	rpcConfig.add_runtimeparameter(std::to_string(config.deltaSeconds));
+
+	std::stringstream ss(config.additionalParameters);
+	std::istream_iterator<std::string> begin(ss);
+	std::istream_iterator<std::string> end;
+	std::vector<std::string> tokens(begin, end);
+
+	for (auto &parameter : tokens) {
+		rpcConfig.add_runtimeparameter(parameter);
+	}
 
 	for (auto& sensorViewExtra : config.osiSensorViewConfig) {
 		auto rpcSensorViewExtra = rpcConfig.add_sensor_view_extras();
-		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.prefixedFmuVariableName);
+		rpcSensorViewExtra->set_prefixed_fmu_variable_name(sensorViewExtra.baseName);
+		rpcSensorViewExtra->set_parent_name(sensorViewExtra.parentName);
 
-		if (sensorViewExtra.cameraSensorMountingPosition.size()) {
+		switch (sensorViewExtra.sensorType) {
+		case CAMERA:
 			if (verbose) {
-				std::cout << "Set CameraSensorMountingPositon\n";
+				std::cout << "Set camera sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.cameraSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_camera_sensor_mounting_position());
-		}
-		if (sensorViewExtra.radarSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("camera");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_number_of_pixels_horizontal(sensorViewExtra.number_of_pixels_horizontal);
+			rpcSensorViewExtra->set_number_of_pixels_vertical(sensorViewExtra.number_of_pixels_vertical);
+			break;
+		case LIDAR:
 			if (verbose) {
-				std::cout << "Set RadarSensorMountingPosition\n";
+				std::cout << "Set lidar sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.radarSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_radar_sensor_mounting_position());
-		}
-		if (sensorViewExtra.lidarSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("lidar");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_field_of_view_vertical(sensorViewExtra.field_of_view_vertical);
+			rpcSensorViewExtra->set_emitter_frequency(sensorViewExtra.emitter_frequency);
+			break;
+		case RADAR:
 			if (verbose) {
-				std::cout << "Set LidarSensorMountingPosition\n";
+				std::cout << "Set radar sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.lidarSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_lidar_sensor_mounting_position());
-		}
-		if (sensorViewExtra.ultrasonicSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("radar");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			rpcSensorViewExtra->set_field_of_view_horizontal(sensorViewExtra.field_of_view_horizontal);
+			rpcSensorViewExtra->set_field_of_view_vertical(sensorViewExtra.field_of_view_vertical);
+			rpcSensorViewExtra->set_emitter_frequency(sensorViewExtra.emitter_frequency);
+			break;
+		case ULTRASONIC:
 			if (verbose) {
-				std::cout << "Set UltrasonicSensorMountingPosition\n";
+				std::cout << "Set ultrasonic sensor configuration\n";
 			}
-			copyMountingPositions(sensorViewExtra.ultrasonicSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_ultrasonic_sensor_mounting_position());
-		}
-		if (sensorViewExtra.genericSensorMountingPosition.size()) {
+			rpcSensorViewExtra->set_sensor_type("ultrasonic");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			break;
+		case GENERIC:
 			if (verbose) {
-				std::cout << "Set GenericSensorMountingPosition\n";
+				std::cout << "Set generic sensor co\n";
 			}
-			copyMountingPositions(sensorViewExtra.genericSensorMountingPosition,
-				rpcSensorViewExtra->mutable_sensor_mounting_position()->add_generic_sensor_mounting_position());
+			rpcSensorViewExtra->set_sensor_type("generic");
+			copyMountingPositions(sensorViewExtra, rpcSensorViewExtra->mutable_sensor_mounting_position());
+			break;
 		}
 	}
 
 	return rpcConfig;
 }
 
-void CARLAInterface::copyMountingPositions(const std::vector<OSIMountingPosition>& mountingPositions, osi3::MountingPosition * rpcMountingPosition)
+void CARLAInterface::copyMountingPositions(const SensorViewConfig& sensorViewConfig, osi3::MountingPosition* rpcMountingPosition)
 {
-	for (auto mountingPosition : mountingPositions) {
-		auto position = rpcMountingPosition->mutable_position();
-		position->set_x(mountingPosition.x);
-		position->set_y(mountingPosition.y);
-		position->set_z(mountingPosition.z);
-		auto orientation = rpcMountingPosition->mutable_orientation();
-		orientation->set_pitch(mountingPosition.pitch);
-		orientation->set_yaw(mountingPosition.yaw);
-		orientation->set_roll(mountingPosition.roll);
-	}
+	OSIMountingPosition mountingPosition = sensorViewConfig.sensorMountingPosition;
+	auto position = rpcMountingPosition->mutable_position();
+	position->set_x(mountingPosition.x);
+	position->set_y(mountingPosition.y);
+	position->set_z(mountingPosition.z);
+	auto orientation = rpcMountingPosition->mutable_orientation();
+	orientation->set_pitch(mountingPosition.pitch * (M_PI / 180));
+	orientation->set_yaw(mountingPosition.yaw * (M_PI / 180));
+	orientation->set_roll(mountingPosition.roll * (M_PI / 180));
 }
 
 double CARLAInterface::getStepSize() {
 	return config.deltaSeconds;
+}
+
+void CARLAInterface::setStepSize(double stepSize) {
+	config.deltaSeconds = stepSize;
 }
 
 int CARLAInterface::disconnect() {

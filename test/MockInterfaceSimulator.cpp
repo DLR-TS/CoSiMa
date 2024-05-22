@@ -7,11 +7,12 @@
 #include "simulation_interfaces/iSimulationData.h"
 #include "mapper/Mapper.h" 
 
-class MockInterfaceSimulator : public iSimulationData {
+class MockInterfaceSimulator : public SimulatorInterface {
 public:
-	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) : iSimulationData(mapper, false) {};
+	MockInterfaceSimulator(std::shared_ptr<Mapper> mapper) {};
 
-	int init(float starttime) {
+	int init() {
+
 		return 0;
 	}
 
@@ -35,7 +36,7 @@ public:
 		return 0;
 	}
 
-	std::shared_ptr<internalState> getInternalState() {
-		return getInternalState();
+	virtual int init(bool verbose, std::string configurationPath) {
+		return 0;
 	}
 };

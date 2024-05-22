@@ -1,3 +1,0 @@
-[submodule "lib/FMI4cpp"]
-	path = lib/FMI4cpp
-	url = https://github.com/NTNU-IHB/FMI4cpp.git

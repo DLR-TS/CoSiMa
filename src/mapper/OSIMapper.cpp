@@ -4,46 +4,18 @@ int OSIMapper::readConfiguration(configVariants_t configVariants) {
 
 	std::cout << "Read Configuration of OSI Mapper" << std::endl;
 
-	if (std::get_if<OSIInterfaceConfig>(&configVariants) == nullptr && std::get_if<OSMPInterfaceConfig>(&configVariants) == nullptr) {
-		std::cout << "Called with wrong configuration variant!" << std::endl;
-		return 1;
+#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
+	OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
+#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
+	OSMPInterfaceConfig interfaceConfig = boost::get<OSMPInterfaceConfig>(configVariants);
+#endif
+	//fill input vectors
+	for (auto& input : interfaceConfig.inputs) {
+		data.messageInputList.push_back(convertToAnnotatedMessage(input));
 	}
-
-	if (auto tmp_owner = owner.lock()) {
-		tmp_owner->readConfiguration(configVariants);
-	}
-
-	if (std::get_if<OSIInterfaceConfig>(&configVariants) != nullptr) {
-		OSIInterfaceConfig interfaceConfig = std::get<OSIInterfaceConfig>(configVariants);
-		//overwrite prefix default value if set in configuration
-		if (interfaceConfig.prefix.length() != 0) {
-			this->prefix = interfaceConfig.prefix;
-		}
-		for (auto& input : interfaceConfig.inputs) {
-			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string(input.default_value));
-		}
-		for (auto& output : interfaceConfig.outputs) {
-			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string(output.default_value));
-		}
-	}
-	else if (std::get_if<OSMPInterfaceConfig>(&configVariants) != nullptr) {
-		OSMPInterfaceConfig interfaceConfig = std::get<OSMPInterfaceConfig>(configVariants);
-		//overwrite prefix default value if set in configuration
-		if (interfaceConfig.prefix.length() != 0) {
-			this->prefix = interfaceConfig.prefix;
-		}
-		for (auto& input : interfaceConfig.inputs) {
-			config.stringInputList.push_back(NamesAndIndex(prefix + input.base_name, input.interface_name, (int)state->strings.size()));
-			state->strings.push_back(std::string(input.default_value));
-		}
-		//increase index - not clear
-		int inputsize = (int)state->strings.size();
-		for (auto& output : interfaceConfig.outputs) {
-			config.stringOutputList.push_back(NamesAndIndex(prefix + output.base_name, output.interface_name, (int)state->strings.size() - inputsize));
-			state->strings.push_back(std::string(output.default_value));
-		}
+	//fill output vectors and internalState for temporary storage
+	for (auto& output : interfaceConfig.outputs) {
+		data.messageOutputList.push_back(convertToAnnotatedMessage(output));
 	}
 	return 0;
 }

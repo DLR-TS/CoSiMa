@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "simulation_interfaces/iSimulationData.h"
-
+#include "mapper/OSIMapper.h"
 #include "CoSiMaUtility.h"
 
 #include <grpcpp/channel.h>
@@ -20,22 +20,27 @@
 #include "grpc_proto_files/simulation_interface/OSMPSimulationInterface.grpc.pb.h"
 #include "grpc_proto_files/simulation_interface/OSMPSimulationInterface.pb.h"
 
-class OSMPInterface : public iSimulationData {
+class OSMPInterface : public SimulatorInterface {
 public:
-	OSMPInterface(std::shared_ptr<Mapper> mapper, bool verbose) : iSimulationData(mapper, verbose) {};
+	OSMPInterface() {
+		mapper = std::make_shared<OSIMapper>();
+	};
 	
-	int init(float starttime) override;
+	int init(bool verbose, std::string configurationPath) override;
 	int disconnect() override;
 	
 	int writeToInternalState() override;
 	int readFromInternalState() override;
 	int doStep(double stepSize = 1) override;
+	void stopSimulation() override;
 	
-	int readConfiguration(configVariants_t configVariants) override;
+	void configure(const YAML::Node& node) override;
+
+	std::string getSensorViewConfigurationRequest();
+	void setSensorViewConfiguration(std::string& appliedsensorViewConfiguration);
+	int sensorviewindex = 0;
 
 private:
-
-	bool sendFMU();
 
 	// grpc fields
 	std::shared_ptr<grpc::Channel> channel;
