@@ -1,15 +1,20 @@
 #include "SubProcessController.h"
 
-void SubProcessController::spawnProcess(SPC_EXECUTABLE executable, const uint16_t& port) {
+void SubProcessController::spawnProcess(SPC_EXECUTABLE executable, const uint16_t& port, const bool& verbose) {
 
 #if defined(__linux__)
 	std::vector<std::string> args;
-	args.emplace_back("./OSMPService");
+	args.emplace_back(executable == SPC_EXECUTABLE::CarlaOSISerivce ? "./CARLA_OSI_Service" : "./OSMPService");
+	if (verbose) {
+		args.emplace_back("-v");
+	}
 	args.emplace_back(std::to_string(port));
+	std::cout <<"Start Services: " << args[0] << " " << args[1] << " " << (verbose ? args[2] : "") << std::endl;
 	runningProcesses.push_back(spawn(args));
 #endif
 #if defined(_WIN32)
 	const std::string exe = executable == SPC_EXECUTABLE::CarlaOSISerivce ? "CARLA_OSI_Service.exe" : "OSMPService.exe";
+	std::cout <<"Start Services: " << exe << " " << std::to_string(port) << std::endl;
 	runningProcesses.push_back(spawn(exe, std::to_string(port)));
 #endif
 }

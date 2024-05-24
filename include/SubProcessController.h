@@ -26,7 +26,7 @@ enum SPC_EXECUTABLE {CarlaOSISerivce, OSMPService};
 
 class SubProcessController {
 public:
-	void spawnProcess(const SPC_EXECUTABLE executable, const uint16_t& port);
+	void spawnProcess(const SPC_EXECUTABLE executable, const uint16_t& port, const bool& verbose);
 	void shutdownProcesses();
 
 private:
