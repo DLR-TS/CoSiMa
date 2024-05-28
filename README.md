@@ -74,7 +74,7 @@ Additional information: [YAML Configuration](https://github.com/DLR-TS/CoSiMa/bl
 cmake-conan 0.18\
 gRPC 1.29.1\
 protobuf 3.21.9\
-open-simulation-interface 3.5.0
+open-simulation-interface 3.6.0
 
 # Contacts
 
