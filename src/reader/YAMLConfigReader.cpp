@@ -35,6 +35,13 @@ SimulationSetup parseSimulationConfiguration(const YAML::Node& node) {
 			config.childSimulators.push_back(osmp);
 		}
 		break;
+		case SUMO:
+		{
+			std::shared_ptr<SUMOInterface> sumo = std::make_shared<SUMOInterface>();
+			sumo->configure(node[i]);
+			config.childSimulators.push_back(sumo);
+		}
+		break;
 		case PROXY:
 		{
 			std::shared_ptr<ProxyInterface> proxy = std::make_shared<ProxyInterface>();
@@ -63,6 +70,9 @@ const eSimulatorTypes nameToEnum(std::string simulatorName) {
 	}
 	else if (simulatorName == "carla") {
 		return CARLA;
+	}
+	else if (simulatorName == "sumo") {
+		return SUMO;
 	}
 	else if (simulatorName == "osmp") {
 		return OSMP;

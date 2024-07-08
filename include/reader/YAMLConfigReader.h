@@ -26,7 +26,8 @@ error "Missing the <filesystem> header."
 #include "base_interfaces/CARLAInterface.h"
 #include "simulation_interfaces/OSMPInterface.h"
 #include "simulation_interfaces/ProxyInterface.h"
-#include "reader/StandardYAMLConfig.h"
+#include "simulation_interfaces/SUMOInterface.h"
+#include "reader/YAMLConfig.h"
 
 struct SimulationSetup {
 	std::shared_ptr<BaseSystemInterface> baseSimulator;
