@@ -41,7 +41,7 @@ void Cosima::loadConfiguration() {
 void Cosima::spawnLocalServices() {
 	uint16_t port;
 	if (setup.baseSimulator->isAutostart(port)) {
-		subProcessController.spawnProcess(SPC_EXECUTABLE::CarlaOSISerivce, port);
+		subProcessController.spawnProcess(SPC_EXECUTABLE::CarlaOSISerivce, port, runtimeParameter.verbose);
 	}
 
 	uint16_t autoPort = 51430;
@@ -52,9 +52,10 @@ void Cosima::spawnLocalServices() {
 				port = autoPort++;
 			}
 			baseSimulator->setPort(port);
-			subProcessController.spawnProcess(SPC_EXECUTABLE::OSMPService, port);
+			subProcessController.spawnProcess(SPC_EXECUTABLE::OSMPService, port, runtimeParameter.verbose);
 		}
 	}
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 void Cosima::stopLocalServices() {
@@ -198,7 +199,6 @@ void Cosima::simulationLoop() {
 			doSimulationStep(simInterface);
 			postSimulationStep(simInterface);
 		}
-
 		if (runtimeParameter.scenarioRunner) {
 			//even if scenario runner does tick, this call to the base simulator must be made to update sensors etc.
 			setup.baseSimulator->doStep(0);

@@ -130,20 +130,27 @@ int OSMPInterface::writeToInternalState() {
 		//context to handle the following rpc call
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		string.set_value(output.interface_name);
+		std::string value;
+		grpc::Status status;
 
-		CoSiMa::rpc::Bytes rpcValue;
-
-		auto status = stub->GetStringValue(context.get(), string, &rpcValue);
-
+		if (output.interface_name.rfind("OSI", 0) == 0 || output.interface_name.rfind("OSMP", 0) == 0) {
+			CoSiMa::rpc::Bytes rpcValue;
+			status = stub->GetOSIValue(context.get(), string, &rpcValue);
+			value = rpcValue.value();
+		}
+		else {
+			CoSiMa::rpc::String rpcValue;
+			status = stub->GetStringValue(context.get(), string, &rpcValue);
+			value = rpcValue.value();
+		}
 		if (!status.ok()) {
 			std::cout << "End of simulation" << std::endl;
 			return 1;
 		}
 		if (verbose) {
-			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << rpcValue.value().size()
-				<< ", Hash: " << std::hash<std::string>{}(rpcValue.value()) << std::endl;
+			std::cout << "OSMPInterface: read " << output.interface_name << ", Size: " << value.size()
+				<< ", Hash: " << std::hash<std::string>{}(value) << std::endl;
 		}
-		std::string value = rpcValue.value();
 		mapper->mapToInternalState(value, output.interface_name);
 	}
 	return 0;
@@ -154,18 +161,28 @@ int OSMPInterface::readFromInternalState() {
 	for (auto input : config.inputs) {
 		// context to handle the following rpc call
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
-		auto namedValue = CoSiMa::rpc::NamedBytes();
-		namedValue.set_name(input.interface_name);
-		std::string value = mapper->mapFromInternalState(input.interface_name);
-		namedValue.set_value(value);
 
+		std::string value = mapper->mapFromInternalState(input.interface_name);
 		CoSiMa::rpc::Int32 rpcRetVal;
+		grpc::Status status;
+
+		if (input.interface_name.rfind("OSI", 0) == 0 || input.interface_name.rfind("OSMP", 0) == 0) {
+			//confident this is an OSI message
+			auto namedValue = CoSiMa::rpc::NamedBytes();
+			namedValue.set_name(input.interface_name);
+			namedValue.set_value(value);
+			status = stub->SetOSIValue(context.get(), namedValue, &rpcRetVal);
+		}
+		else {
+			auto namedValue = CoSiMa::rpc::NamedString();
+			namedValue.set_name(input.interface_name);
+			namedValue.set_value(value);
+			status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
+		}
 		if (verbose) {
 			std::cout << "OSMPInterface: write " << input.interface_name << ", Size: " << value.size()
 				<< ", Hash: " << std::hash<std::string>{}(value) << std::endl;
 		}
-		auto status = stub->SetStringValue(context.get(), namedValue, &rpcRetVal);
-
 		if (!status.ok()) {
 			auto msg = status.error_message();
 			std::cerr << msg << std::endl;
@@ -188,7 +205,7 @@ std::string OSMPInterface::getSensorViewConfigurationRequest() {
 	string.set_value("OSMPSensorViewInConfigRequest");
 
 	CoSiMa::rpc::Bytes rpcValue;
-	auto status = stub->GetStringValue(context.get(), string, &rpcValue);
+	auto status = stub->GetOSIValue(context.get(), string, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
@@ -205,7 +222,7 @@ void OSMPInterface::setSensorViewConfiguration(std::string& appliedsensorviewcon
 	namedString.set_value(appliedsensorviewconfiguration);
 
 	CoSiMa::rpc::Int32 rpcValue;
-	auto status = stub->SetStringValue(context.get(), namedString, &rpcValue);
+	auto status = stub->SetOSIValue(context.get(), namedString, &rpcValue);
 
 	if (!status.ok()) {
 		auto msg = status.error_message();
