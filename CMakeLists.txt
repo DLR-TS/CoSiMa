@@ -93,11 +93,7 @@ else()
 endif(BUILD_SHARED_LIBS)
 
 # Link SUMO library
-message("TEST TEST TEST")
-message(${SUMO_LIBRARY})
-set(MY_LIB ${SUMO_LIBRARY})
-message(${MY_LIB})
-#target_link_libraries(CoSimulationManagerLib ${MY_LIB})
+target_link_libraries(CoSimulationManagerLib PRIVATE "$ENV{SUMO_HOME}/bin/libsumocpp.so")
 
 ## generate grpc code
 # custom grcp cpp code generation script that is easier to use than gRPC's default function
