@@ -8,5 +8,11 @@ endif()
 message(STATUS "SUMO_HOME = $ENV{SUMO_HOME}")
 
 # Find SUMO library
-include_directories("$ENV{SUMO_HOME}/src")
+if (UNIX)
+	include_directories("$ENV{SUMO_HOME}/src")
+endif(UNIX)
+if(WIN32)
+	include_directories("$ENV{SUMO_HOME}/include")
+endif(WIN32)
+
 link_directories("$ENV{SUMO_HOME}/bin")
