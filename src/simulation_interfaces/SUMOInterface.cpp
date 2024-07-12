@@ -9,15 +9,13 @@ void SUMOInterface::configure(const YAML::Node& node) {
 
 int SUMOInterface::init(bool verbose, std::string configurationPath) {
 	if (verbose) {
-		//std::cout << "SUMO Version: " << Simulation::getVersion().second << std::endl;
+		std::cout << "SUMO Version: " << Simulation::getVersion().second << std::endl;
 	}
 	std::vector<std::string> cmd;
 	cmd.push_back("sumo");
 	cmd.push_back("-c");
 	cmd.push_back(configurationPath + config.model);
-	//Simulation::start({"sumo", "-c", ""});
-	Simulation::close();
-	Simulation::getTime();
+	Simulation::start(cmd);
 	return 0;
 }
 
