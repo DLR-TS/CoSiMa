@@ -19,11 +19,6 @@ CmdParameter Cosima::parseRuntimeParameter(int argc, char *argv[]) {
 			runtimeParameter.configurationName = path.filename().string();
 		}
 	}
-	//test
-	runtimeParameter.configurationPath = "C://Users/bahn_bj";//path.parent_path().string();
-	runtimeParameter.configurationName = "sumo.yml";//path.filename().string();
-	runtimeParameter.verbose = true;
-	//end test
 	return runtimeParameter;
 }
 
