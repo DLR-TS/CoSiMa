@@ -12,6 +12,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <vector>
 
 #include "libsumo/libsumo.h"
 #include "simulation_interfaces/iSimulationData.h"
@@ -36,6 +37,10 @@ public:
 
 private:
 	SUMOInterfaceConfig config;
+	std::map<std::string, long> SUMOIDMap;
+	long SUMOIDMapLastEntry = 100;
+
+	void fillSUMOIDMap(const std::vector<std::string>& ids);
 };
 
 #endif //!PROXYINTERFACE_H

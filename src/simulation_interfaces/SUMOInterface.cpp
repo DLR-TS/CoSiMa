@@ -28,6 +28,7 @@ int SUMOInterface::writeToInternalState() {
 	osi3::TrafficUpdate trafficUpdate;
 	//get data from SUMO
 	const std::vector<std::string> vehicleIds = Simulation::getLoadedIDList();
+	fillSUMOIDMap(vehicleIds);
 	//ID from Vehicle or Pedestrian?
 
 	for (auto& id: vehicleIds) {
@@ -36,7 +37,7 @@ int SUMOInterface::writeToInternalState() {
 		//https://sumo.dlr.de/docs/TraCI/Person_Value_Retrieval.html
 
 		auto* movingObject = trafficUpdate.add_update();
-		movingObject->mutable_id()->set_value(std::stoul(id));
+		movingObject->mutable_id()->set_value(SUMOIDMap[id]);
 		osi3::BaseMoving* base = movingObject->mutable_base();
 				
 		base->mutable_dimension()->set_height(Vehicle::getHeight(id));
@@ -65,7 +66,20 @@ int SUMOInterface::writeToInternalState() {
 	for (auto& output : config.outputs) {
 		mapper->mapToInternalState(tuString, output.interface_name);
 	}
+
+	if (vehicleIds.empty() && !SUMOIDMap.empty()) {
+		//There were vehicles, but not anymore. Stops the simulation run.
+		return 1;
+	}
 	return 0;
+}
+
+void SUMOInterface::fillSUMOIDMap(const std::vector<std::string>& ids) {
+	for (const std::string& id : ids) {
+		if (SUMOIDMap.find(id) == SUMOIDMap.end()) {
+			SUMOIDMap.emplace(id, SUMOIDMapLastEntry++);
+		}
+	}
 }
 
 int SUMOInterface::readFromInternalState() {
