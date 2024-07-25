@@ -14,7 +14,7 @@ int SUMOInterface::init(bool verbose, std::string configurationPath) {
 	std::vector<std::string> cmd;
 	cmd.push_back("sumo");
 	cmd.push_back("-c");
-	cmd.push_back(configurationPath + config.model);
+	cmd.push_back(configurationPath + "/" + config.model);
 	Simulation::start(cmd);
 	return 0;
 }
