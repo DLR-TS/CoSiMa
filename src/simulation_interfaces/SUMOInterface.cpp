@@ -27,7 +27,8 @@ int SUMOInterface::disconnect() {
 int SUMOInterface::writeToInternalState() {
 	osi3::TrafficUpdate trafficUpdate;
 	//get data from SUMO
-	const std::vector<std::string> vehicleIds = Simulation::getLoadedIDList();
+
+	const std::vector<std::string> vehicleIds = Vehicle::getIDList();
 	fillSUMOIDMap(vehicleIds);
 	//ID from Vehicle or Pedestrian?
 
@@ -60,7 +61,9 @@ int SUMOInterface::writeToInternalState() {
 		base->mutable_acceleration()->set_y(acceleration * sin(angleRadians));
 
 		//Vehicle::getVehicleClass(id);
-		std::cout << Vehicle::getVehicleClass(id) << std::endl;
+		if (verbose) {
+			std::cout << "SUMO Vehicle: " << id << " " << SUMOIDMap[id] << " " << Vehicle::getVehicleClass(id) << " " << pos.x << " " << pos.y << std::endl;
+		}
 	}
 	std::string tuString = trafficUpdate.SerializeAsString();
 	for (auto& output : config.outputs) {
@@ -68,7 +71,7 @@ int SUMOInterface::writeToInternalState() {
 	}
 
 	if (vehicleIds.empty() && !SUMOIDMap.empty()) {
-		//There were vehicles, but not anymore. Stops the simulation run.
+		std::cout << "SUMO Interface: There were vehicles, but not anymore. Stop the simulation run." << std::endl;
 		return 1;
 	}
 	return 0;
@@ -88,7 +91,9 @@ int SUMOInterface::readFromInternalState() {
 }
 
 int SUMOInterface::doStep(double stepSize) {
-	Simulation::step(stepSize);
+	//Using the stepSize here breaks the simulation.
+	//Make sure to use the same stepSize in both configurations.
+	Simulation::step();
 	return 0;
 }
 
