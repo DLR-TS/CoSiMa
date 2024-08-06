@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn
+@authors German Aerospace Center: Bjï¿½rn Bahn
 */
 
 #pragma once
@@ -40,6 +40,7 @@ struct CARLAInterfaceConfig {
 	double deltaSeconds;
 	uint32_t initializationTransactionTimeout;
 	uint32_t doStepTransactionTimeout;
+	double debugTimerSeconds;
 	std::string additionalParameters;
 	std::vector<SensorViewConfig> osiSensorViewConfig;
 };
@@ -67,6 +68,7 @@ namespace YAML {
 
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			carlaInterface.additionalParameters = node["additional_parameters"].IsDefined() ? node["additional_parameters"].as<std::string>() : "";
+			carlaInterface.debugTimerSeconds = node["debugTimerSeconds"].IsDefined() ? node["debugTimerSeconds"].as<double>() : 0.0;
 			return true;
 		}
 	};

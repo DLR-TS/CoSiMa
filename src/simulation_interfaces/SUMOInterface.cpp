@@ -49,7 +49,7 @@ int SUMOInterface::writeToInternalState() {
 		base->mutable_position()->set_x(pos.x);
 		base->mutable_position()->set_y(pos.y);
 
-		double angleRadians = Vehicle::getAngle(id) * (M_PI / 180.0);
+		double angleRadians = (90 - Vehicle::getAngle(id)) * (M_PI / 180.0);
 		base->mutable_orientation()->set_yaw(angleRadians);
 
 		auto speed = Vehicle::getSpeed(id);

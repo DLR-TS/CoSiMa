@@ -215,6 +215,11 @@ void Cosima::simulationLoop() {
 		else {
 			setup.baseSimulator->doStep(stepSize);
 		}
+		double debugTimerSeconds = setup.baseSimulator->getDebugTimerSeconds();
+		if (debugTimerSeconds != 0.0) {
+			std::cout << "Sleep for: " << debugTimerSeconds << std::endl;
+			std::this_thread::sleep_for(std::chrono::milliseconds((int)(setup.baseSimulator->getDebugTimerSeconds() * 1000)));
+		}
 	}
 }
 
