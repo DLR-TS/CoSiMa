@@ -26,7 +26,7 @@ namespace YAML {
 		static bool decode(const Node& node, DummyInterfaceConfig& dummyInterface)
 		{
 			dummyInterface.deltaSeconds = node["delta"].IsDefined() ? node["delta"].as<double>() : 0;
-			dummyInterface.debugTimerSeconds = node["debugTimerSeconds"].IsDefined() ? node["debugTimerSeconds"].as<double>() : 0.0;
+			dummyInterface.debugTimerSeconds = node["debug_timer_seconds"].IsDefined() ? node["debugTimerSeconds"].as<double>() : 0.0;
 			return true;
 		}
 	};

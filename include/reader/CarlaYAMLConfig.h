@@ -68,7 +68,7 @@ namespace YAML {
 
 			carlaInterface.osiSensorViewConfig = nodeOrDefault<std::vector<SensorViewConfig>>(node["sensor_view_config"]);
 			carlaInterface.additionalParameters = node["additional_parameters"].IsDefined() ? node["additional_parameters"].as<std::string>() : "";
-			carlaInterface.debugTimerSeconds = node["debugTimerSeconds"].IsDefined() ? node["debugTimerSeconds"].as<double>() : 0.0;
+			carlaInterface.debugTimerSeconds = node["debug_timer_seconds"].IsDefined() ? node["debug_timer_seconds"].as<double>() : 0.0;
 			return true;
 		}
 	};
