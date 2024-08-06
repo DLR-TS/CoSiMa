@@ -53,7 +53,7 @@ public:
 	virtual void setStepSize(double stepSize) = 0;
 	void stopSimulation() { simulationStop = true; };
 	bool simulationStopped() { return simulationStop; };
-	double getDebugTimerSeconds {return debugTimerSeconds; };
+	double getDebugTimerSeconds() { return debugTimerSeconds; };
 };
 
 #endif // !BASESYSTEMINTERFACE_H
