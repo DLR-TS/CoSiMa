@@ -8,6 +8,7 @@ void SUMOInterface::configure(const YAML::Node& node) {
 }
 
 int SUMOInterface::init(bool verbose, std::string configurationPath) {
+	this->verbose = verbose;
 	if (verbose) {
 		std::cout << "SUMO Version: " << Simulation::getVersion().second << std::endl;
 	}
