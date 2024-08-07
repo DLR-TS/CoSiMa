@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn
+@authors German Aerospace Center: Bjï¿½rn Bahn
 */
 
 #ifndef SUMOINTERFACE_H
@@ -41,6 +41,7 @@ private:
 	long SUMOIDMapLastEntry = 100;
 
 	void fillSUMOIDMap(const std::vector<std::string>& ids);
+	bool isNumeric(const std::string& str);
 };
 
 #endif //!PROXYINTERFACE_H

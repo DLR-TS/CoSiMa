@@ -39,7 +39,13 @@ int SUMOInterface::writeToInternalState() {
 		//https://sumo.dlr.de/docs/TraCI/Person_Value_Retrieval.html
 
 		auto* movingObject = trafficUpdate.add_update();
-		movingObject->mutable_id()->set_value(SUMOIDMap[id]);
+		//if the value is a number, this is an important single vehicle
+		//generic SUMO traffic flow names are "<id>.<number>"": "flow1.0", "flow1.1", "flow1.2" etc.
+		if (isNumeric(id)) {
+			movingObject->mutable_id()->set_value(std::stol(id));
+		} else {
+			movingObject->mutable_id()->set_value(SUMOIDMap[id]);
+		}
 		osi3::BaseMoving* base = movingObject->mutable_base();
 				
 		base->mutable_dimension()->set_height(Vehicle::getHeight(id));
@@ -100,4 +106,17 @@ int SUMOInterface::doStep(double stepSize) {
 
 void SUMOInterface::stopSimulation() {
 	Simulation::close("Close by OSTAR CoSimulationManager");
+}
+
+bool SUMOInterface::isNumeric(const std::string& str) {
+    if (str.empty()) {
+        return false;
+    }
+
+    for (char c : str) {
+        if (!std::isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
 }
