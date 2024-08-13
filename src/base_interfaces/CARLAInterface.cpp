@@ -2,6 +2,7 @@
 
 void CARLAInterface::configure(const YAML::Node& node) {
 	config = node.as<CARLAInterfaceConfig>();
+	debugTimerSeconds = config.debugTimerSeconds;
 }
 
 int CARLAInterface::init(bool verbose) {
@@ -57,6 +58,11 @@ int CARLAInterface::init(bool verbose) {
 
 	return response.value();
 }
+
+bool CARLAInterface::isAutostart(uint16_t& port) {
+	port = config.client_port;
+	return config.autostart;
+};
 
 double CARLAInterface::doStep(double stepSize)
 {

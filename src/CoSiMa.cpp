@@ -38,6 +38,30 @@ void Cosima::loadConfiguration() {
 	}
 }
 
+void Cosima::spawnLocalServices() {
+	uint16_t port;
+	if (setup.baseSimulator->isAutostart(port)) {
+		subProcessController.spawnProcess(SPC_EXECUTABLE::CarlaOSISerivce, port, runtimeParameter.verbose);
+	}
+
+	uint16_t autoPort = 51430;
+	for (auto& baseSimulator : setup.childSimulators) {
+		if (baseSimulator->isAutostart(port)) {
+			if (port == 0) {
+				baseSimulator->setPort(autoPort);
+				port = autoPort++;
+			}
+			baseSimulator->setPort(port);
+			subProcessController.spawnProcess(SPC_EXECUTABLE::OSMPService, port, runtimeParameter.verbose);
+		}
+	}
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
+void Cosima::stopLocalServices() {
+	subProcessController.shutdownProcesses();
+}
+
 void Cosima::waitForActiveScenarioRunner() {
 	if (runtimeParameter.scenarioRunner) {
 		srAdapter.init();
@@ -175,7 +199,6 @@ void Cosima::simulationLoop() {
 			doSimulationStep(simInterface);
 			postSimulationStep(simInterface);
 		}
-
 		if (runtimeParameter.scenarioRunner) {
 			//even if scenario runner does tick, this call to the base simulator must be made to update sensors etc.
 			setup.baseSimulator->doStep(0);
@@ -191,6 +214,11 @@ void Cosima::simulationLoop() {
 		}
 		else {
 			setup.baseSimulator->doStep(stepSize);
+		}
+		double debugTimerSeconds = setup.baseSimulator->getDebugTimerSeconds();
+		if (debugTimerSeconds != 0.0) {
+			std::cout << "Sleep for: " << debugTimerSeconds << std::endl;
+			std::this_thread::sleep_for(std::chrono::milliseconds((int)(setup.baseSimulator->getDebugTimerSeconds() * 1000)));
 		}
 	}
 }

@@ -10,17 +10,9 @@
 #include <memory>
 #include "base_interfaces/BaseSystemInterface.h"
 #include "mapper/Mapper.h"
-#include "reader/StandardYAMLConfig.h"
+#include "reader/YAMLConfig.h"
 
 //forward declarations
-/**
-* Basic value types
-*/
-#if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
-	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
-#elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
-	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
-#endif
 class BaseSystemInterface;
 class Mapper;
 
@@ -33,6 +25,7 @@ enum eSimulatorTypes
 	OSMP,
 	PROXY,
 	DUMMY,
+	SUMO,
 
 	SIMULATORNAME_ERROR //needs to be last
 };
@@ -65,6 +58,16 @@ public:
 	\return success status.
 	*/
 	virtual int init(bool verbose, std::string configurationPath) = 0;
+	/**
+	Simulator needs a self spawned server to connect to e.g. OSMP Service
+	\param port returns the port to which the base system will try to connect
+	\return autostart
+	*/
+	virtual bool isAutostart(uint16_t& port) = 0;
+	/**
+	Sets port. Needed for autostart feature
+	*/
+	virtual void setPort(uint16_t port) = 0;
 	/**
 	Disconnect from interface.
 	\return success status

@@ -64,6 +64,9 @@ include(FetchGRPC)
 # OSI is not distributed as conan package, but we already took care of installig its dependency (protobuf), so we can just fetch it
 include(FetchOpenSimulationInterface)
 
+# SUMO library
+include(FetchSUMO)
+
 ## main project
 # set up variables that are used below
 add_subdirectory("src")
@@ -89,6 +92,13 @@ else()
 	target_link_libraries(CoSimulationManagerLib PUBLIC open_simulation_interface_static)
 endif(BUILD_SHARED_LIBS)
 
+# Link SUMO library
+if(UNIX)
+	target_link_libraries(CoSimulationManagerLib PRIVATE "$ENV{SUMO_HOME}/bin/libsumocpp.so")
+endif(UNIX)
+if(WIN32)
+	target_link_libraries(CoSimulationManagerLib PRIVATE "$ENV{SUMO_HOME}/bin/libsumocpp.lib")
+endif(WIN32)
 
 ## generate grpc code
 # custom grcp cpp code generation script that is easier to use than gRPC's default function
@@ -148,8 +158,8 @@ catch_discover_tests(test_CoSiMa)
 
 add_executable (CoSimulationManager "${CMAKE_CURRENT_LIST_DIR}/src/Main.cpp" "${CMAKE_CURRENT_LIST_DIR}/include/Main.h")
 if (${CMAKE_CXX_STANDARD} LESS 17)
-	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs)
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib stdc++fs ${MY_LIB})
 else()
-	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib)
+	target_link_libraries(CoSimulationManager PUBLIC CoSimulationManagerLib ${MY_LIB})
 endif()
 target_include_directories(CoSimulationManager PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)

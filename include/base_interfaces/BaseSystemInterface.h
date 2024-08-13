@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+@authors German Aerospace Center: Bjï¿½rn Bahn, Nils Wendorff, Danny Behnecke
 */
 
 #ifndef BASESYSTEMINTERFACE_H
@@ -14,6 +14,7 @@ private:
 	std::atomic<bool> simulationStop = { false };
 protected:
 	bool verbose = false;
+	double debugTimerSeconds = 0;
 public:
 	/**
 	Read configuration for this base simulator interface.
@@ -21,6 +22,11 @@ public:
 	\return valid status
 	*/
 	virtual void configure(const YAML::Node& node) = 0;
+	/**
+	Check if BaseSystem needs to be started by CoSiMa or is already started from somewhere else
+	\param port returns the port to which the base system will try to connect
+	*/
+	virtual bool isAutostart(uint16_t& port) = 0;
 	/**
 	Connect grpc with host/port information from corresponding fields
 	\verbose enable verbose output
@@ -47,6 +53,7 @@ public:
 	virtual void setStepSize(double stepSize) = 0;
 	void stopSimulation() { simulationStop = true; };
 	bool simulationStopped() { return simulationStop; };
+	double getDebugTimerSeconds() { return debugTimerSeconds; };
 };
 
 #endif // !BASESYSTEMINTERFACE_H

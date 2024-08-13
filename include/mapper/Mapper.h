@@ -19,7 +19,7 @@
 
 #include "base_interfaces/BaseSystemInterface.h"
 #include "simulation_interfaces/iSimulationData.h"
-#include "reader/StandardYAMLConfig.h"
+#include "reader/YAMLConfig.h"
 
 //forward declaration
 class BaseSystemInterface;
@@ -28,9 +28,9 @@ class BaseSystemInterface;
 * YAML configuration structs
 */
 #if defined(_WIN32) && (_MSC_VER >= 1910) || defined(__linux__) && __cplusplus >= 201703L
-	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+	typedef std::variant<InterfaceYAMLConfig, OSMPInterfaceConfig, SUMOInterfaceConfig> configVariants_t;
 #elif defined(_WIN32) && (_MSC_VER >= 1600) || defined(__linux__) && __cplusplus >= 201103L
-	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig> configVariants_t;
+	typedef boost::variant<InterfaceYAMLConfig, OSMPInterfaceConfig, SUMOInterfaceConfig> configVariants_t;
 #endif
 
 struct AnnotatedMessage {

@@ -20,6 +20,10 @@ public:
 	virtual void configure(const YAML::Node& node) override {
 	}
 
+	virtual bool isAutostart(uint16_t& port) override {
+		return false;
+	};
+
 	virtual int init(bool verbose) override {
 		return 0;
 	}
