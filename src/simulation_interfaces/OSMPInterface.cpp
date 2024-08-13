@@ -126,7 +126,7 @@ int OSMPInterface::doStep(double stepsize)
 int OSMPInterface::writeToInternalState() {
 
 	auto string = CoSiMa::rpc::String();
-	for (auto output : config.outputs) {
+	for (auto& output : config.outputs) {
 		//context to handle the following rpc call
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 		string.set_value(output.interface_name);
@@ -158,7 +158,7 @@ int OSMPInterface::writeToInternalState() {
 
 int OSMPInterface::readFromInternalState() {
 
-	for (auto input : config.inputs) {
+	for (auto& input : config.inputs) {
 		// context to handle the following rpc call
 		std::unique_ptr<grpc::ClientContext> context = CoSiMa::Utility::CreateDeadlinedClientContext(config.transactionTimeout);
 

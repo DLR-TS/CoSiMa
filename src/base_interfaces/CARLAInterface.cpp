@@ -2,6 +2,7 @@
 
 void CARLAInterface::configure(const YAML::Node& node) {
 	config = node.as<CARLAInterfaceConfig>();
+	debugTimerSeconds = config.debugTimerSeconds;
 }
 
 int CARLAInterface::init(bool verbose) {

@@ -1,5 +1,5 @@
 /**
-@authors German Aerospace Center: Björn Bahn, Nils Wendorff, Danny Behnecke
+@authors German Aerospace Center: Bjï¿½rn Bahn, Nils Wendorff, Danny Behnecke
 */
 
 #ifndef BASESYSTEMINTERFACE_H
@@ -14,6 +14,7 @@ private:
 	std::atomic<bool> simulationStop = { false };
 protected:
 	bool verbose = false;
+	double debugTimerSeconds = 0;
 public:
 	/**
 	Read configuration for this base simulator interface.
@@ -52,6 +53,7 @@ public:
 	virtual void setStepSize(double stepSize) = 0;
 	void stopSimulation() { simulationStop = true; };
 	bool simulationStopped() { return simulationStop; };
+	double getDebugTimerSeconds() { return debugTimerSeconds; };
 };
 
 #endif // !BASESYSTEMINTERFACE_H

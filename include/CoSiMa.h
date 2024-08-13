@@ -19,6 +19,8 @@ error "Missing the <filesystem> header."
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "ScenarioRunnerAdapter.h"
 #include "SubProcessController.h"

@@ -2,6 +2,7 @@
 
 void DummyInterface::configure(const YAML::Node& node) {
 	config = node.as<DummyInterfaceConfig>();
+	debugTimerSeconds = config.debugTimerSeconds;
 }
 
 int DummyInterface::init(bool verbose) { return 0; }
